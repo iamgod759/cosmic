@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Signals Across the Void — The Story of the Internet</title>
+<title>COSMIC — Stories of Technology & History</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Space+Grotesk:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@500;700;800&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --void:#05060f;
@@ -20,7 +20,6 @@
   --rose:#ff7eb0;
   --font-display:'Syne',sans-serif;
   --font-body:'Space Grotesk',sans-serif;
-  --font-mono:'IBM Plex Mono',monospace;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -31,509 +30,207 @@ body{
   line-height:1.65;
   overflow-x:hidden;
 }
-#starfield{position:fixed;inset:0;z-index:0;pointer-events:none}
 .wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 24px}
-a{color:var(--aurora)}
+a{color:var(--aurora);text-decoration:none}
+a:hover{text-decoration:underline}
 ::selection{background:var(--nebula);color:#fff}
+:focus-visible{outline:2px solid var(--aurora);outline-offset:3px;border-radius:4px}
 
-/* ---------- NAV ---------- */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:50;
-  backdrop-filter:blur(12px);
-  background:rgba(5,6,15,.65);
-  border-bottom:1px solid var(--line);
+/* Hero Section */
+header{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  background:linear-gradient(135deg,rgba(114,245,220,.08),rgba(143,123,255,.08));
+  position:relative;
+  overflow:hidden;
 }
-nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
-.logo{font-family:var(--font-display);font-weight:800;font-size:1rem;letter-spacing:.08em;text-transform:uppercase}
-.logo span{color:var(--aurora)}
-nav ul{display:flex;gap:26px;list-style:none}
-nav ul a{color:var(--dim);text-decoration:none;font-size:.82rem;font-family:var(--font-mono);letter-spacing:.05em;transition:color .2s}
-nav ul a:hover,nav ul a:focus{color:var(--aurora)}
-@media(max-width:720px){nav ul{display:none}}
-
-/* ---------- HERO ---------- */
-header{min-height:100vh;display:flex;align-items:center;position:relative;padding-top:60px}
-.eyebrow{font-family:var(--font-mono);font-size:.78rem;letter-spacing:.28em;text-transform:uppercase;color:var(--aurora);margin-bottom:22px}
+header::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:radial-gradient(circle at 30% 50%, rgba(114,245,220,.1) 0%, transparent 50%),
+            radial-gradient(circle at 70% 50%, rgba(143,123,255,.1) 0%, transparent 50%);
+  pointer-events:none;
+}
+.hero{
+  position:relative;
+  z-index:2;
+  max-width:720px;
+}
+.eyebrow{
+  font-family:var(--font-display);
+  font-size:.85rem;
+  letter-spacing:.3em;
+  text-transform:uppercase;
+  color:var(--aurora);
+  margin-bottom:22px;
+}
 h1{
-  font-family:var(--font-display);font-weight:800;
-  font-size:clamp(2.6rem,7vw,5.2rem);
-  line-height:1.02;letter-spacing:-.01em;margin-bottom:26px;
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:clamp(2.8rem,8vw,5.5rem);
+  line-height:1.1;
+  letter-spacing:-.02em;
+  margin-bottom:24px;
 }
 h1 .grad{
   background:linear-gradient(90deg,var(--aurora),var(--nebula) 55%,var(--rose));
-  -webkit-background-clip:text;background-clip:text;color:transparent;
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
 }
-.lede{max-width:560px;color:var(--dim);font-size:1.08rem;font-weight:300;margin-bottom:38px}
-.hero-stats{display:flex;gap:38px;flex-wrap:wrap;margin-bottom:44px}
-.hstat b{display:block;font-family:var(--font-display);font-size:1.7rem;color:var(--star)}
-.hstat span{font-family:var(--font-mono);font-size:.72rem;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
-.btn{
-  display:inline-block;padding:14px 30px;border-radius:100px;
-  font-family:var(--font-mono);font-size:.82rem;letter-spacing:.1em;text-transform:uppercase;
-  text-decoration:none;transition:transform .2s,box-shadow .2s;
-}
-.btn-primary{background:linear-gradient(90deg,var(--aurora),var(--nebula));color:#05060f;font-weight:500;margin-right:14px}
-.btn-ghost{border:1px solid var(--line);color:var(--star)}
-.btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(114,245,220,.18)}
-.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);font-family:var(--font-mono);font-size:.7rem;color:var(--dim);letter-spacing:.2em;animation:bob 2.4s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
-
-/* ---------- SECTION SCAFFOLD ---------- */
-section{padding:110px 0}
-.sec-head{margin-bottom:56px}
-.sec-head .eyebrow{margin-bottom:14px}
-h2{font-family:var(--font-display);font-weight:700;font-size:clamp(1.9rem,4.5vw,3rem);line-height:1.1;margin-bottom:16px}
-.sec-head p{max-width:620px;color:var(--dim);font-weight:300}
-
-/* ---------- HOW IT WORKS: PACKET JOURNEY ---------- */
-.journey{
-  background:linear-gradient(180deg,var(--deep),transparent);
-  border:1px solid var(--line);border-radius:22px;padding:40px 34px;margin-bottom:60px;
-}
-.journey-track{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;position:relative;margin:30px 0 10px}
-.journey-track::before{
-  content:'';position:absolute;top:31px;left:6%;right:6%;height:2px;
-  background:repeating-linear-gradient(90deg,var(--line) 0 8px,transparent 8px 16px);
-}
-.hop{flex:1;min-width:0;text-align:center;background:none;border:none;cursor:pointer;color:inherit;font-family:inherit;padding:0}
-.hop .orb{
-  width:62px;height:62px;border-radius:50%;margin:0 auto 12px;
-  display:flex;align-items:center;justify-content:center;font-size:1.5rem;
-  background:var(--panel);border:1px solid var(--line);position:relative;z-index:1;
-  transition:transform .25s,border-color .25s,box-shadow .25s;
-}
-.hop small{font-family:var(--font-mono);font-size:.68rem;color:var(--dim);letter-spacing:.06em;display:block}
-.hop.active .orb,.hop:hover .orb{transform:scale(1.12);border-color:var(--aurora);box-shadow:0 0 26px rgba(114,245,220,.35)}
-.hop.active small{color:var(--aurora)}
-.journey-detail{
-  margin-top:30px;background:var(--panel);border:1px solid var(--line);border-radius:14px;
-  padding:22px 26px;min-height:110px;
-}
-.journey-detail h4{font-family:var(--font-display);font-size:1.05rem;margin-bottom:8px;color:var(--aurora)}
-.journey-detail p{color:var(--dim);font-size:.94rem}
-.journey-detail .time{font-family:var(--font-mono);font-size:.72rem;color:var(--solar);letter-spacing:.1em}
-.journey-nav{display:flex;gap:10px;margin-top:18px}
-.journey-nav button{
-  background:transparent;border:1px solid var(--line);color:var(--star);
-  font-family:var(--font-mono);font-size:.75rem;padding:9px 20px;border-radius:100px;cursor:pointer;
-  letter-spacing:.08em;transition:border-color .2s,color .2s;
-}
-.journey-nav button:hover{border-color:var(--aurora);color:var(--aurora)}
-@media(max-width:820px){
-  .journey-track{flex-wrap:wrap;row-gap:24px}
-  .hop{flex:0 0 30%}
-  .journey-track::before{display:none}
+.lede{
+  color:var(--dim);
+  font-size:1.15rem;
+  font-weight:300;
+  margin-bottom:48px;
+  max-width:640px;
+  margin-left:auto;
+  margin-right:auto;
 }
 
-/* ---------- COMPONENT GRID ---------- */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+/* Card Grid */
+.stories{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+  gap:28px;
+  margin-bottom:60px;
+}
 .card{
-  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px 24px;
-  cursor:pointer;transition:transform .25s,border-color .25s,box-shadow .25s;position:relative;overflow:hidden;
-  text-align:left;color:inherit;font-family:inherit;
+  background:linear-gradient(160deg,var(--panel),var(--deep));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:40px 32px;
+  transition:transform .3s,border-color .3s,box-shadow .3s;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
 }
-.card::after{
-  content:'';position:absolute;top:-40%;right:-40%;width:80%;height:80%;border-radius:50%;
-  background:radial-gradient(circle,rgba(143,123,255,.14),transparent 70%);pointer-events:none;
+.card::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  right:-50%;
+  width:100%;
+  height:100%;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(143,123,255,.1),transparent 70%);
+  pointer-events:none;
+  transition:all .3s;
 }
-.card:hover,.card:focus-visible{transform:translateY(-4px);border-color:var(--nebula);box-shadow:0 12px 34px rgba(143,123,255,.18)}
-.card .ic{font-size:1.7rem;margin-bottom:14px;display:block}
-.card h3{font-family:var(--font-display);font-size:1.02rem;margin-bottom:8px}
-.card p{color:var(--dim);font-size:.88rem}
-.card .more{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:.86rem;color:var(--star)}
-.card.open .more{display:block}
-.card .tap{font-family:var(--font-mono);font-size:.66rem;color:var(--nebula);letter-spacing:.12em;margin-top:14px;display:block;text-transform:uppercase}
+.card:hover{
+  transform:translateY(-8px);
+  border-color:var(--aurora);
+  box-shadow:0 20px 50px rgba(114,245,220,.15);
+}
+.card:hover::before{
+  top:-25%;
+  right:-25%;
+}
+.card-inner{
+  position:relative;
+  z-index:2;
+}
+.card-icon{
+  font-size:3.5rem;
+  margin-bottom:20px;
+  display:block;
+}
+.card h2{
+  font-family:var(--font-display);
+  font-size:1.6rem;
+  font-weight:700;
+  margin-bottom:12px;
+  color:var(--star);
+}
+.card p{
+  color:var(--dim);
+  font-size:1rem;
+  margin-bottom:24px;
+  line-height:1.6;
+}
+.card-btn{
+  display:inline-block;
+  padding:12px 28px;
+  background:linear-gradient(90deg,var(--aurora),var(--nebula));
+  color:#05060f;
+  font-weight:600;
+  border-radius:100px;
+  text-decoration:none;
+  font-size:.9rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  transition:transform .2s,box-shadow .2s;
+}
+.card-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(114,245,220,.3);
+}
 
-/* ---------- TIMELINE ---------- */
-.era-label{
-  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;
-  padding:8px 20px;border-radius:100px;border:1px solid var(--line);display:inline-block;
-  margin:60px 0 30px;background:var(--deep);
+footer{
+  border-top:1px solid var(--line);
+  padding:50px 0;
+  text-align:center;
+  color:var(--dim);
+  font-size:.9rem;
 }
-.timeline{position:relative;padding-left:0}
-.timeline::before{
-  content:'';position:absolute;left:29px;top:0;bottom:0;width:2px;
-  background:linear-gradient(180deg,var(--aurora),var(--nebula),var(--rose),var(--solar));
-  opacity:.5;
+footer b{
+  color:var(--star);
+  font-family:var(--font-display);
+  letter-spacing:.1em;
 }
-.tl-item{position:relative;padding-left:84px;margin-bottom:20px}
-.tl-node{
-  position:absolute;left:14px;top:8px;width:32px;height:32px;border-radius:50%;
-  background:var(--void);border:2px solid var(--accent,var(--aurora));
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 0 18px color-mix(in srgb,var(--accent,var(--aurora)) 45%,transparent);
-  transition:transform .25s;
-}
-.tl-node::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--accent,var(--aurora))}
-.tl-item:hover .tl-node{transform:scale(1.25)}
-.tl-btn{
-  width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);
-  border-radius:14px;padding:20px 24px;cursor:pointer;color:inherit;font-family:inherit;
-  transition:border-color .25s,transform .25s;
-}
-.tl-btn:hover,.tl-btn:focus-visible{border-color:var(--accent,var(--aurora));transform:translateX(4px)}
-.tl-date{font-family:var(--font-mono);font-size:.74rem;color:var(--accent,var(--aurora));letter-spacing:.12em;display:block;margin-bottom:6px}
-.tl-title{font-family:var(--font-display);font-size:1.08rem;font-weight:700;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.tl-title .chev{transition:transform .3s;color:var(--dim);font-size:.8rem;flex-shrink:0}
-.tl-item.open .tl-title .chev{transform:rotate(180deg)}
-.tl-body{max-height:0;overflow:hidden;transition:max-height .45s ease}
-.tl-item.open .tl-body{max-height:600px}
-.tl-body-inner{padding:16px 4px 4px;color:var(--dim);font-size:.93rem}
-.tl-body-inner b{color:var(--star)}
-.who{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
-.who span{
-  font-family:var(--font-mono);font-size:.7rem;padding:5px 12px;border-radius:100px;
-  border:1px solid var(--line);color:var(--star);background:var(--deep);
-}
-.who span::before{content:'◆ ';color:var(--accent,var(--aurora));font-size:.6rem}
 
-/* ---------- PIONEERS ---------- */
-.pio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px}
-.pio{
-  border:1px solid var(--line);border-radius:16px;padding:24px;background:linear-gradient(160deg,var(--panel),var(--deep));
+@media(max-width:860px){
+  .stories{grid-template-columns:1fr;}
 }
-.pio .avatar{
-  width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-display);font-weight:800;font-size:1rem;margin-bottom:14px;
-  background:radial-gradient(circle at 30% 30%,var(--nebula),#3b2f8f);color:#fff;
-}
-.pio h3{font-family:var(--font-display);font-size:1rem}
-.pio .role{font-family:var(--font-mono);font-size:.68rem;color:var(--aurora);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 10px}
-.pio p{font-size:.85rem;color:var(--dim)}
-
-/* ---------- FOOTER ---------- */
-footer{border-top:1px solid var(--line);padding:50px 0;color:var(--dim);font-size:.85rem}
-footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px}
-footer b{font-family:var(--font-display);color:var(--star)}
-
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
-  html{scroll-behavior:auto}
 }
-:focus-visible{outline:2px solid var(--aurora);outline-offset:3px;border-radius:4px}
 </style>
 </head>
 <body>
-<canvas id="starfield" aria-hidden="true"></canvas>
 
-<nav>
-  <div class="wrap">
-    <div class="logo">NET<span>.CHRONICLE</span></div>
-    <ul>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#components">Components</a></li>
-      <li><a href="#timeline">Timeline</a></li>
-      <li><a href="#pioneers">Pioneers</a></li>
-    </ul>
-  </div>
-</nav>
-
-<!-- ============ HERO ============ -->
 <header>
-  <div class="wrap">
-    <div class="eyebrow">◈ Mission log · 1957 → 2026</div>
-    <h1>Signals across<br>the <span class="grad">void.</span></h1>
-    <p class="lede">The internet began as a Cold War experiment linking four computers — today it connects most of humanity. This is the complete story: how it works, who built it, and every leap along the way.</p>
-    <div class="hero-stats">
-      <div class="hstat"><b>Oct 29, 1969</b><span>First message sent</span></div>
-      <div class="hstat"><b>~5.5 billion</b><span>People online today</span></div>
-      <div class="hstat"><b>~1.4M km</b><span>Submarine cable laid</span></div>
-    </div>
-    <a class="btn btn-primary" href="#timeline">Launch the timeline</a>
-    <a class="btn btn-ghost" href="#how">How it works</a>
+  <div class="hero">
+    <div class="eyebrow">◆ Welcome to COSMIC</div>
+    <h1>Signals across <span class="grad">infinity.</span></h1>
+    <p class="lede">Explore two epic stories: how humanity connected through the internet, and how we reached for the stars with rockets.</p>
   </div>
-  <div class="scroll-hint">▼ SCROLL TO EXPLORE</div>
 </header>
 
-<!-- ============ HOW IT WORKS ============ -->
-<section id="how">
+<section style="padding:80px 0;">
   <div class="wrap">
-    <div class="sec-head">
-      <div class="eyebrow">◈ 01 · The physics of a click</div>
-      <h2>How the internet actually works</h2>
-      <p>Every webpage you open is a round trip across the planet, completed in milliseconds. Your request is chopped into <b style="color:var(--star)">packets</b> — small envelopes of data — that may take completely different routes and reassemble at the destination.</p>
-    </div>
+    <div class="stories">
+      <a href="internet-history.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-inner">
+          <span class="card-icon">📡</span>
+          <h2>The Internet</h2>
+          <p>From ARPANET's first message to 5.5 billion people online. Trace the cables, protocols, and pioneers that wired humanity together.</p>
+          <span class="card-btn">Launch story →</span>
+        </div>
+      </a>
 
-    <div class="journey">
-      <div class="eyebrow" style="color:var(--solar)">◈ Interactive · The journey of a single click</div>
-      <div class="journey-track" id="track" role="tablist" aria-label="Packet journey steps"></div>
-      <div class="journey-detail" id="jdetail" role="tabpanel"></div>
-      <div class="journey-nav">
-        <button id="jprev" type="button">← Prev hop</button>
-        <button id="jnext" type="button">Next hop →</button>
-      </div>
+      <a href="rocket-history.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-inner">
+          <span class="card-icon">🚀</span>
+          <h2>The Rocket</h2>
+          <p>From Chinese fire arrows to Starship. Explore the physics, engines, and launch sequences that lifted humanity into space.</p>
+          <span class="card-btn">Launch story →</span>
+        </div>
+      </a>
     </div>
-  </div>
-</section>
-
-<!-- ============ COMPONENTS ============ -->
-<section id="components" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="eyebrow">◈ 02 · The machinery</div>
-      <h2>Components of the internet</h2>
-      <p>Tap any module to open its technical log.</p>
-    </div>
-    <div class="grid" id="compGrid"></div>
-  </div>
-</section>
-
-<!-- ============ TIMELINE ============ -->
-<section id="timeline" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="eyebrow">◈ 03 · Mission history</div>
-      <h2>The evolution, launch by launch</h2>
-      <p>Every milestone with its exact date and the people who made it happen. Click any event to expand the full mission log.</p>
-    </div>
-    <div id="tlRoot"></div>
-  </div>
-</section>
-
-<!-- ============ PIONEERS ============ -->
-<section id="pioneers" style="padding-top:0">
-  <div class="wrap">
-    <div class="sec-head">
-      <div class="eyebrow">◈ 04 · The crew</div>
-      <h2>Pioneers who built the network</h2>
-      <p>No single person invented the internet — it was assembled by generations of engineers, each adding a layer.</p>
-    </div>
-    <div class="pio-grid" id="pioGrid"></div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <div><b>NET.CHRONICLE</b> — the story of the internet, told in orbit.</div>
-    <div>From ARPANET's first "LO" to 5.5 billion people online.</div>
+    <div><b>COSMIC</b> — Stories of humanity's greatest technologies.</div>
+    <div>Created with wonder and curiosity.</div>
   </div>
 </footer>
 
-<script>
-/* ================= STARFIELD ================= */
-(function(){
-  const c=document.getElementById('starfield'),x=c.getContext('2d');
-  let stars=[],w,h;
-  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  function resize(){
-    w=c.width=innerWidth;h=c.height=innerHeight;
-    stars=Array.from({length:Math.min(220,w/6)},()=>({
-      x:Math.random()*w,y:Math.random()*h,
-      r:Math.random()*1.4+.3,s:Math.random()*.25+.05,
-      tw:Math.random()*Math.PI*2
-    }));
-  }
-  function draw(t){
-    x.clearRect(0,0,w,h);
-    // faint nebula glows
-    const g1=x.createRadialGradient(w*.8,h*.2,0,w*.8,h*.2,w*.5);
-    g1.addColorStop(0,'rgba(143,123,255,.07)');g1.addColorStop(1,'transparent');
-    x.fillStyle=g1;x.fillRect(0,0,w,h);
-    const g2=x.createRadialGradient(w*.1,h*.8,0,w*.1,h*.8,w*.4);
-    g2.addColorStop(0,'rgba(114,245,220,.05)');g2.addColorStop(1,'transparent');
-    x.fillStyle=g2;x.fillRect(0,0,w,h);
-    for(const s of stars){
-      const a=reduced? .7 : .4+.5*Math.abs(Math.sin(t/1400+s.tw));
-      x.globalAlpha=a;x.fillStyle='#dfe6ff';
-      x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();
-      if(!reduced){s.y+=s.s;if(s.y>h)s.y=0;}
-    }
-    x.globalAlpha=1;
-    if(!reduced)requestAnimationFrame(draw);
-  }
-  addEventListener('resize',resize);resize();
-  reduced?draw(0):requestAnimationFrame(draw);
-})();
-
-/* ================= PACKET JOURNEY ================= */
-const hops=[
- {ic:'💻',label:'Your device',time:'T+0 ms',title:'1 · The request is born',
-  text:'You type a URL or tap a link. Your browser builds an HTTP/HTTPS request and hands it to the operating system, which slices it into packets — each stamped with a destination IP address, a return address, sequence numbers, and checksums.'},
- {ic:'📡',label:'Router / Wi-Fi',time:'T+1 ms',title:'2 · Leaving home',
-  text:'Your home router (usually with a built-in modem) is the launchpad. It translates your Wi-Fi signal into pulses on copper, coaxial, or fiber lines and forwards packets toward your Internet Service Provider\'s network.'},
- {ic:'🛰️',label:'ISP network',time:'T+5 ms',title:'3 · The service provider',
-  text:'Your ISP (a Jio, Airtel, Comcast, etc.) receives the packets and routes them through its regional network. ISPs interconnect at Internet Exchange Points (IXPs), where hundreds of networks physically meet and swap traffic.'},
- {ic:'📖',label:'DNS lookup',time:'T+10 ms',title:'4 · The address book',
-  text:'Computers need numbers, not names. The Domain Name System translates "example.com" into an IP address like 93.184.216.34. Invented by Paul Mockapetris in 1983, DNS is a distributed hierarchy: your query bounces up the tree until a root server or cache has the answer.'},
- {ic:'🌊',label:'Backbone & cables',time:'T+40 ms',title:'5 · Crossing oceans',
-  text:'For distant servers, packets ride the internet backbone: high-capacity fiber-optic trunks and roughly 1.4 million km of submarine cables lying on the ocean floor, carrying data as pulses of laser light.'},
- {ic:'🏢',label:'Data center',time:'T+60 ms',title:'6 · The destination server',
-  text:'Packets arrive at a data center — a warehouse of servers. Often a CDN (Content Delivery Network) node much closer to you answers instead, serving cached copies. The server reassembles your request, computes a response, and ships it back.'},
- {ic:'✨',label:'Back to you',time:'T+~100 ms',title:'7 · Reassembly & render',
-  text:'The response packets may each take different routes, arriving out of order. TCP puts them back in sequence, requests any that were lost, and hands the finished data to your browser — which renders it as a webpage.'}
-];
-const track=document.getElementById('track'),jdetail=document.getElementById('jdetail');
-let ji=0;
-hops.forEach((hp,i)=>{
-  const b=document.createElement('button');
-  b.className='hop';b.type='button';b.setAttribute('role','tab');
-  b.innerHTML=`<div class="orb">${hp.ic}</div><small>${hp.label}</small>`;
-  b.addEventListener('click',()=>setHop(i));
-  track.appendChild(b);
-});
-function setHop(i){
-  ji=(i+hops.length)%hops.length;
-  [...track.children].forEach((el,k)=>el.classList.toggle('active',k===ji));
-  const hp=hops[ji];
-  jdetail.innerHTML=`<span class="time">${hp.time}</span><h4>${hp.title}</h4><p>${hp.text}</p>`;
-}
-document.getElementById('jprev').onclick=()=>setHop(ji-1);
-document.getElementById('jnext').onclick=()=>setHop(ji+1);
-setHop(0);
-
-/* ================= COMPONENTS ================= */
-const comps=[
- {ic:'🧭',name:'TCP/IP Protocol Suite',sum:'The universal language of the internet.',
-  more:'Designed by Vint Cerf and Bob Kahn (1974). IP addresses and routes packets; TCP guarantees they arrive complete and in order. UDP is its faster, no-guarantees sibling used for video calls and online games.'},
- {ic:'📖',name:'DNS',sum:'The internet\'s phone book — names to numbers.',
-  more:'A globally distributed database created by Paul Mockapetris in 1983. Thirteen logical root server systems (with hundreds of physical mirrors) sit at the top of the hierarchy.'},
- {ic:'📡',name:'Routers & Switches',sum:'Traffic controllers deciding each packet\'s next hop.',
-  more:'Routers read destination IPs and consult routing tables built by the BGP protocol — the internet\'s "map exchange" between networks. Switches move traffic inside a single local network.'},
- {ic:'🛰️',name:'ISPs & IXPs',sum:'The networks that connect you to every other network.',
-  more:'Tier-1 backbone carriers span continents; regional ISPs buy transit from them; Internet Exchange Points (like DE-CIX Mumbai) are buildings where networks plug into each other directly.'},
- {ic:'🌊',name:'Submarine Cables',sum:'Fiber on the ocean floor carrying the world\'s traffic.',
-  more:'Around 550+ active cables, ~1.4 million km total. Each fiber pair carries terabits per second as laser light. The first transatlantic fiber cable, TAT-8, went live in 1988.'},
- {ic:'🏢',name:'Servers & Data Centers',sum:'Where websites, apps, and the cloud physically live.',
-  more:'Hyperscale data centers hold hundreds of thousands of servers. "The cloud" is simply someone else\'s data center, rented on demand — a model AWS popularized in 2006.'},
- {ic:'⚡',name:'CDNs',sum:'Cached copies of content, parked near you.',
-  more:'Content Delivery Networks (Akamai, Cloudflare, etc.) replicate popular files to thousands of edge locations so a video loads from your city, not another continent. Akamai pioneered this in 1998.'},
- {ic:'🔐',name:'HTTP & HTTPS / TLS',sum:'The rules for requesting webpages — with encryption.',
-  more:'HTTP, created by Tim Berners-Lee (1989–91), defines how browsers ask for pages. HTTPS wraps it in TLS encryption; Netscape shipped the first version (SSL) in 1995. Today the vast majority of web traffic is encrypted.'},
- {ic:'📱',name:'Client Devices',sum:'Phones, laptops, TVs, cars, sensors — the edge.',
-  more:'Anything with a network stack and an IP address. The Internet of Things means tens of billions of connected devices now outnumber humans online several times over.'},
- {ic:'🔢',name:'IP Addressing (v4/v6)',sum:'Every device needs a unique address.',
-  more:'IPv4 (1981) offers ~4.3 billion addresses — long exhausted. IPv6 (standardized 1998, world launch June 6, 2012) offers 340 undecillion, enough for every grain of sand to be online.'}
-];
-const cg=document.getElementById('compGrid');
-comps.forEach(cm=>{
-  const d=document.createElement('button');
-  d.className='card';d.type='button';d.setAttribute('aria-expanded','false');
-  d.innerHTML=`<span class="ic">${cm.ic}</span><h3>${cm.name}</h3><p>${cm.sum}</p><div class="more">${cm.more}</div><span class="tap">◈ Tap to expand</span>`;
-  d.addEventListener('click',()=>{
-    const open=d.classList.toggle('open');
-    d.setAttribute('aria-expanded',open);
-    d.querySelector('.tap').textContent=open?'◈ Tap to collapse':'◈ Tap to expand';
-  });
-  cg.appendChild(d);
-});
-
-/* ================= TIMELINE DATA ================= */
-const eras=[
- {label:'ERA I · ORIGINS · 1957–1969',color:'var(--aurora)',events:[
-  {d:'October 4, 1957',t:'Sputnik launches the space race — and the internet',
-   b:'The Soviet Union puts the first artificial satellite into orbit. In response, the United States creates <b>ARPA</b> (Advanced Research Projects Agency) in <b>February 1958</b> to ensure American technological dominance.'},
-  {d:'August 1962',t:'The "Galactic Network" is imagined',
-   b:'MIT\'s <b>J.C.R. Licklider</b> writes a series of memos describing a globally interconnected set of computers through which anyone could access data from anywhere — the first recorded vision of the internet.'},
-  {d:'1961–1964',t:'Packet switching is invented',
-   b:'<b>Leonard Kleinrock</b> (MIT, 1961) publishes the first paper on packet-switching theory. Independently, <b>Paul Baran</b> (RAND, 1964) designs distributed networks that could survive nuclear attack, and British scientist <b>Donald Davies</b> coins the term "packet."'},
-  {d:'1965',t:'First two computers ever networked',
-   b:'<b>Lawrence Roberts</b> and Thomas Merrill connect the TX-2 computer in Massachusetts to the Q-32 in California over a dial-up telephone line — the first wide-area computer network ever built.'},
-  {d:'October 29, 1969 · 10:30 PM',t:'"LO" — the first message on ARPANET',
-   b:'Student programmer <b>Charley Kline</b> at UCLA attempts to log in to a computer at Stanford Research Institute. He types "L"... "O"... and the system crashes before "G". The internet\'s first message, born incomplete.'}
- ]},
- {label:'ERA II · PROTOCOLS · 1970–1989',color:'var(--nebula)',events:[
-  {d:'1971',t:'Email and the @ sign',
-   b:'<b>Ray Tomlinson</b> at BBN sends the first network email between two machines, choosing the <b>@</b> symbol to separate user from host. Within two years, email is 75% of all ARPANET traffic.'},
-  {d:'May 1974',t:'TCP is published — the internet\'s DNA',
-   b:'<b>Vint Cerf</b> and <b>Bob Kahn</b> publish "A Protocol for Packet Network Intercommunication," describing TCP — a way for completely different networks to interconnect. The word "internet" is born.'},
-  {d:'1973–1978',t:'Going international, going wireless',
-   b:'ARPANET reaches beyond the US in <b>1973</b> with links to Norway (NORSAR) and University College London. Ethernet is invented by <b>Bob Metcalfe</b> at Xerox PARC (1973).'},
-  {d:'January 1, 1983',t:'Flag Day — the internet is born',
-   b:'Every machine on ARPANET must switch to <b>TCP/IP</b> on this single day. This is the moment historians usually mark as the birth of the true internet: a network of networks speaking one protocol.'},
-  {d:'November 1983',t:'DNS gives the internet human names',
-   b:'<b>Paul Mockapetris</b> invents the Domain Name System, replacing a single hosts.txt file maintained by hand. In <b>1985</b>, symbolics.com becomes the first registered .com domain.'},
-  {d:'1986–1989',t:'NSFNET opens the net to academia',
-   b:'The US National Science Foundation builds <b>NSFNET</b> (1986), a 56 kbit/s backbone linking universities, soon upgraded to faster lines. Commercial email gateways begin.'}
- ]},
- {label:'ERA III · THE WEB · 1989–2000',color:'var(--rose)',events:[
-  {d:'March 12, 1989',t:'Tim Berners-Lee proposes the World Wide Web',
-   b:'A British physicist at CERN submits "Information Management: A Proposal" — his boss scribbles <b>"vague but exciting"</b> on it. By the end of <b>1990</b> he has invented <b>HTML, HTTP, URLs, and the first browser and server</b>.'},
-  {d:'April 30, 1993',t:'CERN gives the web to the world — free',
-   b:'CERN releases World Wide Web technology into the <b>public domain</b>, royalty-free forever. The same year, <b>Mosaic</b> — the first popular graphical browser — is built by <b>Marc Andreessen</b> and <b>Eric Bina</b>.'},
-  {d:'1994–1995',t:'The commercial internet ignites',
-   b:'<b>Netscape Navigator</b> ships (Oct 1994) and its 1995 IPO stuns Wall Street. <b>Amazon</b> (July 1995) and <b>eBay</b> (September 1995) launch.'},
-  {d:'September 4, 1998',t:'Google is founded',
-   b:'Stanford PhD students <b>Larry Page</b> and <b>Sergey Brin</b> incorporate Google, built on their PageRank algorithm. Search transforms the exploding web.'},
-  {d:'March 10, 2000',t:'The dot-com bubble peaks — then bursts',
-   b:'The NASDAQ tops out before crashing, wiping out thousands of internet startups. But the infrastructure built during the mania, and survivors like Amazon, reshape the economy.'}
- ]},
- {label:'ERA IV · SOCIAL & MOBILE · 2001–2015',color:'var(--solar)',events:[
-  {d:'January 15, 2001',t:'Wikipedia and Web 2.0',
-   b:'<b>Jimmy Wales</b> and <b>Larry Sanger</b> launch Wikipedia. Broadband replaces dial-up; the web becomes read-<i>write</i>: users generate the content.'},
-  {d:'February 4, 2004',t:'Facebook — the social graph',
-   b:'<b>Mark Zuckerberg</b> launches "TheFacebook" from a Harvard dorm. <b>YouTube</b> follows on February 14, 2005.'},
-  {d:'June 29, 2007',t:'The iPhone puts the internet in every pocket',
-   b:'Apple\'s iPhone goes on sale, followed by the App Store (2008) and Android (2008). Combined with <b>3G/4G</b> networks, the internet becomes mobile.'},
-  {d:'2006–2011',t:'The cloud era begins',
-   b:'<b>Amazon Web Services</b> launches S3 and EC2 (2006), letting anyone rent computing power by the hour. Netflix begins streaming (2007), Spotify launches (2008).'},
-  {d:'June 6, 2012',t:'World IPv6 Launch',
-   b:'With IPv4\'s 4.3 billion addresses exhausted, major ISPs and websites permanently enable <b>IPv6</b> — with its 340 undecillion addresses.'}
- ]},
- {label:'ERA V · EVERYWHERE & AI · 2015–TODAY',color:'var(--aurora)',events:[
-  {d:'2015–2019',t:'Half of humanity gets online',
-   b:'Around <b>2018–2019</b> the world crosses a threshold: more than 50% of all humans are internet users, driven by cheap Android phones and mobile data.'},
-  {d:'2019–2021',t:'Satellites and a pandemic stress test',
-   b:'<b>SpaceX Starlink</b> begins launching its mega-constellation (May 2019; public beta Oct 2020), beaming broadband from low Earth orbit. When COVID-19 lockdowns hit, every network is stress-tested.'},
-  {d:'November 30, 2022',t:'ChatGPT and the AI internet',
-   b:'OpenAI releases <b>ChatGPT</b>, reaching 100 million users in about two months — the fastest-adopted application in history. Generative AI reshapes the web.'},
-  {d:'2023–2026',t:'Today: ~5.5 billion connected',
-   b:'Roughly <b>two-thirds of humanity</b> is now online across 550+ submarine cables, thousands of satellites, and millions of servers. The internet is everywhere.'}
- ]}
-];
-
-/* ================= TIMELINE RENDER ================= */
-const root=document.getElementById('tlRoot');
-eras.forEach(era=>{
-  const lbl=document.createElement('div');
-  lbl.className='era-label';lbl.style.color=era.color;lbl.style.borderColor=era.color;
-  lbl.textContent=era.label;root.appendChild(lbl);
-  const tl=document.createElement('div');tl.className='timeline';
-  era.events.forEach(ev=>{
-    const it=document.createElement('div');
-    it.className='tl-item';it.style.setProperty('--accent',era.color);
-    it.innerHTML=`
-      <div class="tl-node" aria-hidden="true"></div>
-      <button class="tl-btn" type="button" aria-expanded="false">
-        <span class="tl-date">${ev.d}</span>
-        <span class="tl-title">${ev.t}<span class="chev">▼</span></span>
-        <div class="tl-body"><div class="tl-body-inner">
-          <p>${ev.b}</p>
-          <div class="who">${ev.who.map(w=>`<span>${w}</span>`).join('')}</div>
-        </div></div>
-      </button>`;
-    const btn=it.querySelector('.tl-btn');
-    btn.addEventListener('click',()=>{
-      const open=it.classList.toggle('open');
-      btn.setAttribute('aria-expanded',open);
-    });
-    tl.appendChild(it);
-  });
-  root.appendChild(tl);
-});
-
-/* ================= PIONEERS ================= */
-const pioneers=[
- {n:'J.C.R. Licklider',r:'The Visionary',t:'Imagined the "Galactic Network" in 1962 and funded the research culture at ARPA that made it real.'},
- {n:'Leonard Kleinrock',r:'Packet Theory',t:'Developed the mathematical theory of packet switching (1961); his UCLA lab sent the first ARPANET message.'},
- {n:'Paul Baran & Donald Davies',r:'Distributed Networks',t:'Independently designed survivable packet-switched networks; Davies coined the word "packet."'},
- {n:'Lawrence Roberts',r:'ARPANET Architect',t:'Program manager who designed and built ARPANET, connecting the first four nodes in 1969.'},
- {n:'Vint Cerf & Bob Kahn',r:'Fathers of the Internet',t:'Co-invented TCP/IP (1974), the protocol suite that lets any network talk to any other.'},
- {n:'Ray Tomlinson',r:'Email',t:'Sent the first networked email in 1971 and chose the @ symbol that now addresses billions of messages.'},
- {n:'Jon Postel',r:'The Steward',t:'Edited the RFC standards and ran internet numbering (IANA) for decades — the net\'s quiet caretaker.'},
- {n:'Paul Mockapetris',r:'DNS',t:'Invented the Domain Name System (1983), giving the internet human-readable names.'},
- {n:'Radia Perlman',r:'Network Reliability',t:'Invented the Spanning Tree Protocol (1985) that keeps large networks from collapsing into loops — often called the "Mother of the Internet."'},
- {n:'Tim Berners-Lee',r:'The World Wide Web',t:'Invented HTML, HTTP, URLs, the first browser and server (1989–91) — then gave it all away for free.'},
- {n:'Marc Andreessen & Eric Bina',r:'The Graphical Web',t:'Built Mosaic (1993) and Netscape, turning the web from a text tool into a mass medium.'},
- {n:'Larry Page & Sergey Brin',r:'Search',t:'Founded Google (1998); PageRank made the exploding web navigable for ordinary people.'}
-];
-const pg=document.getElementById('pioGrid');
-pioneers.forEach(p=>{
-  const initials=p.n.split(/[\s&]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('');
-  const d=document.createElement('div');
-  d.className='pio';
-  d.innerHTML=`<div class="avatar">${initials}</div><h3>${p.n}</h3><div class="role">${p.r}</div><p>${p.t}</p>`;
-  pg.appendChild(d);
-});
-</script>
 </body>
 </html>
