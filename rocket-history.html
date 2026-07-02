@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASCENT — The Story, Science & Future of Rockets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Manrope:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pad:#0b0d13;         /* graphite launchpad */
+  --panel:#12161f;       /* titanium panel */
+  --panel2:#171c28;
+  --line:#26304a;        /* blueprint line */
+  --burn:#ff6b2c;        /* exhaust orange */
+  --burn2:#ffa14d;
+  --cryo:#59c2ff;        /* LOX blue */
+  --amber:#ffc24b;       /* telemetry amber */
+  --ink:#eceff7;
+  --dim:#93a0be;
+  --d:'Chakra Petch',sans-serif;
+  --b:'Manrope',sans-serif;
+  --m:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:
+    linear-gradient(rgba(38,48,74,.14) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(38,48,74,.14) 1px,transparent 1px),
+    var(--pad);
+  background-size:44px 44px,44px 44px,auto;
+  color:var(--ink);font-family:var(--b);line-height:1.65;overflow-x:hidden;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+::selection{background:var(--burn);color:#0b0d13}
+:focus-visible{outline:2px solid var(--burn);outline-offset:3px;border-radius:4px}
+
+/* ====== SCROLL TELEMETRY ROCKET (signature) ====== */
+#telem{
+  position:fixed;right:18px;top:80px;bottom:40px;width:34px;z-index:40;
+  display:flex;flex-direction:column;align-items:center;pointer-events:none;
+}
+#telem .rail{flex:1;width:2px;background:repeating-linear-gradient(180deg,var(--line) 0 6px,transparent 6px 14px);position:relative}
+#telem .craft{
+  position:absolute;left:50%;transform:translate(-50%,0) rotate(0deg);
+  font-size:20px;filter:drop-shadow(0 0 8px rgba(255,107,44,.7));
+  transition:top .1s linear;
+}
+#telem .alt{font-family:var(--m);font-size:.6rem;color:var(--amber);writing-mode:vertical-rl;letter-spacing:.15em;margin-top:8px}
+@media(max-width:900px){#telem{display:none}}
+
+/* ====== NAV ====== */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(11,13,19,.78);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:58px}
+.logo{font-family:var(--d);font-weight:700;letter-spacing:.2em;font-size:.95rem}
+.logo b{color:var(--burn)}
+nav ul{display:flex;gap:22px;list-style:none}
+nav a{color:var(--dim);text-decoration:none;font-family:var(--m);font-size:.74rem;letter-spacing:.08em;transition:color .2s}
+nav a:hover{color:var(--burn)}
+@media(max-width:760px){nav ul{display:none}}
+
+/* ====== HERO ====== */
+header{min-height:100vh;display:flex;align-items:center;position:relative;padding-top:58px;overflow:hidden}
+.klaxon{font-family:var(--m);font-size:.72rem;letter-spacing:.32em;color:var(--burn);text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.klaxon::before{content:'';width:9px;height:9px;border-radius:50%;background:var(--burn);animation:blink 1.2s steps(2) infinite}
+@keyframes blink{50%{opacity:.15}}
+h1{font-family:var(--d);font-weight:700;font-size:clamp(2.7rem,7.5vw,5.4rem);line-height:.98;text-transform:uppercase;letter-spacing:.01em;margin-bottom:22px}
+h1 span{color:transparent;-webkit-text-stroke:1.5px var(--cryo)}
+h1 em{font-style:normal;color:var(--burn)}
+.lede{max-width:540px;color:var(--dim);font-weight:300;font-size:1.06rem;margin-bottom:34px}
+.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px;align-items:center;width:100%}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr}.hero-rocket{display:none}}
+.stats{display:flex;gap:34px;flex-wrap:wrap;margin-bottom:36px}
+.st b{display:block;font-family:var(--d);font-size:1.55rem;color:var(--amber)}
+.st span{font-family:var(--m);font-size:.68rem;color:var(--dim);letter-spacing:.12em;text-transform:uppercase}
+.btn{display:inline-block;padding:14px 30px;font-family:var(--m);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;text-decoration:none;transition:.2s;border-radius:6px}
+.btn-fire{background:linear-gradient(90deg,var(--burn),var(--burn2));color:#0b0d13;font-weight:500;margin-right:12px;clip-path:polygon(0 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%)}
+.btn-line{border:1px solid var(--line);color:var(--ink)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,107,44,.25)}
+
+/* CSS rocket in hero */
+.hero-rocket{position:relative;height:480px;display:flex;justify-content:center}
+.rkt{position:absolute;bottom:60px;animation:hover 4.5s ease-in-out infinite}
+@keyframes hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.flame{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);
+  width:26px;height:70px;border-radius:50% 50% 50% 50%/30% 30% 70% 70%;
+  background:linear-gradient(180deg,#fff,var(--amber),var(--burn),transparent);
+  filter:blur(2px);animation:flick .12s infinite alternate;transform-origin:top center;
+}
+@keyframes flick{from{transform:translateX(-50%) scaleY(1)}to{transform:translateX(-50%) scaleY(1.25) scaleX(.85)}}
+.pad-line{position:absolute;bottom:40px;left:10%;right:10%;height:2px;background:var(--line)}
+.pad-line::before,.pad-line::after{content:'';position:absolute;top:-14px;width:2px;height:14px;background:var(--line)}
+.pad-line::before{left:20%}.pad-line::after{right:20%}
+
+/* ====== SECTIONS ====== */
+section{padding:110px 0}
+.tag{font-family:var(--m);font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--cryo);margin-bottom:14px}
+.tag i{font-style:normal;color:var(--burn)}
+h2{font-family:var(--d);font-weight:700;text-transform:uppercase;font-size:clamp(1.8rem,4.4vw,2.9rem);line-height:1.06;margin-bottom:16px}
+.sub{max-width:640px;color:var(--dim);font-weight:300}
+.head{margin-bottom:52px}
+
+/* physics cards */
+.phys{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;margin-bottom:60px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;position:relative}
+.pcard::before{content:attr(data-n);position:absolute;top:18px;right:22px;font-family:var(--d);font-size:2rem;color:var(--line)}
+.pcard h3{font-family:var(--d);font-size:1.05rem;text-transform:uppercase;margin-bottom:10px;color:var(--amber)}
+.pcard p{color:var(--dim);font-size:.92rem}
+.pcard .eq{font-family:var(--m);color:var(--cryo);background:var(--pad);border:1px dashed var(--line);border-radius:8px;padding:10px 14px;margin:14px 0 10px;font-size:.95rem;text-align:center}
+
+/* ====== DELTA-V LAB ====== */
+.lab{background:linear-gradient(160deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:36px;margin-bottom:20px}
+.lab h3{font-family:var(--d);text-transform:uppercase;font-size:1.2rem;margin-bottom:6px}
+.lab .hint{font-family:var(--m);font-size:.72rem;color:var(--dim);margin-bottom:26px;letter-spacing:.06em}
+.lab-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+@media(max-width:820px){.lab-grid{grid-template-columns:1fr}}
+.slider{margin-bottom:26px}
+.slider label{display:flex;justify-content:space-between;font-family:var(--m);font-size:.75rem;letter-spacing:.08em;margin-bottom:10px;color:var(--dim)}
+.slider label b{color:var(--amber)}
+input[type=range]{width:100%;appearance:none;height:4px;border-radius:4px;background:var(--line);outline:none}
+input[type=range]::-webkit-slider-thumb{appearance:none;width:20px;height:20px;border-radius:50%;background:var(--burn);border:3px solid var(--pad);box-shadow:0 0 14px rgba(255,107,44,.6);cursor:pointer}
+input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--burn);border:3px solid var(--pad);cursor:pointer}
+.dv-out{text-align:center}
+.dv-out .num{font-family:var(--d);font-size:clamp(2.6rem,6vw,4rem);color:var(--burn);line-height:1}
+.dv-out .num small{font-size:1.1rem;color:var(--dim)}
+.gauge{height:14px;background:var(--pad);border:1px solid var(--line);border-radius:100px;margin:18px 0 8px;overflow:hidden;position:relative}
+.gauge .fill{height:100%;background:linear-gradient(90deg,var(--cryo),var(--amber),var(--burn));width:0%;transition:width .25s;border-radius:100px}
+.gauge .mark{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);left:78%}
+.verdict{font-family:var(--m);font-size:.78rem;letter-spacing:.05em}
+.verdict.go{color:#6dffa8}.verdict.nogo{color:var(--burn)}
+
+/* ====== ENGINE CUTAWAY ====== */
+.engine-wrap{display:grid;grid-template-columns:minmax(300px,460px) 1fr;gap:40px;align-items:start}
+@media(max-width:880px){.engine-wrap{grid-template-columns:1fr}}
+.engine-svg{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;position:sticky;top:80px}
+@media(max-width:880px){.engine-svg{position:static}}
+.hot{cursor:pointer}
+.hot circle.ring{fill:var(--pad);stroke:var(--burn);stroke-width:1.5;transition:.2s}
+.hot text{fill:var(--ink);font-family:var(--m);font-size:11px;font-weight:500}
+.hot:hover circle.ring,.hot.on circle.ring{fill:var(--burn);stroke:#fff}
+.hot:hover text,.hot.on text{fill:#0b0d13}
+.part{transition:opacity .25s, filter .25s}
+.dimmed .part{opacity:.22}
+.dimmed .part.lit{opacity:1;filter:drop-shadow(0 0 8px rgba(255,161,77,.8))}
+.engine-info{border:1px solid var(--line);border-radius:16px;background:var(--panel);padding:30px;min-height:220px}
+.engine-info .step{font-family:var(--m);font-size:.7rem;color:var(--burn);letter-spacing:.2em;text-transform:uppercase}
+.engine-info h3{font-family:var(--d);text-transform:uppercase;font-size:1.25rem;margin:8px 0 12px}
+.engine-info p{color:var(--dim);font-size:.95rem}
+.engine-info .spec{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}
+.engine-info .spec span{font-family:var(--m);font-size:.68rem;border:1px solid var(--line);border-radius:6px;padding:5px 10px;color:var(--cryo)}
+.part-list{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
+.part-list button{font-family:var(--m);font-size:.7rem;letter-spacing:.05em;background:var(--pad);border:1px solid var(--line);color:var(--dim);border-radius:100px;padding:7px 14px;cursor:pointer;transition:.2s}
+.part-list button:hover,.part-list button.on{border-color:var(--burn);color:var(--burn)}
+
+/* cycles */
+.cycles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:60px}
+.cy{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--cryo);border-radius:10px;padding:22px}
+.cy:nth-child(2){border-left-color:var(--amber)}
+.cy:nth-child(3){border-left-color:var(--burn)}
+.cy:nth-child(4){border-left-color:#6dffa8}
+.cy h4{font-family:var(--d);text-transform:uppercase;font-size:.95rem;margin-bottom:6px}
+.cy .ex{font-family:var(--m);font-size:.68rem;color:var(--amber);letter-spacing:.08em;margin-bottom:10px}
+.cy p{font-size:.85rem;color:var(--dim)}
+
+/* solid motor */
+.solid{display:grid;grid-template-columns:minmax(280px,420px) 1fr;gap:40px;align-items:center;margin-top:70px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px}
+@media(max-width:880px){.solid{grid-template-columns:1fr}}
+.solid p{color:var(--dim);font-size:.95rem;margin-bottom:12px}
+.solid h3{font-family:var(--d);text-transform:uppercase;font-size:1.2rem;margin-bottom:14px}
+.leg{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.leg span{font-family:var(--m);font-size:.68rem;display:flex;align-items:center;gap:7px;color:var(--dim)}
+.leg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* ====== FLIGHT SEQUENCE ====== */
+.seq{background:linear-gradient(180deg,#0d1420,#0b0d13);border:1px solid var(--line);border-radius:18px;padding:38px}
+.seq-stage{display:grid;grid-template-columns:220px 1fr;gap:36px;align-items:center;min-height:250px}
+@media(max-width:760px){.seq-stage{grid-template-columns:1fr}}
+.seq-vis{display:flex;justify-content:center}
+.seq-txt .t{font-family:var(--m);color:var(--amber);font-size:.75rem;letter-spacing:.2em}
+.seq-txt h3{font-family:var(--d);text-transform:uppercase;font-size:1.35rem;margin:8px 0 12px}
+.seq-txt p{color:var(--dim);font-size:.95rem;max-width:560px}
+.seq-bar{display:flex;gap:6px;margin-top:30px}
+.seq-bar button{
+  flex:1;height:8px;border:none;border-radius:100px;background:var(--line);cursor:pointer;transition:.25s;padding:0;
+}
+.seq-bar button.on{background:var(--burn);box-shadow:0 0 12px rgba(255,107,44,.6)}
+.seq-nav{display:flex;gap:10px;margin-top:20px}
+.seq-nav button{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:var(--m);font-size:.74rem;padding:10px 22px;border-radius:6px;cursor:pointer;letter-spacing:.1em;transition:.2s}
+.seq-nav button:hover{border-color:var(--burn);color:var(--burn)}
+
+/* ====== TIMELINE ====== */
+.tl{position:relative;margin-top:20px}
+.tl::before{content:'';position:absolute;left:19px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--cryo),var(--amber),var(--burn))}
+.tle{position:relative;padding-left:64px;margin-bottom:18px}
+.tle .dot{position:absolute;left:8px;top:14px;width:24px;height:24px;border-radius:50%;border:2px solid var(--accent,var(--amber));background:var(--pad);box-shadow:0 0 14px color-mix(in srgb,var(--accent,var(--amber)) 50%,transparent)}
+.tle .dot::after{content:'';position:absolute;inset:6px;border-radius:50%;background:var(--accent,var(--amber))}
+.tle-btn{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;cursor:pointer;color:inherit;font-family:inherit;transition:.25s}
+.tle-btn:hover{border-color:var(--accent,var(--amber));transform:translateX(5px)}
+.tle-d{font-family:var(--m);font-size:.72rem;color:var(--accent,var(--amber));letter-spacing:.14em;display:block;margin-bottom:5px}
+.tle-t{font-family:var(--d);font-size:1.05rem;text-transform:uppercase;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.tle-t .ch{color:var(--dim);font-size:.75rem;transition:transform .3s;flex-shrink:0}
+.tle.open .tle-t .ch{transform:rotate(180deg)}
+.tle-b{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.tle.open .tle-b{max-height:900px}
+.tle-bi{padding-top:16px;color:var(--dim);font-size:.93rem}
+.tle-bi b{color:var(--ink)}
+.tle-bi img{width:100%;max-width:520px;border-radius:10px;border:1px solid var(--line);margin:14px 0 6px;display:block}
+.cap{font-family:var(--m);font-size:.66rem;color:var(--dim);letter-spacing:.05em}
+.era{font-family:var(--m);font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;display:inline-block;border:1px solid var(--line);padding:8px 20px;border-radius:6px;margin:56px 0 28px;background:var(--panel)}
+
+/* ====== FUTURE ====== */
+.fut{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.fcard{background:linear-gradient(170deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:14px;padding:28px;position:relative;overflow:hidden;transition:.25s}
+.fcard:hover{transform:translateY(-5px);border-color:var(--burn)}
+.fcard .yr{font-family:var(--m);font-size:.68rem;color:var(--burn);letter-spacing:.2em}
+.fcard h3{font-family:var(--d);text-transform:uppercase;font-size:1.05rem;margin:8px 0 10px}
+.fcard p{color:var(--dim);font-size:.88rem}
+.fcard .glyph{font-size:1.8rem;margin-bottom:12px;display:block}
+
+/* ====== REAL HARDWARE PHOTO STRIPS ====== */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:30px}
+.ph{background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden;transition:.25s}
+.ph:hover{border-color:var(--burn);transform:translateY(-3px)}
+.ph img{width:100%;height:230px;object-fit:cover;display:block;background:#000}
+.ph .cap{padding:12px 14px;display:block}
+.strip-title{font-family:var(--m);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-top:46px;display:flex;align-items:center;gap:12px}
+.strip-title::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* solid motor layout v2 */
+.solid2{margin-top:70px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:34px}
+.solid2-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:start;margin-top:22px}
+@media(max-width:880px){.solid2-grid{grid-template-columns:1fr}}
+.solid2 h3{font-family:var(--d);text-transform:uppercase;font-size:1.25rem}
+.solid2 .sub2{color:var(--dim);font-size:.95rem;margin-top:8px;max-width:720px}
+.solid2 p{color:var(--dim);font-size:.93rem;margin-bottom:12px}
+.solid2 svg{background:#0d1017;border:1px solid var(--line);border-radius:12px;width:100%}
+.solid2 .ph{margin-bottom:16px}
+.solid2 .ph img{height:250px}
+
+/* future concept art */
+.fart{width:100%;height:150px;display:block;border-radius:10px;margin-bottom:16px;border:1px solid var(--line)}
+
+footer{border-top:1px solid var(--line);padding:46px 0;color:var(--dim);font-size:.85rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+footer b{font-family:var(--d);color:var(--ink);letter-spacing:.1em}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- scroll telemetry -->
+<div id="telem" aria-hidden="true">
+  <div class="rail"><div class="craft" id="craft">🚀</div></div>
+  <div class="alt" id="alt">ALT 000 KM</div>
+</div>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">ASC<b>ENT</b></div>
+    <ul>
+      <li><a href="#physics">Physics</a></li>
+      <li><a href="#engine">Engine</a></li>
+      <li><a href="#flight">Flight</a></li>
+      <li><a href="#history">Timeline</a></li>
+      <li><a href="#future">Future</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header>
+  <div class="wrap hero-grid">
+    <div>
+      <div class="klaxon">Launch sequence initiated · T-minus now</div>
+      <h1>Fire.<br><span>Thrust.</span><br><em>Orbit.</em></h1>
+      <p class="lede">From 9th-century Chinese fire arrows to boosters that land themselves — this is the complete story of the rocket: the machines, the physics inside their engines, the exact moments that changed everything, and where they'll take us next.</p>
+      <div class="stats">
+        <div class="st"><b>7.9 km/s</b><span>Speed to reach orbit</span></div>
+        <div class="st"><b>3,300 °C</b><span>Inside a combustion chamber</span></div>
+        <div class="st"><b>Mar 16, 1926</b><span>First liquid-fuel launch</span></div>
+      </div>
+      <a class="btn btn-fire" href="#engine">Open the engine</a>
+      <a class="btn btn-line" href="#history">Mission history</a>
+    </div>
+    <div class="hero-rocket" aria-hidden="true">
+      <svg class="rkt" width="120" height="360" viewBox="0 0 120 360">
+        <defs>
+          <linearGradient id="bodyG" x1="0" x2="1"><stop offset="0" stop-color="#dfe5f2"/><stop offset=".5" stop-color="#aab4cc"/><stop offset="1" stop-color="#7c88a6"/></linearGradient>
+        </defs>
+        <path d="M60 0 C78 40 82 70 82 110 L82 270 L38 270 L38 110 C38 70 42 40 60 0Z" fill="url(#bodyG)" stroke="#26304a"/>
+        <path d="M60 6 C70 34 74 58 75 90 L45 90 C46 58 50 34 60 6Z" fill="#ff6b2c" opacity=".9"/>
+        <circle cx="60" cy="130" r="12" fill="#0b0d13" stroke="#59c2ff" stroke-width="3"/>
+        <rect x="38" y="196" width="44" height="6" fill="#26304a"/>
+        <path d="M38 230 L14 292 L38 274 Z" fill="#ff6b2c"/>
+        <path d="M82 230 L106 292 L82 274 Z" fill="#ff6b2c"/>
+        <path d="M46 270 L74 270 L68 292 L52 292 Z" fill="#5a6580" stroke="#26304a"/>
+      </svg>
+      <div class="flame"></div>
+      <div class="pad-line"></div>
+    </div>
+  </div>
+</header>
+
+<!-- ================= PHYSICS ================= -->
+<section id="physics">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag"><i>■</i> SEC 01 · First principles</div>
+      <h2>Why rockets work at all</h2>
+      <p class="sub">A rocket is the only machine that carries everything it needs — including its own oxygen — which is why it works in the vacuum of space where jets and propellers cannot.</p>
+    </div>
+    <div class="phys">
+      <div class="pcard" data-n="01">
+        <h3>Newton's Third Law</h3>
+        <div class="eq">Action = −Reaction</div>
+        <p>A rocket doesn't "push against air." It hurls hot gas downward at 2–4.5 km/s, and momentum conservation shoves the vehicle up with equal force. That's it — the entire trick, stated by Newton in 1687.</p>
+      </div>
+      <div class="pcard" data-n="02">
+        <h3>The Rocket Equation</h3>
+        <div class="eq">Δv = Isp · g₀ · ln(m₀ / m𝒇)</div>
+        <p>Written by Konstantin Tsiolkovsky in <b style="color:var(--ink)">1903</b>. It says speed gained depends on exhaust efficiency (Isp) and how much of your rocket is fuel. Its logarithm is brutal: to go twice as fast you need exponentially more propellant — the "tyranny of the rocket equation."</p>
+      </div>
+      <div class="pcard" data-n="03">
+        <h3>Staging</h3>
+        <div class="eq">Drop mass → gain Δv</div>
+        <p>The cheat code against that tyranny: once a fuel tank is empty, it's dead weight. Throw it away mid-flight and the equation resets with a lighter rocket. That's why orbital rockets fly in 2–3 stages — an idea Tsiolkovsky called "rocket trains."</p>
+      </div>
+    </div>
+
+    <!-- DELTA-V LAB -->
+    <div class="lab">
+      <h3>Δv Lab — fly the rocket equation</h3>
+      <div class="hint">// Drag the sliders. Reaching low Earth orbit costs ≈ 9,400 m/s including gravity &amp; drag losses (white marker).</div>
+      <div class="lab-grid">
+        <div>
+          <div class="slider">
+            <label>SPECIFIC IMPULSE (engine efficiency) <b id="ispV">350 s</b></label>
+            <input type="range" id="isp" min="200" max="460" value="350">
+            <label style="margin-top:6px;font-size:.62rem"><span>200s · solid motor</span><span>460s · hydrogen engine</span></label>
+          </div>
+          <div class="slider">
+            <label>MASS RATIO (full ÷ empty mass) <b id="mrV">8.0</b></label>
+            <input type="range" id="mr" min="15" max="200" value="80">
+            <label style="margin-top:6px;font-size:.62rem"><span>1.5 · mostly structure</span><span>20 · nearly all fuel</span></label>
+          </div>
+        </div>
+        <div class="dv-out">
+          <div class="num" id="dv">7,138 <small>m/s</small></div>
+          <div class="gauge"><div class="fill" id="fill"></div><div class="mark" title="Orbit: 9,400 m/s"></div></div>
+          <div class="verdict nogo" id="verdict">SUB-ORBITAL — keep pushing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENGINE ================= -->
+<section id="engine" style="padding-top:40px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag"><i>■</i> SEC 02 · Propulsion deep-dive</div>
+      <h2>Inside a liquid rocket engine</h2>
+      <p class="sub">This is a cutaway of a pump-fed liquid engine — the architecture behind the F-1, Merlin, and Raptor. Click the numbered points (or the buttons) to trace propellant from tank to fire.</p>
+    </div>
+
+    <div class="engine-wrap">
+      <div class="engine-svg">
+        <svg id="engSvg" viewBox="0 0 380 560" width="100%" aria-label="Liquid rocket engine cutaway diagram">
+          <defs>
+            <linearGradient id="flameG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#ffffff"/><stop offset=".35" stop-color="#ffc24b"/><stop offset=".75" stop-color="#ff6b2c"/><stop offset="1" stop-color="#ff6b2c" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="metal" x1="0" x2="1"><stop offset="0" stop-color="#39435e"/><stop offset=".5" stop-color="#232a42"/><stop offset="1" stop-color="#39435e"/></linearGradient>
+          </defs>
+
+          <!-- tanks -->
+          <g class="part" data-p="tanks">
+            <rect x="60" y="14" width="110" height="74" rx="16" fill="#123047" stroke="#59c2ff"/>
+            <text x="115" y="55" text-anchor="middle" fill="#59c2ff" font-family="IBM Plex Mono" font-size="12">LOX  −183°C</text>
+            <rect x="210" y="14" width="110" height="74" rx="16" fill="#3a2413" stroke="#ffa14d"/>
+            <text x="265" y="55" text-anchor="middle" fill="#ffa14d" font-family="IBM Plex Mono" font-size="12">FUEL RP-1</text>
+          </g>
+
+          <!-- feed lines -->
+          <g class="part" data-p="lines">
+            <path d="M115 88 L115 150" stroke="#59c2ff" stroke-width="8" fill="none"/>
+            <path d="M265 88 L265 150" stroke="#ffa14d" stroke-width="8" fill="none"/>
+          </g>
+
+          <!-- turbopump -->
+          <g class="part" data-p="pump">
+            <rect x="80" y="150" width="220" height="56" rx="10" fill="url(#metal)" stroke="#59c2ff"/>
+            <circle cx="140" cy="178" r="17" fill="#0b0d13" stroke="#59c2ff" stroke-width="2"/>
+            <path d="M140 164 v28 M126 178 h28 M130 168 l20 20 M150 168 l-20 20" stroke="#59c2ff" stroke-width="2"/>
+            <circle cx="240" cy="178" r="17" fill="#0b0d13" stroke="#ffa14d" stroke-width="2"/>
+            <path d="M240 164 v28 M226 178 h28 M230 168 l20 20 M250 168 l-20 20" stroke="#ffa14d" stroke-width="2"/>
+            <text x="190" y="182" text-anchor="middle" fill="#93a0be" font-family="IBM Plex Mono" font-size="10">TURBOPUMP</text>
+          </g>
+
+          <!-- gas generator -->
+          <g class="part" data-p="gg">
+            <rect x="308" y="140" width="58" height="76" rx="10" fill="#2a1c33" stroke="#c58bff"/>
+            <text x="337" y="172" text-anchor="middle" fill="#c58bff" font-family="IBM Plex Mono" font-size="9">GAS</text>
+            <text x="337" y="186" text-anchor="middle" fill="#c58bff" font-family="IBM Plex Mono" font-size="9">GEN</text>
+            <path d="M337 216 L337 250 L360 250 L360 380" stroke="#c58bff" stroke-width="5" fill="none" stroke-dasharray="6 5"/>
+            <text x="366" y="320" fill="#93a0be" font-family="IBM Plex Mono" font-size="8" transform="rotate(90 366 320)">EXHAUST</text>
+          </g>
+
+          <!-- injector -->
+          <g class="part" data-p="inj">
+            <rect x="110" y="206" width="160" height="26" rx="6" fill="#39435e" stroke="#eceff7"/>
+            <g stroke="#eceff7" stroke-width="2">
+              <path d="M130 232 v12 M155 232 v12 M180 232 v12 M205 232 v12 M230 232 v12 M250 232 v12"/>
+            </g>
+          </g>
+
+          <!-- combustion chamber -->
+          <g class="part" data-p="chamber">
+            <path d="M118 232 L262 232 L262 320 L214 366 L166 366 L118 320 Z" fill="#3a1408" stroke="#ff6b2c" stroke-width="2"/>
+            <ellipse cx="190" cy="290" rx="46" ry="40" fill="url(#flameG)" opacity=".85"/>
+            <text x="190" y="256" text-anchor="middle" fill="#ffd9a8" font-family="IBM Plex Mono" font-size="9">≈300 bar · 3,300°C</text>
+          </g>
+
+          <!-- throat + nozzle -->
+          <g class="part" data-p="nozzle">
+            <path d="M166 366 L214 366 L214 384 L166 384 Z" fill="#39435e" stroke="#ff6b2c"/>
+            <path d="M166 384 C120 440 92 480 74 520 L306 520 C288 480 260 440 214 384 Z" fill="none" stroke="#ff6b2c" stroke-width="3"/>
+            <!-- regen cooling channels -->
+            <path d="M158 396 C118 444 96 478 84 512 M176 390 C140 442 118 478 108 514 M204 390 C240 442 262 478 272 514 M222 396 C262 444 284 478 296 512" stroke="#59c2ff" stroke-width="1.6" fill="none" opacity=".8"/>
+          </g>
+
+          <!-- exhaust plume -->
+          <g class="part" data-p="plume">
+            <path d="M100 520 C130 545 250 545 280 520 L262 556 C230 566 150 566 118 556 Z" fill="url(#flameG)" opacity=".9"/>
+          </g>
+
+          <!-- HOTSPOTS -->
+          <g class="hot" data-p="tanks"><circle class="ring" cx="36" cy="50" r="13"/><text x="36" y="54" text-anchor="middle">1</text></g>
+          <g class="hot" data-p="pump"><circle class="ring" cx="36" cy="178" r="13"/><text x="36" y="182" text-anchor="middle">2</text></g>
+          <g class="hot" data-p="gg"><circle class="ring" cx="337" cy="118" r="13"/><text x="337" y="122" text-anchor="middle">3</text></g>
+          <g class="hot" data-p="inj"><circle class="ring" cx="36" cy="219" r="13"/><text x="36" y="223" text-anchor="middle">4</text></g>
+          <g class="hot" data-p="chamber"><circle class="ring" cx="36" cy="290" r="13"/><text x="36" y="294" text-anchor="middle">5</text></g>
+          <g class="hot" data-p="nozzle"><circle class="ring" cx="36" cy="450" r="13"/><text x="36" y="454" text-anchor="middle">6</text></g>
+          <g class="hot" data-p="plume"><circle class="ring" cx="340" cy="540" r="13"/><text x="340" y="544" text-anchor="middle">7</text></g>
+        </svg>
+      </div>
+
+      <div>
+        <div class="engine-info" id="engInfo"></div>
+        <div class="part-list" id="partList"></div>
+
+        <div class="cycles">
+          <div class="cy"><h4>Gas Generator</h4><div class="ex">F-1 · MERLIN · RS-68</div><p>A small "engine within the engine" burns a bit of propellant just to spin the pumps, dumping its exhaust overboard. Simple and rugged — the cycle that took Apollo to the Moon.</p></div>
+          <div class="cy"><h4>Staged Combustion</h4><div class="ex">RD-180 · SSME/RS-25</div><p>The pump exhaust is fed back into the main chamber instead of wasted, squeezing out several extra percent of efficiency at the cost of ferocious pressures and plumbing.</p></div>
+          <div class="cy"><h4>Full-Flow Staged</h4><div class="ex">SPACEX RAPTOR</div><p>ALL propellant passes through two preburners before combustion — cooler turbines, maximum performance. First flown on Starship; only three engines in history have achieved it.</p></div>
+          <div class="cy"><h4>Electric Pump / Pressure-Fed</h4><div class="ex">RUTHERFORD · DRACO</div><p>Rocket Lab's Rutherford spins its pumps with battery-powered motors; simpler thrusters skip pumps entirely and push propellant with tank pressure. Small, clean, restartable.</p></div>
+        </div>
+
+        <!-- REAL ENGINE HARDWARE -->
+        <div class="strip-title">▣ THE REAL HARDWARE — ARCHIVAL PHOTOGRAPHS</div>
+        <div class="strip">
+          <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Shuttle_Main_Engine_Test_Firing.jpg?width=640" alt="RS-25 Space Shuttle Main Engine test firing" onerror="this.parentElement.style.display='none'"><span class="cap">▣ RS-25 (Shuttle Main Engine) staged-combustion test fire — note the near-transparent hydrogen flame and shock diamonds. NASA, 1981.</span></div>
+          <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/S-IC_engines_and_Von_Braun.jpg?width=640" alt="Wernher von Braun standing beside the five F-1 engines of a Saturn V first stage" onerror="this.parentElement.style.display='none'"><span class="cap">▣ Wernher von Braun beside the five F-1 engines of a Saturn V S-IC stage — each nozzle 3.7 m wide. NASA.</span></div>
+          <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Space_Shuttle_Main_Engine_(SSME)_Test_Firing_-_GPN-2000-000055.jpg?width=640" alt="SSME test firing at Stennis Space Center" onerror="this.parentElement.style.display='none'"><span class="cap">▣ A single RS-25 at full power on the Stennis test stand — 2,279 kN from an engine you could park a car under. NASA.</span></div>
+        </div>
+
+        <!-- SOLID MOTOR v2 -->
+        <div class="solid2">
+          <h3>The other kind: solid rocket motors</h3>
+          <p class="sub2">The oldest rocket design — the same chemistry as a 9th-century Chinese fire arrow, scaled up 100,000×. Fuel and oxidizer are pre-mixed into a rubbery propellant <b style="color:var(--ink)">grain</b> cast directly inside the casing. Light the hollow core and the entire inner surface burns at once.</p>
+          <div class="solid2-grid">
+            <div>
+              <svg viewBox="0 0 560 320" aria-label="Solid rocket motor technical cutaway">
+                <defs>
+                  <linearGradient id="steel" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#e8ecf4"/><stop offset=".18" stop-color="#aeb8ca"/><stop offset=".5" stop-color="#6d788e"/><stop offset=".82" stop-color="#9aa5ba"/><stop offset="1" stop-color="#d7dde8"/>
+                  </linearGradient>
+                  <linearGradient id="grain" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#8a6a3a"/><stop offset=".5" stop-color="#5f4626"/><stop offset="1" stop-color="#8a6a3a"/>
+                  </linearGradient>
+                  <linearGradient id="core" x1="0" x2="1">
+                    <stop offset="0" stop-color="#fff3c0"/><stop offset=".35" stop-color="#ffb454"/><stop offset="1" stop-color="#ff6b2c"/>
+                  </linearGradient>
+                  <linearGradient id="noz" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0" stop-color="#8f99ad"/><stop offset=".5" stop-color="#3c4457"/><stop offset="1" stop-color="#8f99ad"/>
+                  </linearGradient>
+                  <radialGradient id="blast" cx="0" cy=".5" r="1">
+                    <stop offset="0" stop-color="#ffffff"/><stop offset=".25" stop-color="#ffd25e"/><stop offset=".6" stop-color="#ff6b2c"/><stop offset="1" stop-color="#ff6b2c" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+
+                <!-- nose cap -->
+                <path d="M86 96 C60 110 46 130 42 160 C46 190 60 210 86 224 Z" fill="url(#steel)" stroke="#1a1f2c" stroke-width="1.5"/>
+                <!-- casing -->
+                <rect x="86" y="96" width="304" height="128" fill="url(#steel)" stroke="#1a1f2c" stroke-width="1.5"/>
+                <!-- field joints -->
+                <g stroke="#454f66" stroke-width="3"><path d="M162 96 v128 M238 96 v128 M314 96 v128"/></g>
+                <g fill="#2a3040"><circle cx="162" cy="102" r="2"/><circle cx="162" cy="218" r="2"/><circle cx="238" cy="102" r="2"/><circle cx="238" cy="218" r="2"/><circle cx="314" cy="102" r="2"/><circle cx="314" cy="218" r="2"/></g>
+                <!-- cutaway window into grain -->
+                <rect x="96" y="108" width="286" height="104" fill="url(#grain)" stroke="#3a2c17"/>
+                <!-- burning core channel -->
+                <rect x="96" y="146" width="286" height="28" fill="url(#core)"/>
+                <path d="M96 146 h286 M96 174 h286" stroke="#ffdf9e" stroke-width="1" opacity=".7"/>
+                <!-- igniter -->
+                <path d="M96 152 L134 152 L134 168 L96 168 Z" fill="#ff3b1f" stroke="#ffd25e"/>
+                <path d="M134 154 l14 6 -14 6" fill="#ffd25e"/>
+                <!-- nozzle -->
+                <path d="M390 128 L422 148 L422 172 L390 192 Z" fill="#20242f" stroke="#1a1f2c"/>
+                <path d="M422 148 L520 108 L520 212 L422 172 Z" fill="url(#noz)" stroke="#1a1f2c" stroke-width="1.5"/>
+                <!-- exhaust -->
+                <ellipse cx="524" cy="160" rx="70" ry="44" fill="url(#blast)"/>
+                <path d="M520 140 q22 20 0 40" stroke="#fff" stroke-width="2" fill="none" opacity=".8"/>
+                <path d="M544 146 q16 14 0 28" stroke="#ffd25e" stroke-width="2" fill="none" opacity=".7"/>
+
+                <!-- labels -->
+                <g font-family="IBM Plex Mono" font-size="10" fill="#93a0be">
+                  <path d="M60 70 L60 100" stroke="#93a0be" stroke-width="1"/><text x="34" y="62">FORWARD DOME</text>
+                  <path d="M115 246 L115 190" stroke="#ffd25e" stroke-width="1"/><text x="76" y="262" fill="#ffd25e">IGNITER</text>
+                  <path d="M200 60 L200 106" stroke="#93a0be" stroke-width="1"/><text x="150" y="52">STEEL CASING (SEGMENTED)</text>
+                  <path d="M290 250 L290 200" stroke="#c8a06a" stroke-width="1"/><text x="228" y="266" fill="#c8a06a">PROPELLANT GRAIN (APCP)</text>
+                  <path d="M350 66 L350 150" stroke="#ffb454" stroke-width="1"/><text x="296" y="58" fill="#ffb454">BURNING CORE CHANNEL</text>
+                  <path d="M470 246 L470 200" stroke="#93a0be" stroke-width="1"/><text x="438" y="262">NOZZLE</text>
+                </g>
+
+                <!-- cross-section inset -->
+                <g transform="translate(52,268)">
+                  <circle cx="0" cy="0" r="0"/>
+                </g>
+                <g transform="translate(486,52)">
+                  <circle r="40" fill="url(#steel)" stroke="#1a1f2c" stroke-width="1.5"/>
+                  <circle r="33" fill="url(#grain)"/>
+                  <path d="M0-17 L5-6 L16-11 L9 0 L16 11 L5 6 L0 17 L-5 6 L-16 11 L-9 0 L-16 -11 L-5 -6 Z" fill="url(#core)"/>
+                  <text y="58" text-anchor="middle" font-family="IBM Plex Mono" font-size="9" fill="#93a0be">CROSS-SECTION: STAR GRAIN</text>
+                </g>
+              </svg>
+              <p style="margin-top:14px"><b style="color:var(--ink)">Why the star-shaped channel?</b> Thrust is proportional to burning surface area. A star exposes far more surface than a plain cylinder at ignition — and as it burns outward, the shape (an 11-point star in the Shuttle's forward segment) is engineered so thrust follows a pre-programmed curve, easing off automatically around Max-Q with no moving parts at all.</p>
+              <p><b style="color:var(--ink)">The trade-off:</b> a solid delivers colossal thrust from simple hardware — but once lit it <b style="color:var(--ink)">cannot be throttled, stopped, or restarted</b>. It burns until the propellant is gone. That's why solids serve as strap-on boosters (Shuttle, SLS, Ariane, GSLV) and missiles rather than precision upper stages.</p>
+            </div>
+            <div>
+              <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Sls_srb_block_1-1b_qm-2.jpg?width=800" alt="SLS five-segment solid rocket booster ground test firing in Promontory, Utah" onerror="this.parentElement.style.display='none'"><span class="cap">▣ The real thing: NASA/Northrop Grumman's SLS five-segment booster in a ground test at Promontory, Utah — 16 MN of thrust, ~5.5 tonnes of propellant consumed per second, flame at ~3,100 °C.</span></div>
+              <p>Shuttle-heritage propellant recipe: <b style="color:var(--ink)">69.6% ammonium perchlorate</b> (oxidizer), <b style="color:var(--ink)">16% aluminum powder</b> (fuel), iron oxide catalyst, all bound in PBAN rubber. It looks and feels like a pencil eraser — and each Shuttle booster carried ~500 tonnes of it.</p>
+              <div class="leg">
+                <span><i style="background:#8a6a3a"></i>Propellant grain</span>
+                <span><i style="background:linear-gradient(90deg,#ffd25e,#ff6b2c)"></i>Burning core</span>
+                <span><i style="background:#ff3b1f"></i>Igniter</span>
+                <span><i style="background:#6d788e"></i>Segmented steel casing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FLIGHT SEQUENCE ================= -->
+<section id="flight" style="padding-top:40px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag"><i>■</i> SEC 03 · Nine minutes to orbit</div>
+      <h2>Anatomy of a launch</h2>
+      <p class="sub">Step through a modern reusable rocket's flight, from ignition to a booster standing back on its landing legs.</p>
+    </div>
+    <div class="seq">
+      <div class="seq-stage">
+        <div class="seq-vis" id="seqVis"></div>
+        <div class="seq-txt">
+          <div class="t" id="seqT"></div>
+          <h3 id="seqH"></h3>
+          <p id="seqP"></p>
+        </div>
+      </div>
+      <div class="seq-bar" id="seqBar" role="tablist" aria-label="Flight phases"></div>
+      <div class="seq-nav">
+        <button id="sPrev" type="button">← PREV</button>
+        <button id="sNext" type="button">NEXT PHASE →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TIMELINE ================= -->
+<section id="history" style="padding-top:40px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag"><i>■</i> SEC 04 · Mission history</div>
+      <h2>The events that built the rocket</h2>
+      <p class="sub">Exact dates, real hardware, and the people behind each leap. Click any entry to open its full log — several include archival photographs (NASA / public domain, loaded from Wikimedia Commons when you're online).</p>
+    </div>
+    <div id="tlRoot"></div>
+  </div>
+</section>
+
+<!-- ================= FUTURE ================= -->
+<section id="future" style="padding-top:40px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag"><i>■</i> SEC 05 · Trajectory ahead</div>
+      <h2>What the future holds</h2>
+      <p class="sub">Rocketry is in its biggest transformation since Apollo. Here's what's on the launch manifest for humanity.</p>
+    </div>
+    <div class="fut">
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#0a0e18"/><circle cx="40" cy="24" r="1.4" fill="#e9edfa"/><circle cx="120" cy="14" r="1" fill="#e9edfa"/><circle cx="250" cy="30" r="1.4" fill="#e9edfa"/><circle cx="200" cy="18" r="1" fill="#93a0be"/><rect x="196" y="10" width="12" height="120" fill="#2a3348"/><rect x="184" y="56" width="14" height="6" rx="3" fill="#59c2ff"/><rect x="206" y="56" width="14" height="6" rx="3" fill="#59c2ff"/><rect x="146" y="30" width="26" height="76" rx="8" fill="#aeb8ca"/><rect x="146" y="96" width="26" height="10" fill="#3c4457"/><path d="M152 106 q7 16 7 22 M166 106 q-7 16 -7 22" stroke="#ff6b2c" stroke-width="4" fill="none" opacity=".9"/><ellipse cx="159" cy="126" rx="14" ry="5" fill="#ff6b2c" opacity=".5"/><text x="16" y="118" font-family="IBM Plex Mono" font-size="9" fill="#59c2ff">TOWER CATCH · T+00:07:02</text></svg>
+        <span class="glyph">🔁</span><div class="yr">NOW → 2030</div><h3>Full & rapid reusability</h3><p>Falcon 9 boosters already refly 20+ times. Starship aims for both stages returning — with the booster caught mid-air by tower arms, first achieved October 13, 2024. If launch becomes as routine as an airline flight, cost per kilogram could fall 10–100×, unlocking everything below.</p></div>
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#05070d"/><circle cx="252" cy="30" r="16" fill="#59c2ff" opacity=".9"/><path d="M252 14 a16 16 0 0 1 0 32 a22 12 0 0 0 0 -32" fill="#2e7fb2"/><circle cx="60" cy="20" r="1.3" fill="#e9edfa"/><circle cx="140" cy="12" r="1" fill="#e9edfa"/><path d="M0 96 Q80 82 160 94 T300 92 L300 130 L0 130 Z" fill="#3c4457"/><path d="M0 104 Q90 92 300 100 L300 130 L0 130 Z" fill="#2a3040"/><ellipse cx="70" cy="100" rx="26" ry="14" fill="#8f99ad"/><ellipse cx="70" cy="100" rx="26" ry="14" fill="none" stroke="#c9d2e2" stroke-width="1"/><path d="M52 96 h36 M60 90 v18 M80 90 v18" stroke="#5b6579" stroke-width="1"/><rect x="102" y="92" width="18" height="10" rx="3" fill="#8f99ad"/><circle cx="150" cy="98" r="3" fill="#ffb454"/><path d="M150 98 L170 78" stroke="#ffb454" stroke-width="1"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#ffb454">ARTEMIS BASE CAMP · LUNAR SOUTH POLE</text></svg>
+        <span class="glyph">🌙</span><div class="yr">2026 → 2030s</div><h3>Return to the Moon — to stay</h3><p>NASA's Artemis program (with SpaceX, Blue Origin, ESA, JAXA, ISRO partners) plans crewed landings and a permanent south-pole base, mining lunar ice for water, air, and — split into hydrogen and oxygen — rocket fuel made off Earth.</p></div>
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#160b0a"/><circle cx="230" cy="26" r="1.4" fill="#e9edfa"/><circle cx="80" cy="16" r="1" fill="#e9edfa"/><path d="M0 88 Q70 74 150 86 T300 82 L300 130 L0 130 Z" fill="#7a3221"/><path d="M0 100 Q100 88 300 96 L300 130 L0 130 Z" fill="#5c2418"/><ellipse cx="200" cy="94" rx="30" ry="16" fill="none" stroke="#ffb454" stroke-width="1.4"/><ellipse cx="200" cy="94" rx="30" ry="16" fill="#ffb454" opacity=".12"/><rect x="60" y="46" width="12" height="48" rx="5" fill="#c9d2e2"/><path d="M60 88 L54 100 M72 88 L78 100" stroke="#c9d2e2" stroke-width="2"/><rect x="86" y="58" width="10" height="36" rx="4" fill="#8f99ad"/><circle cx="150" cy="30" r="8" fill="#e8ecf4" opacity=".85"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#ff8d5c">MARS BASE ALPHA · SOL 1</text></svg>
+        <span class="glyph">🔴</span><div class="yr">2030s</div><h3>Humans on Mars</h3><p>Starship was designed from day one as a Mars ship: refueled in orbit, landing 100+ tonnes, and making return propellant (methane + oxygen) from Martian CO₂ and ice via the Sabatier reaction. The first uncrewed cargo flights are the opening move of a multi-decade settlement effort.</p></div>
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#070b14"/><circle cx="50" cy="24" r="1.3" fill="#e9edfa"/><circle cx="240" cy="18" r="1" fill="#e9edfa"/><circle cx="270" cy="60" r="1.3" fill="#93a0be"/><rect x="70" y="52" width="110" height="26" rx="13" fill="#aeb8ca"/><rect x="180" y="56" width="26" height="18" fill="#3c4457"/><circle cx="193" cy="65" r="12" fill="none" stroke="#6dffa8" stroke-width="2"/><circle cx="193" cy="65" r="4" fill="#6dffa8"/><ellipse cx="193" cy="65" rx="12" ry="5" fill="none" stroke="#6dffa8" stroke-width="1" transform="rotate(60 193 65)"/><ellipse cx="193" cy="65" rx="12" ry="5" fill="none" stroke="#6dffa8" stroke-width="1" transform="rotate(-60 193 65)"/><path d="M206 58 L228 48 L228 82 L206 72 Z" fill="#5b6579"/><path d="M228 54 q46 11 62 11 q-16 0 -62 11 Z" fill="#8fd0ff" opacity=".8"/><path d="M228 60 h70" stroke="#e9f6ff" stroke-width="2" opacity=".8"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#6dffa8">NTR TRANSIT VEHICLE · Isp ≈ 900s</text></svg>
+        <span class="glyph">⚛️</span><div class="yr">LATE 2020s →</div><h3>Nuclear propulsion</h3><p>Nuclear-thermal rockets (NASA/DARPA's DRACO program) heat hydrogen with a reactor instead of burning fuel — roughly twice the efficiency of the best chemical engines, cutting Mars transit times and radiation exposure for crews.</p></div>
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#070b14"/><circle cx="40" cy="106" r="60" fill="#123047"/><path d="M-20 106 a60 60 0 0 1 120 0" fill="#1b4a6b" opacity=".6"/><circle cx="90" cy="20" r="1.2" fill="#e9edfa"/><circle cx="200" cy="14" r="1" fill="#e9edfa"/><rect x="130" y="52" width="60" height="18" rx="6" fill="#aeb8ca"/><rect x="112" y="56" width="18" height="10" fill="#59c2ff" opacity=".7"/><rect x="190" y="56" width="18" height="10" fill="#59c2ff" opacity=".7"/><rect x="152" y="40" width="16" height="12" fill="#8f99ad"/><path d="M235 40 l16 -8 14 8 2 16 -12 10 -16 -4 Z" fill="#5b6579"/><circle cx="248" cy="46" r="3" fill="#3c4457"/><circle cx="256" cy="54" r="2" fill="#3c4457"/><path d="M212 58 h20" stroke="#ffb454" stroke-width="1.6" stroke-dasharray="3 3"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#59c2ff">ORBITAL FOUNDRY + ASTEROID INTAKE</text></svg>
+        <span class="glyph">🏭</span><div class="yr">2030s → 2040s</div><h3>Space industry & mining</h3><p>Cheap launch makes orbital factories (perfect crystals, fiber optics, pharmaceuticals grown in microgravity), commercial space stations replacing the ISS after ~2030, and eventually asteroid mining — a single metallic asteroid holds more platinum than has ever been mined on Earth.</p></div>
+      <div class="fcard">
+        <svg class="fart" viewBox="0 0 300 130" aria-hidden="true"><rect width="300" height="130" fill="#05070d"/><circle cx="30" cy="20" r="1.3" fill="#e9edfa"/><circle cx="90" cy="40" r="1" fill="#e9edfa"/><circle cx="150" cy="14" r="1.2" fill="#e9edfa"/><circle cx="262" cy="24" r="3" fill="#fff"/><circle cx="262" cy="24" r="7" fill="#fff" opacity=".25"/><path d="M0 110 L60 60 M0 90 L60 64 M0 128 L60 68" stroke="#ff7eb0" stroke-width="2" opacity=".8"/><path d="M60 40 L96 64 L60 88 L52 64 Z" fill="#e8ecf4" opacity=".9"/><path d="M60 40 L96 64 L60 88" fill="none" stroke="#ff7eb0" stroke-width="1.4"/><circle cx="98" cy="64" r="3" fill="#ffb454"/><path d="M104 62 q70 -18 152 -36" stroke="#93a0be" stroke-width="1" stroke-dasharray="4 5" fill="none"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#ff7eb0">LIGHT SAIL · 0.2c → α CENTAURI</text></svg>
+        <span class="glyph">✨</span><div class="yr">2040s → BEYOND</div><h3>Toward the stars</h3><p>Chemical rockets can't reach other stars in a lifetime — but light can. Concepts like Breakthrough Starshot would push gram-scale probes with giant lasers to 20% of light speed, reaching Alpha Centauri in ~20 years. The rocket equation's final loophole: leave the propellant at home.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>ASCENT</b> — 1,200 years of pointing fire at the ground and daring it to lift us.</div>
+    <div>Per aspera ad astra.</div>
+  </div>
+</footer>
+
+<script>
+/* ========== SCROLL TELEMETRY ========== */
+(function(){
+  const craft=document.getElementById('craft'),alt=document.getElementById('alt');
+  const rail=craft.parentElement;
+  function upd(){
+    const max=document.documentElement.scrollHeight-innerHeight;
+    const p=max>0? scrollY/max : 0;
+    craft.style.top=`calc(${(1-p)*100}% - 12px)`;
+    alt.textContent='ALT '+String(Math.round(p*400)).padStart(3,'0')+' KM';
+  }
+  addEventListener('scroll',upd,{passive:true});addEventListener('resize',upd);upd();
+})();
+
+/* ========== DELTA-V LAB ========== */
+(function(){
+  const isp=document.getElementById('isp'),mr=document.getElementById('mr');
+  const ispV=document.getElementById('ispV'),mrV=document.getElementById('mrV');
+  const dv=document.getElementById('dv'),fill=document.getElementById('fill'),verdict=document.getElementById('verdict');
+  const ORBIT=9400,MAX=12000;
+  function calc(){
+    const I=+isp.value,R=(+mr.value)/10;
+    ispV.textContent=I+' s';mrV.textContent=R.toFixed(1);
+    const v=I*9.80665*Math.log(R);
+    dv.innerHTML=Math.round(v).toLocaleString('en-US')+' <small>m/s</small>';
+    fill.style.width=Math.min(100,v/MAX*100)+'%';
+    if(v>=ORBIT){verdict.className='verdict go';verdict.textContent='✔ ORBIT ACHIEVED — welcome to space';}
+    else{verdict.className='verdict nogo';verdict.textContent='SUB-ORBITAL — need '+Math.round(ORBIT-v).toLocaleString('en-US')+' m/s more (add stages!)';}
+  }
+  isp.addEventListener('input',calc);mr.addEventListener('input',calc);calc();
+})();
+
+/* ========== ENGINE CUTAWAY ========== */
+const parts={
+ tanks:{n:'01 · Propellant tanks',t:'Everything starts as two liquids kept apart: an oxidizer — usually liquid oxygen at −183 °C — and a fuel such as refined kerosene (RP-1), liquid methane, or liquid hydrogen. Tanks are most of a rocket\'s volume: on a Falcon 9, propellant is about 95% of liftoff mass.',s:['LOX −183°C','RP-1 / CH₄ / LH₂','≈95% of vehicle mass']},
+ pump:{n:'02 · Turbopump',t:'The violent heart of the engine. To feed a chamber at hundreds of bar, propellants must be forced in even harder. These turbine-driven pumps pack tens of thousands of horsepower into a package the size of a barrel — the F-1\'s turbopump alone produced ~55,000 hp, spinning at thousands of RPM.',s:['~10⁴–10⁵ hp','5,000–40,000 RPM']},
+ gg:{n:'03 · Gas generator (preburner)',t:'What spins the pump? A miniature rocket engine. A small fraction of propellant is burned fuel-rich (cooler, so turbine blades survive) and its gas blasts through the turbine. In this classic cycle the spent gas dumps overboard — the dark streak beside an F-1 or Merlin plume.',s:['Fuel-rich burn','Drives the turbine']},
+ inj:{n:'04 · Injector plate',t:'A metal showerhead with hundreds of precisely drilled orifices that atomize and mix fuel and oxidizer in exact ratio. Injector design is half science, half black art — bad mixing causes combustion instability, the vibration demon that nearly killed the Apollo F-1 program until engineers added baffles.',s:['100s of orifices','Prevents instability']},
+ chamber:{n:'05 · Combustion chamber',t:'Where chemistry becomes fury: mixed propellants burn at up to ~3,300 °C — hotter than the melting point of the chamber walls — at pressures from ~70 bar (Merlin) to over 300 bar (Raptor, the record). The gas has nowhere to go but the throat below.',s:['≈3,300 °C','70–300+ bar']},
+ nozzle:{n:'06 · Throat & bell nozzle (de Laval)',t:'The genius part. Gas chokes to exactly Mach 1 at the narrow throat, then — counterintuitively — the widening bell accelerates it further, to Mach 5–10 (2,500–4,500 m/s). The blue lines are regenerative cooling: cold fuel circulates through wall channels before burning, keeping metal solid inches from an inferno. Invented in principle by de Laval (1888), applied to rockets by Goddard.',s:['Mach 1 at throat','Exhaust 2.5–4.5 km/s','Regen cooling']},
+ plume:{n:'07 · Exhaust plume = thrust',t:'Newton settles the bill: mass flow × exhaust velocity = thrust. A single Raptor pushes ~2,300 kN; the Saturn V\'s five F-1s together delivered 34,500 kN — the power of a small city, spent in 2.5 minutes. Every kilogram thrown down is a kilogram-and-change of push up.',s:['F = ṁ · vₑ','Raptor ≈ 230 t thrust']}
+};
+const order=['tanks','pump','gg','inj','chamber','nozzle','plume'];
+const svg=document.getElementById('engSvg'),info=document.getElementById('engInfo'),plist=document.getElementById('partList');
+function setPart(id){
+  svg.classList.add('dimmed');
+  svg.querySelectorAll('.part').forEach(p=>p.classList.toggle('lit',p.dataset.p===id));
+  svg.querySelectorAll('.hot').forEach(h=>h.classList.toggle('on',h.dataset.p===id));
+  plist.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.p===id));
+  const p=parts[id];
+  info.innerHTML=`<div class="step">${p.n.split('·')[0]}· COMPONENT LOG</div><h3>${p.n.split('· ')[1]}</h3><p>${p.t}</p><div class="spec">${p.s.map(x=>`<span>${x}</span>`).join('')}</div>`;
+}
+svg.querySelectorAll('.hot').forEach(h=>h.addEventListener('click',()=>setPart(h.dataset.p)));
+order.forEach(id=>{
+  const b=document.createElement('button');b.type='button';b.dataset.p=id;
+  b.textContent=parts[id].n.replace(' · ','·');
+  b.addEventListener('click',()=>setPart(id));plist.appendChild(b);
+});
+setPart('tanks');
+
+/* ========== FLIGHT SEQUENCE ========== */
+const phases=[
+ {t:'T−00:00:03',h:'Ignition & liftoff',p:'Engines light seconds before release and are checked at full thrust while clamps hold the rocket down. Only when every parameter is green do the hold-downs let go. Thrust-to-weight must exceed 1 — a Falcon 9 leaves the pad at about 1.4 g.',r:'🔥'},
+ {t:'T+00:01:12',h:'Max-Q — maximum dynamic pressure',p:'Around 11–13 km altitude, the combination of high speed and still-thick air puts peak aerodynamic stress on the vehicle. Engines briefly throttle down to survive it. "Vehicle is through Max-Q" is the first big callout of every webcast.',r:'🌪️'},
+ {t:'T+00:02:30',h:'MECO & stage separation',p:'Main Engine Cut-Off: the first stage, now ~95% empty, shuts down and separates — pushed away by pneumatic pushers or cold-gas thrusters. Dropping this dead mass is the rocket equation\'s reset button. The upper stage\'s vacuum engine, with its huge nozzle, ignites.',r:'✂️'},
+ {t:'T+00:03:10',h:'Fairing jettison',p:'Above ~110 km the air is too thin to harm the payload, so the protective nose cone splits and falls away — every kilogram of shell discarded is a kilogram of satellite that can ride to orbit. SpaceX recovers and reflies its fairings by fishing them from the sea.',r:'🥥'},
+ {t:'T+00:07:00',h:'Boostback & entry burns',p:'Meanwhile the first stage flips around, and reignites some engines to cancel its downrange velocity and aim for the landing zone, then burns again to survive slamming back into the atmosphere at hypersonic speed. Titanium grid fins steer it like dart feathers.',r:'🔄'},
+ {t:'T+00:08:30',h:'The landing burn',p:'One engine relights for a "hoverslam": the booster decelerates so it reaches zero velocity at exactly zero altitude — it cannot hover, thrust exceeds its empty weight. Legs deploy in the final seconds. First achieved December 21, 2015; now routine.',r:'🦵'},
+ {t:'T+00:09:00',h:'SECO — welcome to orbit',p:'Second Engine Cut-Off: the upper stage reaches ~7.8 km/s. Contrary to intuition, orbit isn\'t about height — it\'s about sideways speed so great that as you fall, the Earth\'s surface curves away beneath you. You are now falling around the planet, forever.',r:'🛰️'}
+];
+const sVis=document.getElementById('seqVis'),sT=document.getElementById('seqT'),sH=document.getElementById('seqH'),sP=document.getElementById('seqP'),sBar=document.getElementById('seqBar');
+let si=0;
+phases.forEach((ph,i)=>{
+  const b=document.createElement('button');b.type='button';b.setAttribute('aria-label',ph.h);
+  b.addEventListener('click',()=>setPhase(i));sBar.appendChild(b);
+});
+function setPhase(i){
+  si=(i+phases.length)%phases.length;
+  const ph=phases[si];
+  sT.textContent=ph.t;sH.textContent=ph.h;sP.textContent=ph.p;
+  sVis.innerHTML=`<div style="font-size:5.5rem;filter:drop-shadow(0 0 24px rgba(255,107,44,.5))">${ph.r}</div>`;
+  [...sBar.children].forEach((b,k)=>b.classList.toggle('on',k<=si));
+}
+document.getElementById('sPrev').onclick=()=>setPhase(si-1);
+document.getElementById('sNext').onclick=()=>setPhase(si+1);
+setPhase(0);
+
+/* ========== TIMELINE ========== */
+const IMG=f=>`https://commons.wikimedia.org/wiki/Special:FilePath/${f}?width=640`;
+const eras=[
+ {label:'ERA I · GUNPOWDER TO THEORY · 800s–1926',c:'var(--cryo)',ev:[
+  {d:'c. 850–1232 AD',t:'China invents the rocket',
+   b:'Chinese alchemists searching for an elixir of immortality accidentally create <b>gunpowder</b> (~9th century). By the Song dynasty, "fire arrows" — gunpowder tubes strapped to arrows — are true solid rockets. At the <b>Battle of Kaifeng (1232)</b>, defenders use them against the Mongols: the first recorded rockets in warfare.',
+   who:['Chinese alchemists & Song military engineers']},
+  {d:'1780s–1804',t:'Mysore rockets & Congreve',
+   b:'The Kingdom of Mysore under <b>Hyder Ali and Tipu Sultan</b> fields iron-cased war rockets against the British — the most advanced of their era. Impressed (and bruised), Britain\'s <b>William Congreve</b> reverse-engineers them (1804). Congreve rockets fired at Fort McHenry in 1814 give the US anthem its "rockets\' red glare."',
+   who:['Tipu Sultan','William Congreve']},
+  {d:'1903',t:'Tsiolkovsky publishes the rocket equation',
+   b:'A deaf, self-taught Russian schoolteacher, <b>Konstantin Tsiolkovsky</b>, publishes "Exploration of Outer Space by Means of Reaction Devices" — deriving the rocket equation, proposing liquid hydrogen/oxygen propellant, multi-stage "rocket trains," and orbital stations. All theory, decades early, all correct. "Earth is the cradle of humanity, but one cannot live in a cradle forever."',
+   who:['Konstantin Tsiolkovsky']},
+  {d:'March 16, 1926',t:'Goddard flies the first liquid-fuel rocket',
+   b:'On his aunt Effie\'s farm in Auburn, Massachusetts, physicist <b>Robert Goddard</b> launches a gasoline-and-liquid-oxygen rocket. It flies for 2.5 seconds, climbs 12.5 meters, and lands 56 meters away in a cabbage patch — the Kitty Hawk moment of spaceflight. Goddard pioneers turbopumps, gyroscopic guidance, and gimbaled thrust; the New York Times mocks him (1920) for thinking rockets work in vacuum, and retracts it the day after Apollo 11 launches.',
+   who:['Robert H. Goddard','Hermann Oberth (parallel theory in Germany)'],
+   img:'Dr._Robert_H._Goddard_-_GPN-2002-000131.jpg',cap:'Robert Goddard with his first liquid-fuel rocket, March 1926 (NASA, public domain)'}
+ ]},
+ {label:'ERA II · WAR & THE SPACE RACE · 1942–1972',c:'var(--amber)',ev:[
+  {d:'October 3, 1942',t:'The V-2 — first rocket to reach space',
+   b:'Nazi Germany\'s <b>A-4/V-2</b>, developed under <b>Wernher von Braun</b> at Peenemünde, becomes the first human object to reach the edge of space (a June 20, 1944 test crosses the 100 km Kármán line). Technically brilliant, morally dark: built with concentration-camp slave labor and used to bomb London and Antwerp. After the war, captured V-2s, documents, and engineers seed both the American and Soviet programs.',
+   who:['Wernher von Braun','Walter Dornberger','Soviet & US capture programs'],
+   img:'Bundesarchiv_Bild_141-1880,_Peenemünde,_Start_einer_V2.jpg',cap:'A V-2 lifts off from Peenemünde test stand VII (German Federal Archives, CC BY-SA 3.0 DE)'},
+  {d:'October 4, 1957',t:'Sputnik — first orbit',
+   b:'The USSR\'s <b>R-7 rocket</b> — designed by Chief Designer <b>Sergei Korolev</b>, whose identity was a state secret — places <b>Sputnik 1</b>, a 58 cm beeping sphere, into orbit. The R-7\'s descendants (Soyuz) still fly today, the longest-serving rocket family in history. The Space Race begins; NASA is created October 1, 1958.',
+   who:['Sergei Korolev','Valentin Glushko (engines)'],
+   img:'Sputnik_asm.jpg',cap:'Replica of Sputnik 1 (public domain)'},
+  {d:'April 12, 1961',t:'Gagarin — a human rides the fire',
+   b:'<b>Yuri Gagarin</b> orbits Earth once aboard Vostok 1 (108 minutes), the first human in space. "Poyekhali!" — "Let\'s go!" The US answers with Alan Shepard (May 5, 1961), and 20 days later President Kennedy commits America to the Moon "before this decade is out."',
+   who:['Yuri Gagarin','Sergei Korolev','Alan Shepard'],
+   img:'Yuri_Gagarin_(1961)_-_Restoration.jpg',cap:'Yuri Gagarin in 1961, months after his flight (restored, public domain)'},
+  {d:'July 16–20, 1969',t:'Saturn V & Apollo 11',
+   b:'The <b>Saturn V</b> — 110.6 m tall, 2,970 tonnes, five F-1 engines producing 34,500 kN — remains the benchmark of heavy lift. Von Braun\'s team builds it; <b>Margaret Hamilton\'s</b> guidance software flies it; on <b>July 20, 1969, 20:17 UTC</b>, Neil Armstrong and Buzz Aldrin land at Tranquility Base while Michael Collins orbits above. Thirteen Saturn Vs fly; not one fails.',
+   who:['Wernher von Braun','Neil Armstrong','Buzz Aldrin','Michael Collins','Margaret Hamilton','400,000 engineers'],
+   img:'Apollo_11_Launch_-_GPN-2000-000630.jpg',cap:'Apollo 11 lifts off on Saturn V, July 16, 1969 (NASA, public domain)'}
+ ]},
+ {label:'ERA III · SHUTTLES & STATIONS · 1981–2011',c:'var(--burn)',ev:[
+  {d:'April 12, 1981',t:'Space Shuttle — the first reusable spaceplane',
+   b:'Exactly 20 years after Gagarin, <b>Columbia (STS-1)</b> launches with John Young and Robert Crippen. The Shuttle\'s RS-25 engines pioneer staged combustion and reusability; over 30 years and 135 missions it builds the ISS and deploys Hubble — but the <b>Challenger (Jan 28, 1986)</b> and <b>Columbia (Feb 1, 2003)</b> tragedies, killing 14 astronauts, teach hard lessons about complexity and safety culture.',
+   who:['John Young','Robert Crippen','NASA & Rockwell'],
+   img:'Space_Shuttle_Columbia_launching.jpg',cap:'Columbia lifts off on STS-1, April 12, 1981 — twin solid boosters plus three RS-25s (NASA, public domain)'},
+  {d:'November 20, 1998',t:'The International Space Station begins',
+   b:'Russia\'s Zarya module launches on a Proton rocket; the US Unity module follows in December on Shuttle. Over 40+ assembly flights, 15 nations build a 420-tonne laboratory. Continuously crewed since <b>November 2, 2000</b> — an entire generation has never known a moment without humans in space.',
+   who:['NASA','Roscosmos','ESA · JAXA · CSA']},
+  {d:'September 28, 2008',t:'Falcon 1 — private industry reaches orbit',
+   b:'After three consecutive failures nearly bankrupt SpaceX, the fourth <b>Falcon 1</b> reaches orbit — the first privately developed liquid-fuel rocket to do so. Elon Musk later said the company had funding for exactly one more attempt. The commercial launch era begins; India\'s ISRO, meanwhile, is proving low-cost excellence (Chandrayaan-1 launches October 22, 2008).',
+   who:['SpaceX team','Tom Mueller (Merlin engine)','ISRO']}
+ ]},
+ {label:'ERA IV · THE REUSABLE REVOLUTION · 2015–TODAY',c:'var(--cryo)',ev:[
+  {d:'December 21, 2015',t:'A rocket lands itself',
+   b:'Falcon 9 flight 20 delivers satellites to orbit — and its first stage flies back and <b>lands vertically at Cape Canaveral</b>, the first orbital-class booster ever recovered. (Blue Origin\'s suborbital New Shepard landed a month earlier, Nov 23.) Drone-ship landings follow (April 8, 2016), then reflight of a used booster (March 30, 2017). The economics of spaceflight break open.',
+   who:['SpaceX','Lars Blackmore (landing algorithms)','Blue Origin'],
+   img:'Falcon_9_first_stage_at_LZ-1(two).jpg',cap:'Falcon 9 booster B1019 standing at Landing Zone 1 after the first-ever orbital booster landing, Dec 21, 2015 (SpaceX, CC0)'},
+  {d:'February 6, 2018',t:'Falcon Heavy & the roadster',
+   b:'The most powerful operational rocket of its day (27 Merlin engines, 5,100 kN-class core thrust ×3) launches with a Tesla Roadster as test mass, while its two side boosters land in eerie synchrony. The image of twin boosters touching down together becomes the decade\'s defining spaceflight moment.',
+   who:['SpaceX'],
+   img:'SpaceX_Pad_39A_with_Falcon_Heavy_(39442579634).jpg',cap:'Falcon Heavy on Pad 39A — the same pad that launched Apollo 11 — before its maiden flight, Feb 2018 (SpaceX, CC0)'},
+  {d:'May 30, 2020',t:'Crew Dragon — commercial astronauts',
+   b:'Doug Hurley and Bob Behnken ride a Falcon 9/Crew Dragon to the ISS — the first crewed orbital flight by a private company, and America\'s first crewed launch since the Shuttle retired in 2011. Spaceflight becomes a service you can buy.',
+   who:['SpaceX','NASA Commercial Crew','Hurley & Behnken']},
+  {d:'Nov 16, 2022 → Oct 13, 2024',t:'Artemis, Starship & the tower catch',
+   b:'NASA\'s <b>SLS</b> flies Artemis I around the Moon (Nov 16, 2022). <b>Starship</b> — 121 m, 33 Raptor engines, ~74,000 kN, the largest and most powerful rocket ever flown — begins test flights in April 2023, and on <b>October 13, 2024</b> its Super Heavy booster returns to the pad and is <b>caught in mid-air by the launch tower\'s "chopstick" arms</b>. India lands at the lunar south pole (Chandrayaan-3, Aug 23, 2023); China, Europe, Japan, and a wave of startups (Rocket Lab, Blue Origin\'s New Glenn — first flight Jan 16, 2025) crowd the launch pads. More mass reached orbit in 2024 than in any year of the Space Race.',
+   who:['NASA','SpaceX','ISRO','CNSA','Rocket Lab','Blue Origin'],
+   img:'SpaceX_Starship_booster_landing_approach_IFT-5.jpg',cap:'Super Heavy booster descending toward the launch tower moments before the first "chopstick" catch, Oct 13, 2024 (Steve Jurvetson, CC BY 2.0)'}
+ ]}
+];
+const root=document.getElementById('tlRoot');
+eras.forEach(era=>{
+  const lb=document.createElement('div');lb.className='era';lb.style.color=era.c;lb.style.borderColor=era.c;lb.textContent=era.label;root.appendChild(lb);
+  const tl=document.createElement('div');tl.className='tl';
+  era.ev.forEach(ev=>{
+    const it=document.createElement('div');it.className='tle';it.style.setProperty('--accent',era.c);
+    const imgHtml=ev.img?`<img loading="lazy" src="${IMG(ev.img)}" alt="${ev.cap}" onerror="this.style.display='none';this.nextElementSibling.style.display='none'"><div class="cap">▣ ${ev.cap}</div>`:'';
+    it.innerHTML=`<div class="dot" aria-hidden="true"></div>
+      <button class="tle-btn" type="button" aria-expanded="false">
+        <span class="tle-d">${ev.d}</span>
+        <span class="tle-t">${ev.t}<span class="ch">▼</span></span>
+        <div class="tle-b"><div class="tle-bi"><p>${ev.b}</p>${imgHtml}
+        <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px">${ev.who.map(w=>`<span style="font-family:var(--m);font-size:.68rem;border:1px solid var(--line);border-radius:100px;padding:4px 12px;background:var(--pad)">◆ ${w}</span>`).join('')}</div>
+        </div></div>
+      </button>`;
+    const btn=it.querySelector('.tle-btn');
+    btn.addEventListener('click',()=>{const o=it.classList.toggle('open');btn.setAttribute('aria-expanded',o);});
+    tl.appendChild(it);
+  });
+  root.appendChild(tl);
+});
+</script>
+</body>
+</html>
