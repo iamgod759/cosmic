@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The VMware Stack — Broadcom Private Cloud, explained</title>
+<meta name="description" content="A clear, visual guide to the Broadcom VMware private-cloud stack — VCF, ESX, vSphere, vCenter, NSX, NSX ALB, NSX VPC, NAPP, HCX, VKS — and the Infrastructure-as-Code tools that automate it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070A12; --bg2:#0B0F1C; --panel:#0F1525; --panel2:#121A2E; --raised:#16203A;
+  --line:rgba(255,255,255,.08); --line2:rgba(255,255,255,.14);
+  --ink:#EAF0FB; --muted:#94A1BC; --faint:#5C6A86;
+  --cyan:#3AE0D0; --blue:#5B8DEF; --violet:#9C7CF8; --pink:#F472B6; --amber:#F6B54A; --green:#46D58A; --indigo:#6E7BF2;
+  --flowA:#3AE0D0; --flowB:#9C7CF8;
+  --maxw:1240px;
+  --r:18px; --r-sm:12px;
+  --shadow:0 20px 60px -24px rgba(0,0,0,.7);
+  --ease:cubic-bezier(.22,.61,.36,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:'Inter',system-ui,sans-serif; font-size:16px; line-height:1.6;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:'Space Grotesk','Inter',sans-serif; font-weight:600; line-height:1.08; margin:0; letter-spacing:-.02em}
+.mono{font-family:'JetBrains Mono',monospace}
+a{color:inherit;text-decoration:none}
+::selection{background:rgba(58,224,208,.28)}
+
+/* ---------- ambient aurora background ---------- */
+.aurora{position:fixed; inset:-20vh -10vw; z-index:0; pointer-events:none; filter:blur(20px); opacity:.7}
+.aurora span{position:absolute; border-radius:50%; mix-blend-mode:screen; opacity:.5; will-change:transform}
+.aurora .a1{width:46vw;height:46vw; left:-6vw; top:-8vh; background:radial-gradient(circle at 30% 30%, rgba(58,224,208,.55), transparent 60%); animation:drift1 26s var(--ease) infinite alternate}
+.aurora .a2{width:50vw;height:50vw; right:-10vw; top:4vh; background:radial-gradient(circle at 60% 40%, rgba(156,124,248,.5), transparent 60%); animation:drift2 30s var(--ease) infinite alternate}
+.aurora .a3{width:40vw;height:40vw; left:30vw; bottom:-18vh; background:radial-gradient(circle at 50% 50%, rgba(91,141,239,.42), transparent 62%); animation:drift3 34s var(--ease) infinite alternate}
+@keyframes drift1{to{transform:translate(8vw,10vh) scale(1.15)}}
+@keyframes drift2{to{transform:translate(-7vw,8vh) scale(1.1)}}
+@keyframes drift3{to{transform:translate(4vw,-9vh) scale(1.2)}}
+.grid-veil{position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);
+  background-size:64px 64px; mask-image:radial-gradient(circle at 50% 12%, #000 0%, transparent 78%)}
+@media (prefers-reduced-motion:reduce){.aurora span{animation:none}}
+
+/* ---------- progress + nav ---------- */
+.progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:60;
+  background:linear-gradient(90deg,var(--flowA),var(--flowB));box-shadow:0 0 12px rgba(58,224,208,.6)}
+header.nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+  background:linear-gradient(180deg,rgba(7,10,18,.86),rgba(7,10,18,.5));border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Space Grotesk';font-weight:600;font-size:16px;letter-spacing:-.01em}
+.brand .mark{width:30px;height:30px;border-radius:9px;position:relative;flex:none;
+  background:conic-gradient(from 140deg,var(--cyan),var(--violet),var(--blue),var(--cyan));box-shadow:0 0 22px -6px var(--cyan)}
+.brand .mark::after{content:"";position:absolute;inset:6px;border-radius:5px;background:var(--bg2)}
+.brand small{display:block;font-family:'JetBrains Mono';font-weight:400;font-size:10px;color:var(--faint);letter-spacing:.12em;text-transform:uppercase;margin-top:1px}
+.nav-links{margin-left:auto;display:flex;gap:6px;align-items:center}
+.nav-links a{font-size:13px;color:var(--muted);padding:8px 13px;border-radius:9px;transition:.25s var(--ease);font-weight:500}
+.nav-links a:hover{color:var(--ink);background:rgba(255,255,255,.05)}
+.nav-cta{border:1px solid var(--line2)!important;color:var(--ink)!important}
+.nav-cta:hover{border-color:var(--cyan)!important;box-shadow:0 0 0 3px rgba(58,224,208,.12)}
+.burger{display:none;margin-left:auto;background:none;border:1px solid var(--line2);color:var(--ink);border-radius:9px;padding:8px 10px;cursor:pointer}
+
+/* ---------- layout ---------- */
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px;position:relative;z-index:2}
+section{position:relative;z-index:2}
+.eyebrow{font-family:'JetBrains Mono';font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan);font-weight:500;display:inline-flex;align-items:center;gap:9px}
+.eyebrow::before{content:"";width:22px;height:1px;background:linear-gradient(90deg,var(--cyan),transparent)}
+
+/* ---------- hero ---------- */
+.hero{padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+.hero h1{font-size:clamp(38px,5.4vw,68px);margin:18px 0 0;font-weight:700}
+.hero h1 .flow{background:linear-gradient(100deg,var(--cyan),var(--violet) 60%,var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p.lead{color:var(--muted);font-size:18px;max-width:30em;margin:20px 0 28px}
+.hero-cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:12px;font-weight:600;font-size:14.5px;cursor:pointer;border:1px solid transparent;transition:.28s var(--ease)}
+.btn-primary{background:linear-gradient(100deg,var(--cyan),var(--violet));color:#06121a;box-shadow:0 14px 40px -14px rgba(58,224,208,.6)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 20px 50px -14px rgba(156,124,248,.6)}
+.btn-ghost{border-color:var(--line2);color:var(--ink);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--cyan);background:rgba(58,224,208,.06)}
+.hero-stats{display:flex;gap:26px;margin-top:34px;flex-wrap:wrap}
+.hero-stats .s b{font-family:'Space Grotesk';font-size:26px;display:block;font-weight:600}
+.hero-stats .s span{font-size:12px;color:var(--faint);font-family:'JetBrains Mono';letter-spacing:.04em}
+
+/* ---------- signature: the stack ---------- */
+.stack{display:flex;flex-direction:column;gap:9px;perspective:1400px}
+.layer{position:relative;display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:14px;cursor:pointer;
+  background:linear-gradient(120deg,var(--panel),var(--panel2));border:1px solid var(--line);
+  transform-style:preserve-3d;transition:transform .4s var(--ease),border-color .3s,box-shadow .4s;will-change:transform;
+  opacity:0;animation:layerIn .7s var(--ease) forwards}
+.layer:nth-child(1){animation-delay:.05s}.layer:nth-child(2){animation-delay:.12s}.layer:nth-child(3){animation-delay:.19s}
+.layer:nth-child(4){animation-delay:.26s}.layer:nth-child(5){animation-delay:.33s}.layer:nth-child(6){animation-delay:.40s}.layer:nth-child(7){animation-delay:.47s}
+@keyframes layerIn{from{opacity:0;transform:translateY(16px) rotateX(8deg)}to{opacity:1;transform:none}}
+.layer:hover{transform:translateX(-6px) scale(1.018);border-color:var(--lc,var(--cyan));box-shadow:-10px 14px 40px -18px var(--lc,var(--cyan))}
+.layer .dot{width:11px;height:11px;border-radius:50%;flex:none;background:var(--lc,var(--cyan));box-shadow:0 0 14px var(--lc,var(--cyan))}
+.layer .lt{font-family:'Space Grotesk';font-weight:600;font-size:15px}
+.layer .ls{font-size:11.5px;color:var(--faint);font-family:'JetBrains Mono';margin-top:1px}
+.layer .lx{margin-left:auto;font-size:11px;color:var(--faint);font-family:'JetBrains Mono';opacity:0;transform:translateX(-6px);transition:.3s var(--ease)}
+.layer:hover .lx{opacity:1;transform:none;color:var(--lc,var(--cyan))}
+.stack-cap{text-align:center;font-size:11.5px;color:var(--faint);font-family:'JetBrains Mono';letter-spacing:.08em;margin-top:6px}
+@media (prefers-reduced-motion:reduce){.layer{animation:none;opacity:1}}
+
+/* ---------- section heading ---------- */
+.shead{max-width:620px;margin-bottom:36px}
+.shead h2{font-size:clamp(27px,3.6vw,40px);margin-top:14px}
+.shead p{color:var(--muted);font-size:16.5px;margin-top:14px}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:0 auto;max-width:var(--maxw)}
+.sec-pad{padding:64px 0}
+
+/* ---------- explorer ---------- */
+.explorer{display:grid;grid-template-columns:248px 1fr;gap:30px;align-items:start}
+.rail{position:sticky;top:84px;display:flex;flex-direction:column;gap:4px}
+.rail-h{font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:0 12px 10px}
+.rail button{display:flex;align-items:center;gap:11px;width:100%;text-align:left;background:none;border:0;color:var(--muted);
+  padding:10px 12px;border-radius:11px;cursor:pointer;font:inherit;font-size:14px;font-weight:500;transition:.22s var(--ease);position:relative}
+.rail button .rd{width:8px;height:8px;border-radius:50%;background:var(--rc);flex:none;opacity:.55;transition:.2s}
+.rail button:hover{color:var(--ink);background:rgba(255,255,255,.04)}
+.rail button.active{color:var(--ink);background:linear-gradient(100deg,rgba(255,255,255,.07),rgba(255,255,255,.02))}
+.rail button.active .rd{opacity:1;box-shadow:0 0 12px var(--rc);transform:scale(1.25)}
+.rail button.active::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--rc);box-shadow:0 0 12px var(--rc)}
+.rail .rtag{margin-left:auto;font-family:'JetBrains Mono';font-size:9.5px;color:var(--faint);letter-spacing:.06em}
+
+/* panel */
+.panel{background:linear-gradient(160deg,var(--panel),rgba(15,21,37,.6));border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden;min-height:560px}
+.p-head{padding:26px 30px 0;position:relative}
+.p-glow{position:absolute;top:-40px;right:-30px;width:240px;height:160px;border-radius:50%;background:var(--pc);filter:blur(60px);opacity:.22}
+.p-cat{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--pc)}
+.p-title{display:flex;align-items:center;gap:14px;margin-top:10px}
+.p-ic{width:46px;height:46px;border-radius:13px;flex:none;display:grid;place-items:center;background:var(--pc-soft);border:1px solid var(--pc-line)}
+.p-ic svg{width:24px;height:24px;stroke:var(--pc);fill:none;stroke-width:1.7}
+.p-title h3{font-size:26px}
+.p-title .full{font-family:'JetBrains Mono';font-size:11.5px;color:var(--faint);margin-top:3px;font-weight:400;letter-spacing:.02em}
+.p-tag{color:var(--muted);margin:14px 0 18px;font-size:15.5px;max-width:62ch}
+.facts{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.fact{font-family:'JetBrains Mono';font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);padding:5px 10px;border-radius:8px}
+.fact b{color:var(--pc);font-weight:500}
+
+/* tabs */
+.tabs{display:flex;gap:3px;padding:18px 30px 0;flex-wrap:wrap;border-bottom:1px solid var(--line);position:relative}
+.tabs button{background:none;border:0;color:var(--muted);font:inherit;font-size:13.5px;font-weight:600;padding:9px 14px;cursor:pointer;
+  border-radius:9px 9px 0 0;position:relative;transition:.2s}
+.tabs button:hover{color:var(--ink)}
+.tabs button.active{color:var(--ink)}
+.tabs button.active::after{content:"";position:absolute;left:10px;right:10px;bottom:-1px;height:2px;border-radius:2px;background:var(--pc);box-shadow:0 0 10px var(--pc)}
+.tab-body{padding:26px 30px 32px;position:relative}
+.tab-pane{animation:fadeUp .42s var(--ease)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.tab-pane{animation:none}}
+
+.lead-line{font-size:15.5px;color:var(--ink);line-height:1.7;max-width:74ch}
+.lead-line b{color:var(--pc);font-weight:600}
+
+/* component grid */
+.cgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.ccard{background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:13px;padding:14px 16px;transition:.25s var(--ease)}
+.ccard:hover{border-color:var(--pc-line);transform:translateY(-2px);background:rgba(255,255,255,.045)}
+.ccard h5{font-family:'Space Grotesk';font-size:14.5px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.ccard h5::before{content:"";width:6px;height:6px;border-radius:2px;background:var(--pc);flex:none}
+.ccard p{font-size:13px;color:var(--muted);margin:0;line-height:1.55}
+
+/* steps */
+.steps{counter-reset:st;margin-top:16px;display:flex;flex-direction:column;gap:0}
+.step{position:relative;padding:0 0 18px 50px;counter-increment:st}
+.step::before{content:counter(st,decimal-leading-zero);position:absolute;left:0;top:-2px;width:34px;height:34px;border-radius:10px;
+  display:grid;place-items:center;font-family:'JetBrains Mono';font-size:12px;font-weight:600;color:var(--pc);
+  background:var(--pc-soft);border:1px solid var(--pc-line)}
+.step::after{content:"";position:absolute;left:16.5px;top:34px;bottom:0;width:1px;background:linear-gradient(var(--pc-line),transparent)}
+.step:last-child{padding-bottom:0}.step:last-child::after{display:none}
+.step h6{font-family:'Space Grotesk';font-size:14.5px;font-weight:600;margin:4px 0 3px}
+.step p{margin:0;font-size:13px;color:var(--muted)}
+.step code{font-family:'JetBrains Mono';font-size:12px;color:var(--cyan);background:rgba(58,224,208,.08);padding:1px 6px;border-radius:5px}
+
+/* config */
+.cfg{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+.cfg-row{display:grid;grid-template-columns:200px 1fr;gap:14px;padding:11px 14px;border-radius:11px;background:rgba(255,255,255,.022);border:1px solid var(--line)}
+.cfg-row .k{font-family:'JetBrains Mono';font-size:12.5px;color:var(--pc);font-weight:500}
+.cfg-row .v{font-size:13.5px;color:var(--muted)}
+.codeblock{margin-top:18px;background:#070B15;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+.codeblock .cb-top{display:flex;align-items:center;gap:7px;padding:11px 15px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.02)}
+.codeblock .cb-top .dotrow{display:flex;gap:6px}.cb-top i{width:10px;height:10px;border-radius:50%;display:block}
+.cb-top .d1{background:#ff5f57}.cb-top .d2{background:#febc2e}.cb-top .d3{background:#28c840}
+.codeblock .cb-name{font-family:'JetBrains Mono';font-size:11.5px;color:var(--faint);margin-left:6px}
+.codeblock pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:'JetBrains Mono';font-size:12.5px;line-height:1.7;color:#cdd6e6}
+.codeblock pre .c{color:#5e6b86}.codeblock pre .k{color:var(--violet)}.codeblock pre .s{color:var(--cyan)}.codeblock pre .n{color:#f6b54a}
+
+/* use cases */
+.ucgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:18px}
+.uc{display:flex;gap:13px;align-items:flex-start;background:rgba(255,255,255,.025);border:1px solid var(--line);border-radius:13px;padding:15px 16px;transition:.25s var(--ease)}
+.uc:hover{border-color:var(--pc-line);background:rgba(255,255,255,.045)}
+.uc .ucn{width:30px;height:30px;border-radius:9px;flex:none;display:grid;place-items:center;background:var(--pc-soft);border:1px solid var(--pc-line);color:var(--pc);font-family:'JetBrains Mono';font-size:12px;font-weight:600}
+.uc h6{font-family:'Space Grotesk';font-size:14px;font-weight:600;margin:2px 0 4px}
+.uc p{margin:0;font-size:12.8px;color:var(--muted);line-height:1.5}
+
+/* ---------- IaC section ---------- */
+.iac-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:30px;align-items:start}
+.iac-tools{display:flex;flex-direction:column;gap:10px}
+.tool{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;border-radius:15px;cursor:pointer;
+  background:linear-gradient(120deg,var(--panel),var(--panel2));border:1px solid var(--line);transition:.26s var(--ease)}
+.tool:hover,.tool.active{border-color:var(--tc);box-shadow:-8px 12px 36px -20px var(--tc);transform:translateX(4px)}
+.tool .tic{width:42px;height:42px;border-radius:12px;flex:none;display:grid;place-items:center;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+.tool .tic svg{width:22px;height:22px;stroke:var(--tc);fill:none;stroke-width:1.7}
+.tool h4{font-size:16px;display:flex;align-items:center;gap:9px}
+.tool .pill{font-family:'JetBrains Mono';font-size:9.5px;letter-spacing:.06em;color:var(--tc);border:1px solid var(--tc);border-radius:20px;padding:2px 8px;font-weight:500}
+.tool p{margin:5px 0 0;font-size:13.2px;color:var(--muted)}
+.iac-code{position:sticky;top:84px}
+.iac-code .codeblock{margin-top:0}
+.iac-code pre{min-height:300px;font-size:12px}
+
+/* ---------- workflow ---------- */
+.flow{display:grid;grid-template-columns:repeat(6,1fr);gap:0;margin-top:14px;position:relative}
+.fstep{position:relative;padding:22px 16px;text-align:center}
+.fstep .fn{width:50px;height:50px;margin:0 auto 12px;border-radius:15px;display:grid;place-items:center;
+  background:var(--panel2);border:1px solid var(--line2);position:relative;z-index:2}
+.fstep .fn svg{width:24px;height:24px;stroke:var(--fc);fill:none;stroke-width:1.7}
+.fstep h5{font-family:'Space Grotesk';font-size:14px;font-weight:600}
+.fstep p{font-size:12px;color:var(--muted);margin:5px 0 0}
+.fstep::after{content:"";position:absolute;top:46px;left:50%;width:100%;height:2px;background:repeating-linear-gradient(90deg,var(--line2) 0 6px,transparent 6px 12px);z-index:1}
+.fstep:last-child::after{display:none}
+.fstep .fn{box-shadow:0 0 0 0 var(--fc)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);margin-top:40px;padding:48px 0 60px;position:relative;z-index:2}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:30px}
+footer h5{font-family:'JetBrains Mono';font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
+footer a{display:block;color:var(--muted);font-size:13.5px;padding:4px 0;transition:.2s}
+footer a:hover{color:var(--cyan)}
+.foot-note{margin-top:36px;padding-top:22px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-size:12px;color:var(--faint);font-family:'JetBrains Mono'}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* ---------- responsive ---------- */
+@media(max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:30px}
+  .explorer{grid-template-columns:1fr}
+  .rail{position:static;flex-direction:row;overflow-x:auto;gap:6px;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+  .rail-h{display:none}.rail button{white-space:nowrap;width:auto}.rail button.active::before{display:none}.rail .rtag{display:none}
+  .iac-grid{grid-template-columns:1fr}.iac-code{position:static}
+  .flow{grid-template-columns:repeat(2,1fr);gap:8px}.fstep::after{display:none}
+  .foot-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:680px){
+  .nav-links{display:none}.burger{display:inline-block}
+  .nav-links.open{display:flex;position:absolute;top:60px;right:16px;left:16px;flex-direction:column;background:var(--panel);
+    border:1px solid var(--line2);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+  .nav-links.open a{padding:11px 12px}
+  .cgrid,.ucgrid{grid-template-columns:1fr}
+  .cfg-row{grid-template-columns:1fr;gap:3px}
+  .foot-grid{grid-template-columns:1fr}
+  .hero{padding:46px 0 20px}.tab-body{padding:22px 18px 26px}.p-head{padding:22px 18px 0}.tabs{padding:14px 18px 0}
+}
+</style>
+</head>
+<body>
+<div class="progress" id="prog"></div>
+<div class="aurora"><span class="a1"></span><span class="a2"></span><span class="a3"></span></div>
+<div class="grid-veil"></div>
+
+<header class="nav">
+  <div class="nav-in">
+    <a href="#top" class="brand"><span class="mark"></span><span>The VMware Stack<small>Broadcom · Private Cloud</small></span></a>
+    <button class="burger" id="burger" aria-label="Menu">☰</button>
+    <nav class="nav-links" id="navlinks">
+      <a href="#stack">The stack</a>
+      <a href="#products">Products</a>
+      <a href="#iac">Automation</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#products" class="nav-cta">Explore →</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<section class="hero wrap">
+  <div class="hero-grid">
+    <div>
+      <span class="eyebrow reveal">A field guide to the modern private cloud</span>
+      <h1 class="reveal">One <span class="flow">software-defined stack</span>, explained simply.</h1>
+      <p class="lead reveal">Broadcom's VMware portfolio — anchored by <b style="color:var(--ink)">VCF 9.1</b> — turns racks of bare-metal servers into a public-cloud-like platform you run yourself. Here's every layer — compute, storage, networking, security, and Kubernetes — plus the Infrastructure-as-Code tools that build it all on autopilot.</p>
+      <div class="hero-cta reveal">
+        <a href="#products" class="btn btn-primary">Explore the products →</a>
+        <a href="#iac" class="btn btn-ghost">See the IaC tools</a>
+      </div>
+      <div class="hero-stats reveal">
+        <div class="s"><b id="st1">10</b><span>core products</span></div>
+        <div class="s"><b id="st2">5</b><span>views each</span></div>
+        <div class="s"><b id="st3">6</b><span>IaC tools</span></div>
+      </div>
+    </div>
+    <div class="reveal">
+      <div class="stack" id="stack"></div>
+      <div class="stack-cap">▲ click any layer to jump in</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec-pad wrap" id="stack-intro">
+  <div class="shead reveal">
+    <span class="eyebrow">How it fits together</span>
+    <h2>Two planes, many layers, one platform.</h2>
+    <p>Everything in VMware splits into a <b style="color:var(--cyan)">control plane</b> (the brains that decide and configure — vCenter, NSX Manager, the Avi Controller) and a <b style="color:var(--violet)">data plane</b> (the muscle that moves packets and runs workloads — ESX hosts, Service Engines, Edge nodes). Learn that one idea and the whole stack clicks.</p>
+  </div>
+  <div class="cgrid reveal" style="grid-template-columns:repeat(3,1fr)" id="plane-cards"></div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec-pad wrap" id="products">
+  <div class="shead reveal">
+    <span class="eyebrow">The products</span>
+    <h2>Pick a product. Get the whole picture.</h2>
+    <p>Each one is broken into five plain-language views: what it is, what it's made of, how you deploy it, how you configure it, and where you'd actually use it.</p>
+  </div>
+  <div class="explorer">
+    <div class="rail" id="rail"><div class="rail-h">Choose a product</div></div>
+    <div class="panel" id="panel"></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec-pad wrap" id="iac">
+  <div class="shead reveal">
+    <span class="eyebrow">Infrastructure as Code</span>
+    <h2>Don't click it. Declare it.</h2>
+    <p>Every product above exposes an API, so you can build and manage it from code — versioned in Git, reviewed like software, and repeatable across sites. Click a tool to see a real snippet.</p>
+  </div>
+  <div class="iac-grid">
+    <div class="iac-tools reveal" id="iac-tools"></div>
+    <div class="iac-code reveal">
+      <div class="codeblock">
+        <div class="cb-top"><span class="dotrow"><i class="d1"></i><i class="d2"></i><i class="d3"></i></span><span class="cb-name" id="code-name">main.tf</span></div>
+        <pre><code id="code-body"></code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="sec-pad wrap" id="workflow">
+  <div class="shead reveal">
+    <span class="eyebrow">The automation loop</span>
+    <h2>From a pull request to a running app.</h2>
+    <p>This is how teams actually ship infrastructure on VMware — the same loop whether you're standing up one VM or a whole workload domain.</p>
+  </div>
+  <div class="flow reveal" id="flow"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a href="#top" class="brand" style="margin-bottom:14px"><span class="mark"></span><span>The VMware Stack<small>Broadcom · Private Cloud</small></span></a>
+        <p style="color:var(--muted);font-size:13.5px;max-width:34ch">A learning companion to the Broadcom VMware portfolio and the Infrastructure-as-Code that automates it. Built to make a complex stack feel simple.</p>
+      </div>
+      <div>
+        <h5>Products</h5>
+        <div id="foot-prod"></div>
+      </div>
+      <div>
+        <h5>Automation</h5>
+        <div id="foot-iac"></div>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>// Educational reference · not affiliated with Broadcom</span>
+      <span>Built for engineers, architects & the curious</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ============================================================================
+   The VMware Stack — data + interactions
+   ========================================================================== */
+(function(){
+"use strict";
+
+/* ---------- tiny SVG icon set ---------- */
+const I = {
+  cloud:'<path d="M6.5 18.5h9a4 4 0 0 0 .4-7.98A6 6 0 0 0 4.8 9.6 3.6 3.6 0 0 0 6.5 18.5Z"/>',
+  server:'<rect x="3" y="4" width="18" height="6.5" rx="1.6"/><rect x="3" y="13.5" width="18" height="6.5" rx="1.6"/><circle cx="6.6" cy="7.2" r=".7"/><circle cx="6.6" cy="16.7" r=".7"/><path d="M9.5 7.2h7M9.5 16.7h7"/>',
+  layers:'<path d="m12 3 8.5 4.6L12 12.2 3.5 7.6 12 3Z"/><path d="m3.5 12 8.5 4.6 8.5-4.6M3.5 16.4 12 21l8.5-4.6"/>',
+  gauge:'<path d="M4 18a8 8 0 1 1 16 0"/><path d="M12 18l4.5-5.5"/><circle cx="12" cy="18" r="1"/>',
+  network:'<circle cx="5" cy="12" r="2.3"/><circle cx="18" cy="5.5" r="2.3"/><circle cx="18" cy="18.5" r="2.3"/><path d="m7.1 11 8.9-4.6M7.1 13l8.9 4.6"/>',
+  scale:'<path d="M12 4v15M7.5 19h9M6 7.5h12"/><path d="M6 7.5 3.5 13a2.5 2.5 0 0 0 5 0L6 7.5Zm12 0L15.5 13a2.5 2.5 0 0 0 5 0L18 7.5Z"/>',
+  vpc:'<rect x="3" y="3.5" width="18" height="17" rx="3"/><rect x="6.5" y="7" width="5" height="4.5" rx="1"/><path d="M14 8.5h3.5M14 11h3.5M6.5 15h11"/>',
+  activity:'<path d="M3 12h3.5l2.2 6 3.6-13 2.2 8H21"/>',
+  migrate:'<path d="M4 8.5h11l-3.2-3.2M15 8.5l-3.2 3.2"/><path d="M20 15.5H9l3.2 3.2M9 15.5l3.2-3.2"/>',
+  hex:'<path d="M12 3 4 7.5v9L12 21l8-4.5v-9L12 3Z"/><path d="M12 8.2v7.6M8.3 10.1l7.4 3.8M15.7 10.1l-7.4 3.8"/>',
+  terminal:'<rect x="3" y="4" width="18" height="16" rx="2.2"/><path d="m7 9.5 3 2.5-3 2.5M12.5 15h4.5"/>',
+  cog:'<circle cx="12" cy="12" r="3.2"/><path d="M12 3v2.4M12 18.6V21M3 12h2.4M18.6 12H21M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M18.5 5.5l-1.7 1.7M7.2 16.8l-1.7 1.7"/>',
+  git:'<circle cx="6" cy="6" r="2.1"/><circle cx="6" cy="18" r="2.1"/><circle cx="18" cy="12" r="2.1"/><path d="M6 8.1v7.8M8.1 6H14a4 4 0 0 1 4 4v.1"/>',
+  package:'<path d="m12 3 8.3 4.6v8.8L12 21l-8.3-4.6V7.6L12 3Z"/><path d="m3.7 7.6 8.3 4.6 8.3-4.6M12 12.2V21"/>',
+  catalog:'<rect x="4" y="3" width="16" height="18" rx="2.2"/><path d="M8 7.5h8M8 11.5h8M8 15.5h5"/>',
+  pencil:'<path d="M4 20h4L19.5 8.5l-4-4L4 16v4Z"/><path d="m14 6 4 4"/>',
+  check:'<circle cx="12" cy="12" r="8.5"/><path d="m8.5 12 2.4 2.4L16 9"/>',
+  shield:'<path d="M12 3 5 5.5v5c0 4.5 3 8 7 9.5 4-1.5 7-5 7-9.5v-5L12 3Z"/><path d="m9 12 2 2 4-4"/>'
+};
+const svg = k => '<svg viewBox="0 0 24 24">'+(I[k]||'')+'</svg>';
+
+/* ---------- color helpers ---------- */
+const C = {cyan:'#3AE0D0',blue:'#5B8DEF',indigo:'#6E7BF2',violet:'#9C7CF8',pink:'#F472B6',amber:'#F6B54A',green:'#46D58A'};
+const soft = h => h+'1f', line = h => h+'4d';
+
+/* ---------- the stack (hero signature) ---------- */
+const STACK = [
+  {t:'Workloads',s:'VMs · containers · AI',c:C.green,go:'vks'},
+  {t:'Automation',s:'IaC · VCF Automation',c:C.amber,go:'iac'},
+  {t:'Management',s:'vCenter · VCF Operations',c:C.violet,go:'vcenter'},
+  {t:'Network & Security',s:'NSX · ALB · VPC · NAPP',c:C.pink,go:'nsx'},
+  {t:'Storage',s:'vSAN datastore',c:C.indigo,go:'vcf'},
+  {t:'Hypervisor',s:'ESX hosts',c:C.blue,go:'esx'},
+  {t:'Hardware',s:'x86 servers · switches',c:C.cyan,go:null}
+];
+
+/* ---------- control vs data plane cards ---------- */
+const PLANES = [
+  {name:'Control plane',c:C.cyan,d:'The brains. Where you set policy and configuration once — vCenter, NSX Manager, the Avi Controller, SDDC Manager. It decides; it doesn\'t carry your traffic.'},
+  {name:'Data plane',c:C.violet,d:'The muscle. Where work actually happens — ESX hosts run VMs, NSX Edge & Service Engines forward packets. If the control plane blinks, the data plane keeps running.'},
+  {name:'Management & automation',c:C.amber,d:'The glue. VCF Operations watches health and capacity; IaC tools and VCF Automation build and change everything through APIs instead of clicks.'}
+];
+
+/* ---------- PRODUCTS ---------- */
+const PRODUCTS = [
+{
+  id:'vcf', name:'VCF 9.1', full:'VMware Cloud Foundation 9.1', color:C.cyan, icon:'cloud',
+  tag:'The all-in-one private cloud. It bundles compute, storage, networking, and management into one automated platform you run in your own datacenter — with a public-cloud feel.',
+  facts:[{k:'Type',v:'Full-stack platform'},{k:'Min hosts',v:'3 (vSAN)'},{k:'Bring-up',v:'~3–5 hrs, automated'},{k:'VKS scale',v:'500 clusters/instance'}],
+  overview:'Think of VCF as the <b>whole private cloud in a box</b>. Instead of installing vSphere, vSAN, and NSX separately and wiring them together by hand, VCF deploys and lifecycle-manages them as one validated system. You get a Management Domain that runs the platform itself, then carve out Workload Domains for teams, apps, or tenants — each with its own vCenter and NSX. <b>VCF 9.1</b>, the current Broadcom release, made VCF Operations mandatory, added self-service NSX VPC networking, and pushed VKS scale to 500 Kubernetes clusters per instance with 75% faster provisioning.',
+  components:[
+    {name:'VCF Installer',desc:'Permanent appliance that downloads binaries and runs the deployment wizard. Replaced the old Cloud Builder.'},
+    {name:'Management Domain',desc:'The core: ESX hosts, vCenter, NSX, vSAN and SDDC Manager that run the platform.'},
+    {name:'Workload Domains',desc:'Separate clusters with their own vCenter + NSX for each team, app, or tenant.'},
+    {name:'VCF Operations',desc:'Mandatory fleet manager — lifecycle, health, capacity and patching across instances.'},
+    {name:'vSAN ESA',desc:'Software-defined NVMe storage with no disk groups and memory tiering for AI.'},
+    {name:'VKS',desc:'vSphere Kubernetes Service for running containers next to VMs.'}
+  ],
+  deployment:[
+    {h:'Plan hardware & network',p:'Validate servers against the Broadcom Compatibility Guide; design VLANs for Mgmt, vMotion, vSAN and TEP with MTU 9000.'},
+    {h:'Deploy the VCF Installer',p:'Boot the installer OVA (VCF 9.1\'s permanent replacement for Cloud Builder), enter your Broadcom token and download all component binaries first.'},
+    {h:'Run the wizard',p:'Pick Greenfield, Converge, or Upgrade. Enter hosts, networks, storage type and licensing in the UI — no Excel workbook.'},
+    {h:'Auto-build the Management Domain',p:'VCF deploys vCenter, the NSX cluster, vSAN and SDDC Manager in the correct order, then validates health.'},
+    {h:'Add Workload Domains',p:'From VCF Operations, commission hosts and create VI or VKS domains for your applications.'}
+  ],
+  config:{rows:[
+    {k:'Networks',v:'Management, vMotion, vSAN, Host/Edge TEP, uplinks — plan VLANs before you start.'},
+    {k:'DNS & NTP',v:'Forward + reverse records for every host; one shared NTP source (drift breaks certificates).'},
+    {k:'Storage',v:'vSAN ESA (NVMe, recommended) or OSA; NFS / Fibre Channel also supported in VCF 9.'},
+    {k:'Licensing',v:'Per-core for vSphere, vSAN and NSX — applied during the wizard or in Eval mode.'}
+  ]},
+  useCases:[
+    {title:'Standardized private cloud',desc:'One validated design every team deploys the same way, instead of snowflake builds.'},
+    {title:'Multi-tenant domains',desc:'Give each business unit an isolated Workload Domain with its own vCenter and networking.'},
+    {title:'VDI & modern apps',desc:'Run virtual desktops and containerized apps (VKS) on the same fleet.'},
+    {title:'Cloud exit / repatriation',desc:'A public-cloud-like operating model on hardware you own and control.'}
+  ]
+},
+{
+  id:'esx', name:'ESX', full:'ESX / ESXi — the hypervisor', color:C.blue, icon:'server',
+  tag:'The bare-metal hypervisor. It installs straight onto server hardware and runs your virtual machines. Everything else in the stack sits on top of it.',
+  facts:[{k:'Type',v:'Type-1 hypervisor'},{k:'Boot',v:'M.2 NVMe / SATADOM'},{k:'Mgmt port',v:'HTTPS 443 · SSH 22'}],
+  overview:'ESX (rebranded from "ESXi" in VCF 9) is a <b>type-1 hypervisor</b> — it runs directly on the metal, not inside another OS, so it\'s fast and lean. Its job is to slice one physical server into many isolated virtual machines, each thinking it has its own CPU, memory, disk and network. A tiny kernel called the VMkernel schedules everything. On its own an ESX host is useful; joined to vCenter and clustered, hundreds of hosts behave like one giant computer.',
+  components:[
+    {name:'VMkernel',desc:'The core OS that schedules CPU/memory and handles storage and network I/O for every VM.'},
+    {name:'VM Monitor',desc:'Gives each VM virtual hardware and keeps VMs isolated from each other.'},
+    {name:'VMkernel adapters',desc:'Special interfaces for Management, vMotion, vSAN and NSX overlay (TEP) traffic.'},
+    {name:'Host Client / DCUI',desc:'A browser UI and a console screen to configure a single host directly.'},
+    {name:'VIBs',desc:'Installable modules — vSAN and NSX add their drivers to the host as VIBs.'}
+  ],
+  deployment:[
+    {h:'Install ESX 9',p:'Boot the ISO (or use Auto Deploy / Image Builder for fleets) and install to an M.2 NVMe boot device.'},
+    {h:'Set host identity',p:'Assign management IP, hostname (FQDN), DNS and NTP from the console (DCUI).'},
+    {h:'Join vCenter',p:'Add the host to a datacenter/cluster so it can be managed centrally.'},
+    {h:'Build networking',p:'Create a Distributed Switch and VMkernel adapters for vMotion, vSAN and TEP.'},
+    {h:'Attach storage',p:'Claim local NVMe for vSAN, or mount shared NFS / Fibre Channel / vVols datastores.'}
+  ],
+  config:{rows:[
+    {k:'Networking',v:'vSphere Distributed Switch + VMkernel per traffic type; MTU 9000 on storage/overlay.'},
+    {k:'Time',v:'NTP to the same source as the rest of the stack — certificate validation depends on it.'},
+    {k:'Security',v:'Lockdown mode, replace self-signed certs, restrict SSH.'},
+    {k:'Boot',v:'ESX 9 supports M.2 NVMe boot — keep it separate from vSAN disks.'}
+  ]},
+  useCases:[
+    {title:'Server consolidation',desc:'Run dozens of workloads on one physical server instead of one app per box.'},
+    {title:'Run any OS',desc:'Windows, Linux and appliances side by side, fully isolated.'},
+    {title:'Foundation for everything',desc:'The required base layer for vSphere, vSAN, NSX and VCF.'},
+    {title:'Edge & ROBO',desc:'Small, reliable hosts at remote sites and the edge.'}
+  ]
+},
+{
+  id:'vsphere', name:'vSphere', full:'vSphere — the virtualization platform', color:C.indigo, icon:'layers',
+  tag:'The platform that turns many ESX hosts into one pool of resources, with live migration, automatic load balancing, and self-healing.',
+  facts:[{k:'Made of',v:'ESX + vCenter'},{k:'Key feature',v:'vMotion · DRS · HA'},{k:'Unit',v:'The cluster'}],
+  overview:'vSphere isn\'t a single thing you install — it\'s the <b>platform</b> formed when ESX hosts are grouped into clusters and managed by vCenter. That combination unlocks the famous features: <b>vMotion</b> moves a running VM between hosts with zero downtime, <b>DRS</b> automatically balances load across the cluster, and <b>HA</b> restarts VMs elsewhere if a host dies. To a workload, the cluster looks like one big, always-on computer.',
+  components:[
+    {name:'Clusters',desc:'A group of ESX hosts managed as a single pool of CPU, memory and storage.'},
+    {name:'vMotion',desc:'Live-migrates a running VM between hosts with no downtime — the magic trick.'},
+    {name:'DRS',desc:'Distributed Resource Scheduler balances VMs across hosts automatically.'},
+    {name:'HA',desc:'High Availability restarts VMs on surviving hosts when one fails.'},
+    {name:'Distributed Switch',desc:'One virtual switch spanning every host in the cluster for consistent networking.'},
+    {name:'Content Library',desc:'Central store of VM templates and ISOs shared across the environment.'}
+  ],
+  deployment:[
+    {h:'Install ESX on the hosts',p:'Each cluster member runs the hypervisor with identical networking.'},
+    {h:'Deploy vCenter',p:'Stand up the appliance that will manage the cluster.'},
+    {h:'Create datacenter & cluster',p:'Group the hosts and enable the features you want.'},
+    {h:'Turn on HA & DRS',p:'Set admission control and a DRS automation level (usually Fully Automated).'},
+    {h:'Add shared storage & networking',p:'A Distributed Switch and shared/vSAN datastore let VMs move freely between hosts.'}
+  ],
+  config:{rows:[
+    {k:'HA',v:'Admission control reserves capacity so failed VMs always have somewhere to restart.'},
+    {k:'DRS',v:'Automation level + migration threshold; affinity rules pin or separate VMs.'},
+    {k:'Storage policies',v:'Per-VM rules (e.g. FTT=1, RAID-1) decide protection and placement.'},
+    {k:'Resource pools',v:'Carve cluster capacity into shares/limits for teams or tiers.'}
+  ]},
+  useCases:[
+    {title:'Zero-downtime maintenance',desc:'vMotion every VM off a host, patch it, and move them back — users never notice.'},
+    {title:'Automatic balancing',desc:'DRS keeps hot hosts from overloading without anyone watching.'},
+    {title:'Self-healing',desc:'A host failure becomes a brief restart instead of an outage.'},
+    {title:'Mixed workloads',desc:'Run databases, web tiers and desktops on one elastic pool.'}
+  ]
+},
+{
+  id:'vcenter', name:'vCenter', full:'vCenter Server — central management', color:C.violet, icon:'gauge',
+  tag:'The single pane of glass for vSphere. One web UI and API to manage every host, VM, cluster, network and datastore.',
+  facts:[{k:'Form',v:'vCSA appliance'},{k:'HA',v:'1 or 3 nodes'},{k:'Access',v:'UI · REST · PowerCLI'}],
+  overview:'vCenter is the <b>brain of vSphere</b>. Without it, each ESX host is an island you log into separately. With it, you manage thousands of VMs from one place — and features like vMotion, DRS and HA only exist because vCenter coordinates them. It ships as a hardened Linux appliance (the vCSA) and exposes a full REST API, which is exactly what Terraform, Ansible and PowerCLI talk to when you automate.',
+  components:[
+    {name:'vCSA appliance',desc:'The pre-packaged Linux VM that is vCenter — no Windows server to maintain.'},
+    {name:'vpxd service',desc:'The core service that manages hosts, VMs and tasks.'},
+    {name:'Single Sign-On (SSO)',desc:'Identity domain that handles logins, roles and trust.'},
+    {name:'Inventory database',desc:'Stores the entire configuration and history of your environment.'},
+    {name:'vSphere Client',desc:'The HTML5 web UI most admins live in day to day.'},
+    {name:'REST / SOAP API',desc:'The programmable surface every IaC tool automates against.'}
+  ],
+  deployment:[
+    {h:'Deploy the vCSA OVA',p:'Stage 1 installs the appliance VM onto an ESX host or cluster.'},
+    {h:'Configure SSO',p:'Stage 2 sets the SSO domain (e.g. vsphere.local), NTP and the admin password.'},
+    {h:'Add hosts',p:'Create a datacenter and cluster, then connect your ESX hosts.'},
+    {h:'Set up access',p:'Join AD/LDAP, define roles and permissions for teams.'},
+    {h:'Optional vCenter HA',p:'Deploy a 3-node active/passive/witness cluster for production resilience.'}
+  ],
+  config:{rows:[
+    {k:'Identity',v:'SSO domain + AD/LDAP federation; least-privilege roles per team.'},
+    {k:'Certificates',v:'Replace self-signed certs with a CA-signed chain; set expiry alerts.'},
+    {k:'Backup',v:'Schedule file-based backup of the vCSA to SFTP — and test the restore.'},
+    {k:'Tags & libraries',v:'Tags drive automation and dynamic groups; content libraries share templates.'}
+  ]},
+  useCases:[
+    {title:'Single pane of glass',desc:'See and manage the whole environment from one console.'},
+    {title:'Role-based access',desc:'Give each team exactly the rights they need, no more.'},
+    {title:'Automation target',desc:'The API endpoint Terraform and Ansible build against.'},
+    {title:'Template management',desc:'Golden images and ISOs shared from one content library.'}
+  ]
+},
+{
+  id:'nsx', name:'NSX', full:'NSX (NSX-T) — networking & security', color:C.pink, icon:'network',
+  tag:'Software-defined networking and security. It builds virtual networks and a distributed firewall in software — no physical re-cabling required.',
+  facts:[{k:'Overlay',v:'Geneve tunnels'},{k:'Firewall',v:'Distributed (per-vNIC)'},{k:'Mgr',v:'3-node + VIP'}],
+  overview:'NSX <b>decouples networking from hardware</b>. Instead of begging the network team for a new VLAN, you create a segment in software in seconds, anywhere in the datacenter. Its superpower is the <b>Distributed Firewall</b>: a tiny firewall enforced right at every VM\'s virtual NIC, so you can isolate workloads from each other (micro-segmentation) even on the same subnet. Routing, switching, load-balancing and security all become software you can automate.',
+  components:[
+    {name:'NSX Manager',desc:'The control plane — a 3-node cluster behind a VIP that holds all config and policy.'},
+    {name:'Segments',desc:'Logical switches (Layer 2 networks) that live on the overlay, not on physical switches.'},
+    {name:'T0 / T1 Gateways',desc:'Routers in software — T0 connects to the physical world (BGP), T1 serves tenants/apps.'},
+    {name:'Edge nodes',desc:'The data-plane VMs that run gateways, NAT, load-balancing and N-S traffic.'},
+    {name:'Distributed Firewall',desc:'Stateful firewall enforced at every vNIC — the heart of micro-segmentation.'},
+    {name:'TEPs & Geneve',desc:'Tunnel endpoints on each host wrap traffic in Geneve so it rides any physical network.'}
+  ],
+  deployment:[
+    {h:'Deploy the Manager cluster',p:'Stand up 3 NSX Manager nodes and a VIP; register vCenter as a compute manager.'},
+    {h:'Prepare the hosts',p:'Install NSX on ESX hosts (transport nodes) and assign TEP IPs from a pool.'},
+    {h:'Create transport zones',p:'Define overlay and VLAN zones; set uplink profiles with MTU 9000.'},
+    {h:'Deploy Edge nodes',p:'Add an Edge cluster to run gateways and north-south services.'},
+    {h:'Build routing & policy',p:'Create T0 with BGP uplinks, T1s per app, segments, and Distributed Firewall rules.'}
+  ],
+  config:{rows:[
+    {k:'Segments',v:'Overlay networks created on demand; attach VMs by network, not by VLAN.'},
+    {k:'Routing',v:'T0 peers with physical routers via BGP; T1s hang off T0 per workload.'},
+    {k:'Micro-segmentation',v:'Group VMs by tag and write DFW rules allowing only required flows.'},
+    {k:'MTU',v:'9000 end-to-end on TEP networks so Geneve encapsulation fits.'}
+  ]},
+  useCases:[
+    {title:'Zero-trust micro-seg',desc:'Stop threats spreading sideways by isolating every workload.'},
+    {title:'On-demand networks',desc:'Spin up isolated dev/test networks in seconds, fully automated.'},
+    {title:'Consistent multi-site',desc:'Same network & security model across datacenters and clouds.'},
+    {title:'App isolation',desc:'Lock a multi-tier app so web can talk to app, app to db, nothing else.'}
+  ]
+},
+{
+  id:'alb', name:'NSX ALB', full:'NSX Advanced Load Balancer (Avi)', color:C.amber, icon:'scale',
+  tag:'The enterprise load balancer (Avi Networks). It spreads traffic across servers, terminates SSL, runs a web-app firewall, and gives deep per-request analytics.',
+  facts:[{k:'Brain',v:'Avi Controller'},{k:'Muscle',v:'Service Engines'},{k:'Layers',v:'L4 + L7'}],
+  overview:'NSX ALB is a <b>software-defined load balancer</b> that scales itself. The <b>Controller</b> is the brain (config, certs, analytics); lightweight <b>Service Engines</b> are the muscle that actually forward packets and spin up automatically under load. It works on vCenter, NSX-T, and public clouds. Beyond balancing traffic it terminates HTTPS centrally, blocks OWASP attacks with a built-in WAF, and records every transaction — so it doubles as your app-performance microscope.',
+  components:[
+    {name:'Avi Controller',desc:'Control plane: web UI, API, certificates, analytics and health scoring. Runs 1 or 3 nodes.'},
+    {name:'Service Engines (SE)',desc:'Data-plane VMs that do the real load-balancing; scale out automatically.'},
+    {name:'Cloud Connectors',desc:'Plug Avi into vCenter, NSX-T, AWS/Azure/GCP to auto-discover servers.'},
+    {name:'Virtual Service',desc:'The published app = VIP + Pool + Health Monitor + SSL + policies.'},
+    {name:'Pool',desc:'The group of backend servers plus the load-balancing algorithm.'},
+    {name:'Health Monitor',desc:'Probes each server every few seconds and removes the sick ones.'}
+  ],
+  deployment:[
+    {h:'Deploy the Controller OVA',p:'Boot the appliance and wait for it to fully start (~8–12 min).'},
+    {h:'Run the setup wizard',p:'Set the admin password, DNS/NTP, tenancy and license tier.'},
+    {h:'Form a 3-node cluster',p:'For production, add two more controllers for HA behind a cluster VIP.'},
+    {h:'Configure the cloud connector',p:'Connect to vCenter/NSX so Avi can auto-deploy Service Engines.'},
+    {h:'Create a Virtual Service',p:'Define VIP + Pool + Health Monitor (+ SSL/WAF) and the app goes live.'}
+  ],
+  config:{rows:[
+    {k:'IPAM & DNS',v:'Let Avi auto-assign VIPs from a pool instead of typing IPs by hand.'},
+    {k:'Algorithm',v:'Round Robin, Least Connections, Least Response Time, IP Hash, custom header.'},
+    {k:'SSL',v:'Offload (decrypt at VIP), re-encrypt (end-to-end), or passthrough; enforce TLS 1.2+.'},
+    {k:'WAF',v:'Start in Detection mode, tune, then switch to Prevention for OWASP Top 10.'}
+  ]},
+  useCases:[
+    {title:'Website high availability',desc:'A crashed server is detected in seconds and traffic reroutes — zero downtime.'},
+    {title:'Central SSL & certs',desc:'Manage certificates in one place instead of on every server.'},
+    {title:'API gateway',desc:'Route /api/users, /api/orders, /static to different pools by URL.'},
+    {title:'WAF & GSLB',desc:'Block attacks at the edge and route users to the nearest healthy site.'}
+  ]
+},
+{
+  id:'vpc', name:'NSX VPC', full:'NSX Virtual Private Cloud', color:C.green, icon:'vpc',
+  tag:'Self-service, AWS-style networking inside NSX (new in VCF 9). Tenants build their own isolated networks from vCenter — without ever touching NSX directly.',
+  facts:[{k:'Model',v:'Like AWS VPC'},{k:'Built in',v:'vCenter UI'},{k:'New in',v:'VCF 9'}],
+  overview:'NSX VPC brings the <b>public-cloud networking experience on-prem</b>. A platform admin sets the guardrails once; then each team gets a VPC — their own private IP space, subnets, NAT, internet gateway and firewall — that they manage themselves in vCenter. No NSX training, no tickets. NSX silently enforces the isolation so one tenant can never see another\'s traffic. It\'s the self-service layer that makes a private cloud feel like a public one.',
+  components:[
+    {name:'VPC',desc:'A tenant\'s isolated network space with its own IP range, routing and firewall.'},
+    {name:'IP block',desc:'The address range carved out for the VPC, e.g. 10.20.0.0/16.'},
+    {name:'Subnets',desc:'Sub-divisions for tiers — web, app, db — created by the tenant on demand.'},
+    {name:'NAT & Internet Gateway',desc:'Outbound SNAT and optional inbound access with elastic-style IPs.'},
+    {name:'Security Groups',desc:'Simple firewall rules that replace hand-written distributed-firewall policy.'},
+    {name:'VPC Peering',desc:'Connect two VPCs when they genuinely need to talk.'}
+  ],
+  deployment:[
+    {h:'Admin sets guardrails',p:'Create a VPC connectivity profile and policy defining the available IP blocks and edge cluster.'},
+    {h:'Tenant creates a VPC',p:'In vCenter, pick an IP block, attach to a Workload Domain, enable the internet gateway.'},
+    {h:'Add subnets',p:'Tenant carves web/app/db subnets inside their VPC as needed.'},
+    {h:'Define security groups',p:'Allow only the flows the app requires — no NSX expertise needed.'},
+    {h:'Attach workloads',p:'Drop VMs (and VKS pods) onto the subnets; isolation is automatic.'}
+  ],
+  config:{rows:[
+    {k:'IP block',v:'Each VPC owns a private range, e.g. Finance 10.20.0.0/16, isolated from HR 10.30.0.0/16.'},
+    {k:'Subnets',v:'10.20.1.0/24 web, 10.20.2.0/24 app, created by the tenant on demand.'},
+    {k:'Gateways',v:'NAT for outbound; internet gateway + public IPs for inbound where allowed.'},
+    {k:'Where',v:'Managed in the vCenter UI — not the NSX Manager UI.'}
+  ]},
+  useCases:[
+    {title:'Tenant self-service',desc:'Teams provision their own networks without filing tickets.'},
+    {title:'Dev/test isolation',desc:'Spin up a throwaway, fully isolated network in minutes.'},
+    {title:'Per-team segmentation',desc:'Finance and HR get separate, non-overlapping address spaces.'},
+    {title:'Cloud-like on-prem',desc:'The VPC mental model your developers already know, on your hardware.'}
+  ]
+},
+{
+  id:'napp', full:'NSX Application Platform', name:'NAPP', color:C.cyan, icon:'activity',
+  tag:'A Kubernetes-based platform that runs NSX\'s advanced features as microservices — traffic analytics, threat detection, metrics and malware prevention.',
+  facts:[{k:'Runs on',v:'Kubernetes'},{k:'Hosts',v:'Intelligence · NDR'},{k:'Form factors',v:'Standard / Advanced'}],
+  overview:'Some NSX features need to crunch <b>huge amounts of data</b> — every flow, every packet signature. Rather than overload NSX Manager, those features run on the <b>NSX Application Platform</b>: a Kubernetes cluster of microservices that scales independently. It\'s how you get flow maps of your whole datacenter, automatic firewall-rule recommendations, advanced threat detection (NDR) and malware analysis — all as services you switch on.',
+  components:[
+    {name:'Kubernetes cluster',desc:'A TKG/upstream K8s cluster (3+ workers) that hosts the platform services.'},
+    {name:'NSX Intelligence',desc:'Builds a live flow map and recommends micro-segmentation rules for you.'},
+    {name:'NDR',desc:'Network Detection & Response — spots advanced threats and lateral movement.'},
+    {name:'Metrics',desc:'Long-term storage and dashboards for NSX performance data.'},
+    {name:'Malware Prevention',desc:'Extracts and analyzes files crossing the network for malicious behavior.'},
+    {name:'Messaging & data store',desc:'In-platform pipeline that ingests flow and event data at scale.'}
+  ],
+  deployment:[
+    {h:'Provide a K8s cluster',p:'Stand up a conformant Kubernetes cluster sized for the form factor you need.'},
+    {h:'Register with NSX',p:'Point NSX Manager at the cluster and upload the platform Helm bundle.'},
+    {h:'Deploy NAPP',p:'From the NSX UI choose Standard or Advanced form factor and deploy the services.'},
+    {h:'Enable features',p:'Turn on Intelligence, NDR, Metrics or Malware Prevention as licensed.'},
+    {h:'Tune retention',p:'Set how long flow and event data is kept based on storage.'}
+  ],
+  config:{rows:[
+    {k:'Form factor',v:'Standard for visibility/metrics; Advanced adds NDR and malware prevention.'},
+    {k:'Registry & certs',v:'Point at your image registry and provide a valid platform certificate.'},
+    {k:'Features',v:'Enable only what you license — each is an independent microservice.'},
+    {k:'Retention',v:'Balance how much history you keep against cluster storage.'}
+  ]},
+  useCases:[
+    {title:'See every flow',desc:'A live map of what talks to what across the whole datacenter.'},
+    {title:'Rule recommendations',desc:'Intelligence suggests micro-seg policy from real traffic.'},
+    {title:'Advanced threat detection',desc:'NDR catches lateral movement traditional tools miss.'},
+    {title:'Malware analysis',desc:'Inspect suspicious files crossing the network in detail.'}
+  ]
+},
+{
+  id:'hcx', name:'HCX', full:'HCX — workload mobility', color:C.pink, icon:'migrate',
+  tag:'The moving van for VMs. It migrates workloads between datacenters and clouds with little or no downtime, and stretches networks across sites so IPs never change.',
+  facts:[{k:'Job',v:'Migrate & extend'},{k:'Downtime',v:'Zero (live) options'},{k:'Pairs',v:'Site ↔ site'}],
+  overview:'Moving hundreds of VMs to a new datacenter or cloud is usually painful — different networks, re-IPing, long outages. HCX makes it <b>boring and safe</b>. It builds an optimized, encrypted tunnel between two sites, can <b>stretch a network</b> across them so a VM keeps its IP, and then migrates VMs in bulk or live (vMotion-style) on a schedule. It\'s the standard tool for datacenter moves, hybrid cloud, and disaster recovery.',
+  components:[
+    {name:'HCX Manager',desc:'The control appliance deployed at both the source and destination sites.'},
+    {name:'Interconnect (IX)',desc:'Builds the secure, optimized tunnel that carries migration traffic.'},
+    {name:'Network Extension (NE)',desc:'Stretches a Layer-2 network across sites so VMs keep their IP address.'},
+    {name:'WAN Optimization',desc:'De-dupes and compresses traffic so migrations run faster over the WAN.'},
+    {name:'Migration engines',desc:'Bulk, live (RAV/vMotion) and cold options for different downtime needs.'},
+    {name:'Service Mesh',desc:'The set of paired appliances that actually move and extend traffic.'}
+  ],
+  deployment:[
+    {h:'Deploy HCX Manager',p:'Install the appliance at both the source and destination, then activate with your license.'},
+    {h:'Pair the sites',p:'Connect source and destination HCX Managers with credentials.'},
+    {h:'Build the Service Mesh',p:'Deploy the IX, NE and WAN-opt appliances that form the data path.'},
+    {h:'Extend networks',p:'Stretch the L2 segments your VMs live on so addresses don\'t change.'},
+    {h:'Migrate',p:'Pick VMs, choose bulk or live migration, and schedule the move.'}
+  ],
+  config:{rows:[
+    {k:'Site pairing',v:'Mutual trust between the two HCX Managers before any traffic flows.'},
+    {k:'Profiles',v:'Compute and network profiles tell HCX which clusters and uplinks to use.'},
+    {k:'Network extension',v:'Stretch each VLAN/segment so migrated VMs keep their IP and gateway.'},
+    {k:'Migration type',v:'Bulk (scheduled, brief switchover) or live (no downtime) per workload.'}
+  ]},
+  useCases:[
+    {title:'Datacenter migration',desc:'Move an entire site to new hardware or a new location safely.'},
+    {title:'Hybrid cloud',desc:'Shift workloads to VMware Cloud on AWS / Azure / Google and back.'},
+    {title:'Disaster recovery',desc:'Replicate and fail over VMs to a second site.'},
+    {title:'Consolidation',desc:'Collapse many small datacenters into one without re-IPing apps.'}
+  ]
+},
+{
+  id:'vks', name:'VKS', full:'vSphere Kubernetes Service', color:C.green, icon:'hex',
+  tag:'Kubernetes built into vSphere (formerly Tanzu Kubernetes Grid). Developers get real K8s clusters; admins run containers and VMs from one platform.',
+  facts:[{k:'Was',v:'Tanzu Kubernetes Grid'},{k:'Scale',v:'500 clusters / instance'},{k:'Access',v:'kubectl'}],
+  overview:'VKS lets you run <b>Kubernetes natively on the same infrastructure as your VMs</b>. Turn on Workload Management and vSphere becomes a Kubernetes platform: a Supervisor coordinates everything, namespaces give teams isolated slices, and developers self-serve conformant <b>Tanzu Kubernetes clusters</b> with a single command. No separate K8s silo, no second team, one set of hardware, networking (NSX/Avi) and storage (vSAN) underneath.',
+  components:[
+    {name:'Supervisor',desc:'The control layer that turns a vSphere cluster into a Kubernetes platform.'},
+    {name:'vSphere Namespaces',desc:'Isolated slices with quotas, storage and access for each team or app.'},
+    {name:'Tanzu K8s clusters',desc:'Conformant, upgradable Kubernetes clusters developers create on demand.'},
+    {name:'CNS storage',desc:'Cloud Native Storage maps Kubernetes volumes onto vSAN/datastores.'},
+    {name:'NSX / Avi',desc:'Provide pod networking, load balancing and ingress for the clusters.'},
+    {name:'kubectl + plugin',desc:'Standard Kubernetes tooling plus a vSphere plugin for login.'}
+  ],
+  deployment:[
+    {h:'Enable Workload Management',p:'Switch it on for a cluster and choose NSX or vDS + Avi for networking.'},
+    {h:'Configure the Supervisor',p:'Set management network, ingress/egress ranges and storage policies.'},
+    {h:'Create a Namespace',p:'Give a team a namespace with CPU/memory/storage quotas and permissions.'},
+    {h:'Create a TKG cluster',p:'Developers declare cluster size and K8s version; VKS builds it in ~15 min.'},
+    {h:'Get kubeconfig',p:'Download credentials and use plain kubectl to deploy apps.'}
+  ],
+  config:{rows:[
+    {k:'Namespaces',v:'Quotas + RBAC + storage policy per team — the unit of self-service.'},
+    {k:'Networking',v:'NSX VPC or Avi load balancers provide pod networking and ingress.'},
+    {k:'Node pools',v:'Cluster classes define node count, size and Kubernetes version.'},
+    {k:'Storage',v:'CNS turns vSAN storage policies into Kubernetes StorageClasses.'}
+  ]},
+  useCases:[
+    {title:'Containers + VMs together',desc:'One platform and team for both, instead of two silos.'},
+    {title:'Self-service Kubernetes',desc:'Developers get clusters on demand within guardrails.'},
+    {title:'CI/CD platforms',desc:'A reliable base for build/deploy pipelines on-prem.'},
+    {title:'AI/ML with GPU',desc:'GPU-backed clusters for training and inference next to your data.'}
+  ]
+}
+];
+
+/* ---------- IaC tools ---------- */
+const IAC = [
+{
+  id:'terraform', name:'Terraform', pill:'PROVISION', color:C.violet, icon:'layers',
+  desc:'Declare your VMs, networks and load balancers in HCL. Providers for vSphere, NSX-T, Avi and VCF turn that code into real infrastructure — and tear it down just as cleanly.',
+  codeName:'main.tf',
+  code:[
+    '# Provision a VM on vSphere',
+    'provider "vsphere" {',
+    '  vsphere_server       = "vcenter.corp.local"',
+    '  user                 = "svc-tf@vsphere.local"',
+    '  allow_unverified_ssl = true',
+    '}',
+    '',
+    'resource "vsphere_virtual_machine" "web" {',
+    '  count            = 3',
+    '  name             = "web-${count.index + 1}"',
+    '  resource_pool_id = data.vsphere_compute_cluster.c.resource_pool_id',
+    '  datastore_id     = data.vsphere_datastore.ds.id',
+    '  num_cpus         = 2',
+    '  memory           = 4096',
+    '  guest_id         = "ubuntu64Guest"',
+    '',
+    '  network_interface { network_id = data.vsphere_network.vlan10.id }',
+    '  disk { label = "disk0"; size = 40 }',
+    '}'
+  ]
+},
+{
+  id:'nsxtf', name:'Terraform + NSX', pill:'NETWORK', color:C.pink, icon:'network',
+  desc:'The same tool builds your network. Create segments, gateways and distributed-firewall rules as code so every environment gets identical, reviewable networking and security.',
+  codeName:'network.tf',
+  code:[
+    '# Create an overlay segment + a firewall rule',
+    'resource "nsxt_policy_segment" "app" {',
+    '  display_name      = "seg-app"',
+    '  transport_zone_path = data.nsxt_policy_transport_zone.overlay.path',
+    '  subnet { cidr = "10.20.2.1/24" }',
+    '}',
+    '',
+    'resource "nsxt_policy_security_policy" "app" {',
+    '  display_name = "app-tier"',
+    '  rule {',
+    '    display_name       = "web-to-app"',
+    '    source_groups      = [nsxt_policy_group.web.path]',
+    '    destination_groups = [nsxt_policy_group.app.path]',
+    '    services           = [data.nsxt_policy_service.https.path]',
+    '    action             = "ALLOW"',
+    '  }',
+    '}'
+  ]
+},
+{
+  id:'ansible', name:'Ansible', pill:'CONFIGURE', color:C.green, icon:'cog',
+  desc:'Great for day-2 work and configuration. Agentless playbooks talk to vCenter and NSX through modules to create VMs, set up clusters, tag workloads and enforce desired state.',
+  codeName:'deploy-vm.yml',
+  code:[
+    '# Clone a VM from a template via vCenter',
+    '- name: Deploy app server',
+    '  hosts: localhost',
+    '  gather_facts: false',
+    '  tasks:',
+    '    - name: Create VM from template',
+    '      community.vmware.vmware_guest:',
+    '        hostname: "vcenter.corp.local"',
+    '        username: "svc-ansible@vsphere.local"',
+    '        datacenter: "Production-DC"',
+    '        folder: "/Production-DC/vm/App"',
+    '        name: "app-01"',
+    '        template: "ubuntu-2204-golden"',
+    '        state: poweredon',
+    '        hardware: { num_cpus: 2, memory_mb: 4096 }'
+  ]
+},
+{
+  id:'powercli', name:'PowerCLI', pill:'SCRIPT', color:C.blue, icon:'terminal',
+  desc:'VMware\'s PowerShell toolkit — perfect for quick tasks, reporting and glue scripts. Thousands of cmdlets cover vSphere, NSX, vSAN and HCX from one familiar shell.',
+  codeName:'rightsize.ps1',
+  code:[
+    '# Find and resize oversized VMs',
+    'Connect-VIServer -Server vcenter.corp.local',
+    '',
+    'Get-VM | Where-Object { $_.NumCpu -gt 8 -and $_.PowerState -eq "PoweredOff" } |',
+    '  ForEach-Object {',
+    '    Write-Host "Resizing $($_.Name) to 4 vCPU"',
+    '    Set-VM -VM $_ -NumCpu 4 -Confirm:$false',
+    '  }',
+    '',
+    'Get-Cluster "App-Cluster" | Get-VMHost |',
+    '  Select Name, ConnectionState, @{N="GHz";E={$_.CpuTotalMhz/1000}}'
+  ]
+},
+{
+  id:'packer', name:'Packer', pill:'IMAGES', color:C.amber, icon:'package',
+  desc:'Bake golden VM templates automatically. Packer boots an ISO, installs and hardens the OS, then hands a ready template to vCenter — so every VM starts from the same clean image.',
+  codeName:'ubuntu.pkr.hcl',
+  code:[
+    '# Build a golden Ubuntu template on vSphere',
+    'source "vsphere-iso" "ubuntu" {',
+    '  vcenter_server = "vcenter.corp.local"',
+    '  cluster        = "Build-Cluster"',
+    '  datastore      = "vsanDatastore"',
+    '  vm_name        = "ubuntu-2204-golden"',
+    '  guest_os_type  = "ubuntu64Guest"',
+    '  CPUs           = 2',
+    '  RAM            = 4096',
+    '  iso_paths      = ["[datastore] iso/ubuntu-22.04.iso"]',
+    '  convert_to_template = true',
+    '}',
+    '',
+    'build { sources = ["source.vsphere-iso.ubuntu"] }'
+  ]
+},
+{
+  id:'vcfauto', name:'VCF Automation', pill:'SELF-SERVICE', color:C.cyan, icon:'catalog',
+  desc:'Formerly Aria Automation. Wraps all of the above in a self-service catalog: users request a "3-tier app" or "K8s cluster" from a portal, and approved blueprints build it end to end.',
+  codeName:'blueprint.yaml',
+  code:[
+    '# A simple self-service blueprint',
+    'formatVersion: 1',
+    'inputs:',
+    '  size: { type: string, enum: [small, large], default: small }',
+    'resources:',
+    '  web:',
+    '    type: Cloud.vSphere.Machine',
+    '    properties:',
+    '      image: ubuntu-2204-golden',
+    '      flavor: \'${input.size}\'',
+    '      networks:',
+    '        - network: \'${resource.app-net.id}\'',
+    '  app-net:',
+    '    type: Cloud.NSX.Network',
+    '    properties: { networkType: routed }'
+  ]
+}
+];
+
+/* ---------- the automation loop ---------- */
+const FLOW = [
+  {ic:'pencil',c:C.cyan,h:'Author',p:'Describe the infra you want in Terraform or Ansible.'},
+  {ic:'git',c:C.blue,h:'Commit',p:'Push to Git and review the change like application code.'},
+  {ic:'check',c:C.indigo,h:'Plan',p:'A dry run shows exactly what will change. Approve it.'},
+  {ic:'server',c:C.violet,h:'Provision',p:'APIs build it: vCenter VMs, NSX segments, Avi VIPs.'},
+  {ic:'cog',c:C.pink,h:'Configure',p:'Ansible / PowerCLI apply day-2 settings and policy.'},
+  {ic:'gauge',c:C.green,h:'Operate',p:'Monitor, detect drift, re-apply. The loop repeats.'}
+];
+
+/* =========================================================================
+   RENDER
+   ========================================================================= */
+const $ = (s,r=document)=>r.querySelector(s);
+const el = (t,c,h)=>{const e=document.createElement(t); if(c)e.className=c; if(h!=null)e.innerHTML=h; return e;};
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function hl(lines){
+  return lines.map(line=>{
+    const t=line.trim();
+    let e=esc(line);
+    if(t.startsWith('#')||t.startsWith('//')) return '<span class="c">'+e+'</span>';
+    e=e.replace(/^(\s*)(resource|provider|variable|data|module|output|terraform|required_providers|source|build|formatVersion|inputs|resources|properties|networks|tasks|hosts|gather_facts)\b/,
+      (m,sp,kw)=>sp+'<span class="k">'+kw+'</span>');
+    e=e.replace(/(&quot;[^&]*?&quot;|'[^']*?')/g,'<span class="s">$1</span>');
+    return e;
+  }).join('\n');
+}
+
+/* stack */
+function renderStack(){
+  const wrap=$('#stack');
+  STACK.forEach(L=>{
+    const d=el('div','layer');
+    d.style.setProperty('--lc',L.c);
+    d.innerHTML='<span class="dot"></span><div><div class="lt">'+L.t+'</div><div class="ls">'+L.s+'</div></div><span class="lx">'+(L.go?'open →':'base')+'</span>';
+    if(L.go){
+      d.addEventListener('click',()=>{
+        if(L.go==='iac'){ document.getElementById('iac').scrollIntoView({behavior:'smooth'}); }
+        else { selectProduct(L.go,true); }
+      });
+    }
+    wrap.appendChild(d);
+  });
+}
+
+/* planes */
+function renderPlanes(){
+  const w=$('#plane-cards');
+  PLANES.forEach(P=>{
+    const c=el('div','ccard');
+    c.style.setProperty('--pc',P.c);
+    c.innerHTML='<h5 style="font-size:15px">'+P.name+'</h5><p style="font-size:13.5px;margin-top:6px">'+P.d+'</p>';
+    w.appendChild(c);
+  });
+}
+
+/* rail */
+function renderRail(){
+  const rail=$('#rail');
+  PRODUCTS.forEach(P=>{
+    const b=el('button');
+    b.style.setProperty('--rc',P.color);
+    b.dataset.id=P.id;
+    b.innerHTML='<span class="rd"></span><span>'+P.name+'</span><span class="rtag">'+P.id+'</span>';
+    b.addEventListener('click',()=>selectProduct(P.id,false));
+    rail.appendChild(b);
+  });
+}
+
+let activeTab='overview';
+const TABS=[['overview','Overview'],['components','Components'],['deployment','Deployment'],['configuration','Config'],['useCases','Use cases']];
+
+function tabContent(P,key){
+  if(key==='overview'){
+    return '<p class="lead-line">'+P.tag.replace(/^[^.]*\./,m=>m)+'</p>'+
+           '<p class="lead-line" style="margin-top:14px;color:var(--muted)">'+P.overview+'</p>';
+  }
+  if(key==='components'){
+    return '<div class="cgrid">'+P.components.map(c=>'<div class="ccard"><h5>'+c.name+'</h5><p>'+c.desc+'</p></div>').join('')+'</div>';
+  }
+  if(key==='deployment'){
+    return '<div class="steps">'+P.deployment.map(s=>'<div class="step"><h6>'+s.h+'</h6><p>'+s.p+'</p></div>').join('')+'</div>';
+  }
+  if(key==='configuration'){
+    return '<div class="cfg">'+P.config.rows.map(r=>'<div class="cfg-row"><span class="k">'+r.k+'</span><span class="v">'+r.v+'</span></div>').join('')+'</div>';
+  }
+  if(key==='useCases'){
+    return '<div class="ucgrid">'+P.useCases.map((u,i)=>'<div class="uc"><span class="ucn">'+(i+1)+'</span><div><h6>'+u.title+'</h6><p>'+u.desc+'</p></div></div>').join('')+'</div>';
+  }
+  return '';
+}
+
+function renderPanel(P){
+  const panel=$('#panel');
+  panel.style.setProperty('--pc',P.color);
+  panel.style.setProperty('--pc-soft',soft(P.color));
+  panel.style.setProperty('--pc-line',line(P.color));
+  const facts=P.facts.map(f=>'<span class="fact">'+f.k+' <b>'+f.v+'</b></span>').join('');
+  const tabs=TABS.map(t=>'<button data-tab="'+t[0]+'"'+(t[0]===activeTab?' class="active"':'')+'>'+t[1]+'</button>').join('');
+  panel.innerHTML=
+    '<div class="p-head"><div class="p-glow"></div>'+
+      '<div class="p-cat">'+P.full.split('—')[0].trim()+'</div>'+
+      '<div class="p-title"><span class="p-ic">'+svg(P.icon)+'</span><div><h3>'+P.name+'</h3><div class="full">'+P.full+'</div></div></div>'+
+      '<p class="p-tag">'+P.tag+'</p>'+
+      '<div class="facts">'+facts+'</div>'+
+    '</div>'+
+    '<div class="tabs">'+tabs+'</div>'+
+    '<div class="tab-body"><div class="tab-pane" id="tabpane">'+tabContent(P,activeTab)+'</div></div>';
+  panel.querySelectorAll('.tabs button').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeTab=btn.dataset.tab;
+      panel.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===activeTab));
+      const pane=$('#tabpane');
+      pane.style.animation='none'; void pane.offsetWidth; pane.style.animation='';
+      pane.innerHTML=tabContent(P,activeTab);
+    });
+  });
+}
+
+let currentId=null;
+function selectProduct(id,scroll){
+  currentId=id;
+  const P=PRODUCTS.find(p=>p.id===id)||PRODUCTS[0];
+  document.querySelectorAll('#rail button').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  renderPanel(P);
+  if(scroll){ document.getElementById('products').scrollIntoView({behavior:'smooth'}); }
+}
+
+/* IaC */
+function renderIaC(){
+  const w=$('#iac-tools');
+  IAC.forEach((t,i)=>{
+    const d=el('div','tool'+(i===0?' active':''));
+    d.style.setProperty('--tc',t.color);
+    d.dataset.id=t.id;
+    d.innerHTML='<span class="tic">'+svg(t.icon)+'</span><div><h4>'+t.name+'<span class="pill">'+t.pill+'</span></h4><p>'+t.desc+'</p></div>';
+    d.addEventListener('click',()=>setTool(t.id));
+    w.appendChild(d);
+  });
+  setTool(IAC[0].id);
+}
+function setTool(id){
+  const t=IAC.find(x=>x.id===id);
+  document.querySelectorAll('.tool').forEach(x=>x.classList.toggle('active',x.dataset.id===id));
+  $('#code-name').textContent=t.codeName;
+  const body=$('#code-body');
+  body.innerHTML=hl(t.code);
+  body.parentElement.style.animation='none'; void body.offsetWidth; body.parentElement.style.animation='fadeUp .42s var(--ease)';
+}
+
+/* flow */
+function renderFlow(){
+  const w=$('#flow');
+  FLOW.forEach(f=>{
+    const d=el('div','fstep');
+    d.style.setProperty('--fc',f.c);
+    d.innerHTML='<div class="fn">'+svg(f.ic)+'</div><h5>'+f.h+'</h5><p>'+f.p+'</p>';
+    w.appendChild(d);
+  });
+}
+
+/* footer lists */
+function renderFooter(){
+  $('#foot-prod').innerHTML=PRODUCTS.map(p=>'<a href="#products" data-go="'+p.id+'">'+p.name+' · '+p.full.split('—')[0].replace(p.name,'').replace(/[—-]/g,'').trim()+'</a>').join('');
+  $('#foot-iac').innerHTML=IAC.map(t=>'<a href="#iac">'+t.name+'</a>').join('');
+  $('#foot-prod').querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>selectProduct(a.dataset.go,true)));
+}
+
+/* reveal + progress + counters + nav */
+function effects(){
+  const io=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.12, rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(r=>io.observe(r));
+
+  const prog=$('#prog');
+  const onScroll=()=>{
+    const h=document.documentElement;
+    const sc=h.scrollTop/(h.scrollHeight-h.clientHeight);
+    prog.style.width=(sc*100)+'%';
+  };
+  document.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+  // counters
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const counters=[['st1',10],['st2',5],['st3',6]];
+  const cio=new IntersectionObserver((es)=>{
+    es.forEach(e=>{ if(!e.isIntersecting)return; cio.unobserve(e.target);
+      counters.forEach(([id,to])=>{
+        const node=document.getElementById(id); if(!node)return;
+        if(reduce){node.textContent=to;return;}
+        let v=0; const step=Math.max(1,Math.round(to/22));
+        const t=setInterval(()=>{v+=step; if(v>=to){v=to;clearInterval(t);} node.textContent=v;},34);
+      });
+    });
+  },{threshold:.5});
+  const hs=$('.hero-stats'); if(hs)cio.observe(hs);
+
+  // burger
+  const burger=$('#burger'), links=$('#navlinks');
+  burger.addEventListener('click',()=>links.classList.toggle('open'));
+  links.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>links.classList.remove('open')));
+}
+
+/* init */
+function init(){
+  renderStack();
+  renderPlanes();
+  renderRail();
+  renderIaC();
+  renderFlow();
+  renderFooter();
+  selectProduct(PRODUCTS[0].id,false);
+  effects();
+}
+if(document.readyState!=='loading') init(); else document.addEventListener('DOMContentLoaded',init);
+})();
+
+</script>
+</body>
+</html>
