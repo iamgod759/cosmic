@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SILICON — How Semiconductors Work, Evolved & Where They're Going</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@300;400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --wafer:#f3f4f7;        /* cleanroom background */
+  --panel:#ffffff;
+  --line:#e1e4ec;
+  --ink:#15181f;
+  --dim:#5b6270;
+  --copper:#c2702f;       /* interconnect copper */
+  --ntype:#2f6fe4;        /* phosphorus / electrons */
+  --ptype:#d93d7d;        /* boron / holes */
+  --gate:#0fa38a;         /* channel teal */
+  --gold:#d9a13b;
+  --d:'Sora',sans-serif;
+  --b:'Inter',sans-serif;
+  --m:'Fira Code',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:
+    radial-gradient(circle at 85% 8%, rgba(47,111,228,.06), transparent 40%),
+    radial-gradient(circle at 8% 90%, rgba(217,61,125,.05), transparent 40%),
+    linear-gradient(rgba(21,24,31,.035) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(21,24,31,.035) 1px,transparent 1px),
+    var(--wafer);
+  background-size:auto,auto,36px 36px,36px 36px;
+  color:var(--ink);font-family:var(--b);line-height:1.65;overflow-x:hidden;
+}
+.wrap{max-width:1100px;margin:0 auto;padding:0 24px;position:relative}
+::selection{background:var(--ntype);color:#fff}
+:focus-visible{outline:2px solid var(--ntype);outline-offset:3px;border-radius:4px}
+
+/* iridescent wafer gradient (signature color) */
+.irid{background:linear-gradient(100deg,#2f6fe4,#0fa38a 30%,#d9a13b 55%,#d93d7d 80%,#7b4fe0);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ===== NAV ===== */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(243,244,247,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+.logo{font-family:var(--d);font-weight:800;font-size:1rem;letter-spacing:.02em;display:flex;align-items:center;gap:9px}
+.logo .die{width:18px;height:18px;border-radius:4px;background:conic-gradient(from 40deg,#2f6fe4,#0fa38a,#d9a13b,#d93d7d,#2f6fe4)}
+nav ul{display:flex;gap:24px;list-style:none}
+nav a{color:var(--dim);text-decoration:none;font-family:var(--m);font-size:.74rem;transition:color .2s}
+nav a:hover{color:var(--ntype)}
+@media(max-width:820px){nav ul{display:none}}
+
+/* ===== HERO ===== */
+header{min-height:100vh;display:flex;align-items:center;padding-top:60px;position:relative;overflow:hidden}
+.pill{font-family:var(--m);font-size:.72rem;color:var(--dim);border:1px solid var(--line);background:var(--panel);border-radius:100px;padding:8px 18px;display:inline-flex;gap:10px;align-items:center;margin-bottom:24px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--gate);animation:pulse 1.6s infinite}
+@keyframes pulse{50%{opacity:.25}}
+h1{font-family:var(--d);font-weight:800;font-size:clamp(2.7rem,7vw,5rem);line-height:1.02;letter-spacing:-.03em;margin-bottom:24px}
+.lede{max-width:580px;color:var(--dim);font-size:1.08rem;font-weight:300;margin-bottom:36px}
+.stats{display:flex;gap:36px;flex-wrap:wrap;margin-bottom:40px}
+.st b{display:block;font-family:var(--d);font-size:1.6rem}
+.st span{font-family:var(--m);font-size:.68rem;color:var(--dim)}
+.btn{display:inline-block;padding:14px 30px;border-radius:12px;font-family:var(--m);font-size:.8rem;text-decoration:none;transition:.2s;margin-right:12px}
+.btn-dark{background:var(--ink);color:#fff}
+.btn-lite{border:1px solid var(--line);color:var(--ink);background:var(--panel)}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(21,24,31,.14)}
+/* hero die graphic */
+.die-art{position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:420px;height:420px;opacity:.9;pointer-events:none}
+@media(max-width:980px){.die-art{display:none}}
+.hero-traces{position:absolute;left:0;bottom:0;width:100%;height:190px;pointer-events:none;opacity:.9}
+.hero-traces .tr-line{stroke:#dfe3ee}
+
+/* ===== SECTIONS ===== */
+section{padding:110px 0}
+.tag{font-family:var(--m);font-size:.72rem;color:var(--copper);margin-bottom:12px;letter-spacing:.18em;text-transform:uppercase}
+h2{font-family:var(--d);font-weight:800;font-size:clamp(1.8rem,4.3vw,2.8rem);letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+.sub{max-width:640px;color:var(--dim);font-weight:300}
+.head{margin-bottom:50px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;box-shadow:0 1px 2px rgba(21,24,31,.04)}
+
+/* ===== BANDS ===== */
+.bands{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-bottom:26px}
+.band{padding:26px;text-align:center}
+.band h3{font-family:var(--d);font-size:1rem;margin-bottom:4px}
+.band .who{font-family:var(--m);font-size:.68rem;color:var(--dim);margin-bottom:18px;display:block}
+.bd{position:relative;height:190px;margin:0 auto;max-width:190px}
+.cb,.vb{position:absolute;left:0;right:0;border-radius:10px;height:52px}
+.cb{top:0;background:repeating-linear-gradient(45deg,#e9f0fd 0 8px,#dfe9fb 8px 16px);border:1.5px dashed var(--ntype)}
+.vb{bottom:0;background:var(--ntype);opacity:.9}
+.gapLbl{position:absolute;left:50%;transform:translateX(-50%);font-family:var(--m);font-size:.66rem;color:var(--dim);top:50%;margin-top:-8px}
+.e{position:absolute;width:13px;height:13px;border-radius:50%;background:#fff;border:2.5px solid var(--ntype);left:calc(50% - 7px)}
+.band-cond .cb{top:64px}.band-cond .vb{bottom:64px}
+.band-cond .e{animation:drift 2.2s linear infinite}
+@keyframes drift{0%{left:12%;bottom:78px}50%{left:78%;bottom:96px}100%{left:12%;bottom:78px}}
+.band-semi .e{bottom:14px;animation:jump 3.2s ease-in-out infinite}
+@keyframes jump{0%,35%{bottom:14px;border-color:var(--ntype)}50%,80%{bottom:152px;border-color:var(--gate)}100%{bottom:14px}}
+.band-ins .bd .cb{height:44px}.band-ins .bd .vb{height:44px}
+.band-ins .e{bottom:12px;animation:fail 3s ease-in-out infinite}
+@keyframes fail{0%,40%{bottom:12px}55%{bottom:64px}70%,100%{bottom:12px}}
+.band p{font-size:.85rem;color:var(--dim);margin-top:16px}
+
+/* ===== DOPING LATTICE ===== */
+.lat-wrap{display:grid;grid-template-columns:minmax(300px,1fr) 1fr;gap:34px;align-items:center;padding:34px}
+@media(max-width:860px){.lat-wrap{grid-template-columns:1fr}}
+.lat-svg{width:100%;max-width:400px;margin:0 auto;display:block}
+.atom{fill:#eef0f5;stroke:#b9bfcc;stroke-width:1.5}
+.atom-txt{font-family:var(--m);font-size:12px;fill:var(--ink);text-anchor:middle;dominant-baseline:middle}
+.bondline{stroke:#c6ccda;stroke-width:2}
+.dopN .dopant{fill:#e3ecfd;stroke:var(--ntype)}
+.dopP .dopant{fill:#fbe4ee;stroke:var(--ptype)}
+.freeE{opacity:0}
+.dopN .freeE{opacity:1;animation:orbit 3s linear infinite}
+@keyframes orbit{from{transform:rotate(0deg) translate(38px) rotate(0deg)}to{transform:rotate(360deg) translate(38px) rotate(-360deg)}}
+.hole{opacity:0}
+.dopP .hole{opacity:1;animation:holepulse 1.6s ease-in-out infinite}
+@keyframes holepulse{50%{r:11;opacity:.5}}
+.lat-btns{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px}
+.chipbtn{font-family:var(--m);font-size:.74rem;padding:10px 18px;border-radius:100px;border:1.5px solid var(--line);background:var(--panel);cursor:pointer;transition:.2s;color:var(--ink)}
+.chipbtn:hover{border-color:var(--ink)}
+.chipbtn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.lat-txt h3{font-family:var(--d);font-size:1.15rem;margin-bottom:10px}
+.lat-txt p{color:var(--dim);font-size:.95rem}
+.lat-txt .note{font-family:var(--m);font-size:.7rem;margin-top:16px;padding:10px 14px;border-radius:10px;background:var(--wafer);border:1px dashed var(--line);display:inline-block}
+
+/* ===== MOSFET ===== */
+.fetgrid{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center;padding:36px}
+@media(max-width:880px){.fetgrid{grid-template-columns:1fr}}
+.fet-svg{width:100%}
+.chan{opacity:0;transition:opacity .5s}
+.fet-on .chan{opacity:1}
+.fe{opacity:0}
+.fet-on .fe{opacity:1;animation:flowx 1.5s linear infinite}
+.fet-on .fe.d2{animation-delay:.5s}.fet-on .fe.d3{animation-delay:1s}
+@keyframes flowx{from{transform:translateX(0)}to{transform:translateX(180px)}}
+.bulbGlow{opacity:0;transition:opacity .5s}
+.fet-on .bulbGlow{opacity:1}
+.gateSig{transition:.4s}
+.fet-on .gateSig{fill:var(--gate)}
+.fet-ui h3{font-family:var(--d);font-size:1.2rem;margin-bottom:10px}
+.fet-ui p{color:var(--dim);font-size:.94rem;margin-bottom:18px}
+.switch{display:flex;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;width:fit-content;margin-bottom:20px}
+.switch button{font-family:var(--m);font-size:.78rem;padding:12px 24px;border:none;background:var(--panel);cursor:pointer;transition:.2s;color:var(--dim)}
+.switch button.on{background:var(--ink);color:#fff}
+.readout{display:flex;gap:14px;flex-wrap:wrap}
+.ro{border:1px solid var(--line);border-radius:12px;padding:12px 18px;background:var(--wafer)}
+.ro b{font-family:var(--m);font-size:1.05rem;display:block}
+.ro span{font-family:var(--m);font-size:.64rem;color:var(--dim)}
+.fetfacts{margin-top:22px;font-size:.86rem;color:var(--dim);border-top:1px dashed var(--line);padding-top:16px}
+.fetfacts b{color:var(--ink)}
+
+/* ===== FAB ===== */
+.fab{padding:36px}
+.fab-track{display:flex;gap:0;position:relative;overflow-x:auto;padding-bottom:8px;scrollbar-width:thin}
+.fstep{flex:0 0 118px;text-align:center;background:none;border:none;cursor:pointer;font-family:inherit;color:inherit;position:relative;padding:0 4px}
+.fstep::before{content:'';position:absolute;top:26px;left:-50%;width:100%;height:2px;background:var(--line);z-index:0}
+.fstep:first-child::before{display:none}
+.fstep .n{width:52px;height:52px;border-radius:14px;background:var(--panel);border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 10px;position:relative;z-index:1;transition:.25s}
+.fstep small{font-family:var(--m);font-size:.62rem;color:var(--dim);display:block;line-height:1.3}
+.fstep.on .n,.fstep:hover .n{border-color:var(--copper);transform:scale(1.1);box-shadow:0 6px 18px rgba(194,112,47,.22)}
+.fstep.on small{color:var(--copper)}
+.fab-detail{margin-top:28px;background:var(--wafer);border:1px solid var(--line);border-radius:14px;padding:24px 28px;min-height:130px}
+.fab-detail .k{font-family:var(--m);font-size:.68rem;color:var(--copper);letter-spacing:.16em}
+.fab-detail h4{font-family:var(--d);font-size:1.08rem;margin:6px 0 8px}
+.fab-detail p{color:var(--dim);font-size:.93rem}
+
+/* ===== MOORE CHART ===== */
+.moore{padding:36px}
+.moore svg{width:100%;height:auto}
+.mpt{cursor:pointer}
+.mpt circle{transition:.2s}
+.mpt:hover circle{r:8}
+.mtip{position:absolute;pointer-events:none;background:var(--ink);color:#fff;font-family:var(--m);font-size:.7rem;padding:8px 12px;border-radius:8px;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:5}
+
+/* ===== TIMELINE ===== */
+.era{font-family:var(--m);font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;display:inline-block;background:var(--panel);border:1.5px solid var(--eacc,var(--line));color:var(--eacc,var(--ink));padding:8px 20px;border-radius:100px;margin:54px 0 26px}
+.tl{position:relative}
+.tl::before{content:'';position:absolute;left:17px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--ntype),var(--gate),var(--gold),var(--ptype))}
+.tle{position:relative;padding-left:60px;margin-bottom:16px}
+.tle .dot{position:absolute;left:7px;top:16px;width:22px;height:22px;border-radius:6px;transform:rotate(45deg);background:var(--panel);border:2px solid var(--acc,var(--ntype))}
+.tle .dot::after{content:'';position:absolute;inset:5px;background:var(--acc,var(--ntype));border-radius:2px}
+.tle-btn{width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 24px;cursor:pointer;color:inherit;font-family:inherit;transition:.22s;box-shadow:0 1px 2px rgba(21,24,31,.04)}
+.tle-btn:hover{border-color:var(--acc,var(--ntype));transform:translateX(5px)}
+.tle-d{font-family:var(--m);font-size:.72rem;color:var(--acc,var(--ntype));display:block;margin-bottom:4px}
+.tle-t{font-family:var(--d);font-size:1.05rem;font-weight:700;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.tle-t .ch{color:var(--dim);font-size:.75rem;transition:transform .3s;flex-shrink:0}
+.tle.open .tle-t .ch{transform:rotate(180deg)}
+.tle-b{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.tle.open .tle-b{max-height:900px}
+.tle-bi{padding-top:14px;color:var(--dim);font-size:.93rem}
+.tle-bi b{color:var(--ink)}
+.tle-bi img{width:100%;max-width:460px;border-radius:12px;border:1px solid var(--line);margin:14px 0 6px;display:block}
+.cap{font-family:var(--m);font-size:.66rem;color:var(--dim)}
+.who{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.who span{font-family:var(--m);font-size:.68rem;padding:5px 12px;border-radius:100px;border:1px solid var(--line);background:var(--wafer)}
+.who span::before{content:'▪ ';color:var(--acc,var(--ntype))}
+
+/* ===== PIONEERS ===== */
+.pio-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.pio{padding:24px;transition:.22s}
+.pio:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(21,24,31,.1)}
+.pio .av{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:var(--d);font-weight:800;color:#fff;margin-bottom:14px;background:linear-gradient(135deg,var(--ntype),var(--gate))}
+.pio:nth-child(3n) .av{background:linear-gradient(135deg,var(--ptype),var(--gold))}
+.pio:nth-child(3n+2) .av{background:linear-gradient(135deg,var(--copper),var(--ptype))}
+.pio h3{font-family:var(--d);font-size:.98rem}
+.pio .r{font-family:var(--m);font-size:.66rem;color:var(--copper);margin:4px 0 8px;text-transform:uppercase;letter-spacing:.08em}
+.pio p{font-size:.84rem;color:var(--dim)}
+
+/* ===== FUTURE ===== */
+.fut{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+.fcard{padding:26px;position:relative;overflow:hidden;transition:.22s}
+.fcard:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(21,24,31,.12)}
+.fcard .yr{font-family:var(--m);font-size:.66rem;color:var(--copper);letter-spacing:.16em}
+.fcard h3{font-family:var(--d);font-size:1.05rem;margin:8px 0 10px}
+.fcard p{color:var(--dim);font-size:.88rem}
+.fart{width:100%;height:140px;border-radius:12px;border:1px solid var(--line);margin-bottom:16px;display:block;background:#101420}
+
+/* ===== CHIP THEME UPGRADES ===== */
+/* IC package pins on cards */
+.icpkg{position:relative}
+.icpkg::before,.icpkg::after{content:'';position:absolute;top:26px;bottom:26px;width:7px;background:repeating-linear-gradient(180deg,var(--gold) 0 11px,transparent 11px 28px);opacity:.6;pointer-events:none}
+.icpkg::before{left:-8px;border-radius:3px 0 0 3px}
+.icpkg::after{right:-8px;border-radius:0 3px 3px 0}
+.pin1{position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:var(--wafer);border:1.5px solid #c6ccda}
+
+/* PCB trace section dividers */
+.trace{max-width:1100px;margin:0 auto;padding:0 24px;height:72px;overflow:hidden}
+.trace svg{width:100%;height:72px;display:block}
+.tr-line{stroke:#d5dae6;stroke-width:2;fill:none}
+.tr-pulse{stroke:var(--gold);stroke-width:2.4;fill:none;stroke-dasharray:26 700;stroke-linecap:round;animation:tp 3.6s linear infinite}
+.tr-pulse.p2{stroke:var(--ntype);animation-duration:4.8s;animation-delay:.9s}
+.tr-pulse.p3{stroke:var(--gate);animation-duration:5.6s;animation-delay:1.8s}
+@keyframes tp{to{stroke-dashoffset:-726}}
+.tr-via{fill:#fff;stroke:#c6ccda;stroke-width:2}
+.tr-pad{fill:var(--gold);opacity:.7}
+
+/* tag as chip pad label */
+.tag::before{content:'';display:inline-block;width:9px;height:9px;background:var(--copper);border-radius:2px;margin-right:10px;vertical-align:0}
+
+/* real-image strips */
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:26px}
+.ph{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.22s;position:relative}
+.ph:hover{transform:translateY(-4px);box-shadow:0 14px 32px rgba(21,24,31,.12)}
+.ph img{width:100%;height:200px;object-fit:cover;display:block;background:#101420}
+.ph .cap{padding:12px 14px;display:block;font-family:var(--m);font-size:.66rem;color:var(--dim)}
+.ph .cap::before{content:'▪ ';color:var(--copper)}
+.strip-title{font-family:var(--m);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--copper);margin-top:44px;display:flex;align-items:center;gap:12px}
+.strip-title::after{content:'';flex:1;height:2px;background:repeating-linear-gradient(90deg,var(--line) 0 10px,transparent 10px 18px)}
+
+footer{border-top:1px solid var(--line);padding:46px 0;color:var(--dim);font-size:.85rem;background:var(--panel);position:relative}
+footer::before{content:'';position:absolute;top:-9px;left:0;right:0;height:9px;background:repeating-linear-gradient(90deg,var(--gold) 0 12px,transparent 12px 36px);opacity:.45}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+footer b{font-family:var(--d);color:var(--ink)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="die"></span>SILICON</div>
+    <ul>
+      <li><a href="#physics">Physics</a></li>
+      <li><a href="#transistor">Transistor</a></li>
+      <li><a href="#fab">Fabrication</a></li>
+      <li><a href="#moore">Moore's Law</a></li>
+      <li><a href="#history">Timeline</a></li>
+      <li><a href="#future">Future</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header>
+  <div class="wrap">
+    <div class="pill"><i></i>13,000,000,000,000,000,000,000+ transistors manufactured — the most produced artifact in human history</div>
+    <h1>From <span class="irid">sand</span><br>to <span class="irid">thought.</span></h1>
+    <p class="lede">A semiconductor is just a material that can't quite decide whether to conduct electricity — and that indecision, controlled billions of times per second, is the foundation of every computer, phone, car, and AI on Earth. Here's how it works, how we got here, and what comes next.</p>
+    <div class="stats">
+      <div class="st"><b>Dec 16, 1947</b><span>FIRST TRANSISTOR</span></div>
+      <div class="st"><b>~2 nm</b><span>TODAY'S SMALLEST FEATURES</span></div>
+      <div class="st"><b>200+ billion</b><span>TRANSISTORS ON ONE AI CHIP</span></div>
+    </div>
+    <a class="btn btn-dark" href="#transistor">Flip a transistor</a>
+    <a class="btn btn-lite" href="#history">The timeline</a>
+  </div>
+  <svg class="die-art" viewBox="0 0 400 400" aria-hidden="true">
+    <defs><linearGradient id="dieg" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#2f6fe4"/><stop offset=".4" stop-color="#0fa38a"/><stop offset=".7" stop-color="#d9a13b"/><stop offset="1" stop-color="#d93d7d"/></linearGradient></defs>
+    <rect x="40" y="40" width="320" height="320" rx="18" fill="#171b26"/>
+    <rect x="60" y="60" width="130" height="130" rx="6" fill="url(#dieg)" opacity=".85"/>
+    <rect x="200" y="60" width="140" height="60" rx="6" fill="#232a3c"/>
+    <rect x="200" y="130" width="66" height="60" rx="6" fill="#232a3c"/>
+    <rect x="274" y="130" width="66" height="60" rx="6" fill="#2c3448"/>
+    <rect x="60" y="200" width="88" height="140" rx="6" fill="#232a3c"/>
+    <rect x="156" y="200" width="184" height="66" rx="6" fill="#2c3448"/>
+    <rect x="156" y="274" width="184" height="66" rx="6" fill="#232a3c"/>
+    <g stroke="#3b465f" stroke-width="1.4">
+      <path d="M70 210 h68 M70 226 h68 M70 242 h68 M70 258 h68 M70 274 h68 M70 290 h68 M70 306 h68 M70 322 h68"/>
+      <path d="M210 70 h120 M210 84 h120 M210 98 h120"/>
+      <path d="M166 284 h164 M166 300 h164 M166 316 h164"/>
+    </g>
+    <g fill="#d9a13b"><circle cx="52" cy="80" r="3"/><circle cx="52" cy="120" r="3"/><circle cx="52" cy="160" r="3"/><circle cx="52" cy="200" r="3"/><circle cx="52" cy="240" r="3"/><circle cx="52" cy="280" r="3"/><circle cx="52" cy="320" r="3"/><circle cx="348" cy="80" r="3"/><circle cx="348" cy="120" r="3"/><circle cx="348" cy="160" r="3"/><circle cx="348" cy="200" r="3"/><circle cx="348" cy="240" r="3"/><circle cx="348" cy="280" r="3"/><circle cx="348" cy="320" r="3"/></g>
+  </svg>
+  <svg class="hero-traces" viewBox="0 0 1200 190" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+    <path class="tr-line" d="M-10 150 H240 L290 100 H520 L560 140 H820 L870 90 H1210"/>
+    <path class="tr-line" d="M-10 176 H340 L390 126 H700 L750 166 H1210"/>
+    <path class="tr-line" d="M120 190 V150 M430 100 V60 M640 140 V100 M960 90 V50"/>
+    <path class="tr-pulse" d="M-10 150 H240 L290 100 H520 L560 140 H820 L870 90 H1210"/>
+    <path class="tr-pulse p2" d="M-10 176 H340 L390 126 H700 L750 166 H1210"/>
+    <circle class="tr-via" cx="430" cy="60" r="5"/><circle class="tr-via" cx="640" cy="100" r="5"/><circle class="tr-via" cx="960" cy="50" r="5"/><circle class="tr-via" cx="120" cy="150" r="5"/>
+    <rect class="tr-pad" x="285" y="95" width="10" height="10" rx="2"/><rect class="tr-pad" x="745" y="161" width="10" height="10" rx="2"/><rect class="tr-pad" x="865" y="85" width="10" height="10" rx="2"/>
+  </svg>
+</header>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= PHYSICS ================= -->
+<section id="physics">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">01 · THE PHYSICS</div>
+      <h2>Conductor, insulator… or negotiable</h2>
+      <p class="sub">Whether a material conducts comes down to its <b style="color:var(--ink)">band gap</b> — the energy jump an electron must make from the bound "valence band" to the free-roaming "conduction band". Watch the electron in each material:</p>
+    </div>
+
+    <div class="bands">
+      <div class="card band band-cond">
+        <h3>Conductor</h3><span class="who">COPPER · GOLD · ALUMINUM</span>
+        <div class="bd"><div class="cb"></div><div class="vb"></div><div class="e"></div></div>
+        <p>Bands overlap — electrons are always free. Great for wires, useless for logic: you can't switch it off.</p>
+      </div>
+      <div class="card band band-semi" style="border:1.5px solid var(--gate)">
+        <h3>Semiconductor</h3><span class="who">SILICON · Eg ≈ 1.1 eV</span>
+        <div class="bd"><div class="cb"></div><div class="vb"></div><div class="gapLbl">← small gap →</div><div class="e"></div></div>
+        <p>A small, jumpable gap. Heat, light, or a voltage can boost electrons across — conduction <b style="color:var(--ink)">on demand</b>. This is the magic.</p>
+      </div>
+      <div class="card band band-ins">
+        <h3>Insulator</h3><span class="who">GLASS · RUBBER · SiO₂ (9 eV)</span>
+        <div class="bd"><div class="cb"></div><div class="vb"></div><div class="gapLbl">huge gap</div><div class="e"></div></div>
+        <p>The gap is a canyon — electrons try and fall back. Perfect for keeping currents apart.</p>
+      </div>
+    </div>
+
+    <!-- REAL SILICON -->
+    <div class="strip-title">THE REAL MATERIAL — PHOTOGRAPHS</div>
+    <div class="strip">
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Semiconductor_Wafer_of_Microelectronics.jpg?width=640" alt="Rainbow diffraction colors on a patterned semiconductor wafer" onerror="this.parentElement.style.display='none'"><span class="cap">A finished wafer shimmers with rainbow diffraction — the colors come from billions of nanoscale circuit features splitting light (CC BY-SA 4.0)</span></div>
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Wafer_2_Zoll_bis_8_Zoll_2.jpg?width=640" alt="Silicon wafers from 2 inch to 8 inch diameter" onerror="this.parentElement.style.display='none'"><span class="cap">Wafer evolution: 2-inch (1970s) to 8-inch — today's fabs run 12-inch/300mm; bigger discs = more chips per pass (CC BY-SA)</span></div>
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Silicon_wafer_researcher.jpg?width=640" alt="Researcher in cleanroom suit holding a silicon wafer" onerror="this.parentElement.style.display='none'"><span class="cap">A "bunny suit" isn't for the human's protection — it protects the wafer from the human: one flake of skin can ruin dozens of chips (CC)</span></div>
+    </div>
+
+    <!-- DOPING -->
+    <div class="card lat-wrap icpkg" id="latCard" style="margin-top:44px">
+      <svg class="lat-svg" viewBox="0 0 300 300" id="latSvg" aria-label="Silicon crystal lattice doping demonstration">
+        <g class="bondline">
+          <path d="M60 60 H240 M60 130 H240 M60 200 H240 M60 270 H240" stroke="#c6ccda" stroke-width="2"/>
+          <path d="M60 60 V270 M130 60 V270 M200 60 V270 M240 60 V270" stroke="#c6ccda" stroke-width="2" fill="none"/>
+        </g>
+        <!-- lattice atoms 4x4 at 60,130,200,270 x 60,130,200,270 -->
+        <g id="atoms"></g>
+        <!-- center dopant handled in JS -->
+        <g transform="translate(200,130)"><circle class="freeE" r="7" fill="#fff" stroke="#2f6fe4" stroke-width="3"/></g>
+        <circle class="hole" cx="200" cy="182" r="9" fill="none" stroke="#d93d7d" stroke-width="3" stroke-dasharray="4 4"/>
+      </svg>
+      <div class="lat-txt">
+        <div class="tag" style="margin-bottom:10px">INTERACTIVE · DOPING</div>
+        <h3 id="latH">Pure silicon: a perfect, boring crystal</h3>
+        <div class="lat-btns">
+          <button class="chipbtn on" data-mode="i" type="button">Pure Si</button>
+          <button class="chipbtn" data-mode="n" type="button">+ Phosphorus (N-type)</button>
+          <button class="chipbtn" data-mode="p" type="button">+ Boron (P-type)</button>
+        </div>
+        <p id="latP">Each silicon atom shares its 4 outer electrons with 4 neighbors — every electron is locked in a bond. Pure silicon barely conducts at all. The trick that unlocked the modern world: <b style="color:var(--ink)">contaminate it on purpose.</b></p>
+        <span class="note" id="latN">Doping = adding ~1 impurity atom per million silicon atoms</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= MOSFET ================= -->
+<section id="transistor" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">02 · THE DEVICE</div>
+      <h2>The transistor: a switch with no moving parts</h2>
+      <p class="sub">Put N and P silicon together and you get diodes, solar cells — and the MOSFET, the transistor design behind ~99.9% of all chips. It's a faucet for electrons: voltage on the <b style="color:var(--ink)">gate</b> opens a channel between <b style="color:var(--ink)">source</b> and <b style="color:var(--ink)">drain</b>. Try it:</p>
+    </div>
+
+    <div class="card fetgrid icpkg" id="fet"><span class="pin1" aria-hidden="true"></span>
+      <svg class="fet-svg" viewBox="0 0 460 300" aria-label="Interactive MOSFET cross-section">
+        <!-- substrate -->
+        <rect x="30" y="120" width="400" height="140" rx="10" fill="#fbe9f2" stroke="#e6b6cd"/>
+        <text x="230" y="238" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#c06a92">P-TYPE SILICON SUBSTRATE (holes)</text>
+        <!-- source/drain n+ -->
+        <path d="M60 120 h90 v46 q0 12 -12 12 h-66 q-12 0 -12 -12 Z" fill="#dbe7fc" stroke="#2f6fe4"/>
+        <path d="M310 120 h90 v46 q0 12 -12 12 h-66 q-12 0 -12 -12 Z" fill="#dbe7fc" stroke="#2f6fe4"/>
+        <text x="105" y="152" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#2f6fe4">N+ SOURCE</text>
+        <text x="355" y="152" text-anchor="middle" font-family="Fira Code" font-size="11" fill="#2f6fe4">N+ DRAIN</text>
+        <!-- channel -->
+        <rect class="chan" x="150" y="120" width="160" height="14" rx="6" fill="#0fa38a" opacity="0"/>
+        <!-- gate oxide + gate -->
+        <rect x="150" y="108" width="160" height="12" fill="#eef0f5" stroke="#b9bfcc"/>
+        <text x="230" y="103" text-anchor="middle" font-family="Fira Code" font-size="9" fill="#8b92a3">SiO₂ INSULATOR (~1nm!)</text>
+        <rect class="gateSig" x="150" y="66" width="160" height="42" rx="8" fill="#c8cdd9"/>
+        <text x="230" y="92" text-anchor="middle" font-family="Fira Code" font-size="12" fill="#15181f" font-weight="600">GATE</text>
+        <!-- terminals -->
+        <path d="M105 120 V40 M355 120 V40 M230 66 V30" stroke="#15181f" stroke-width="2.5"/>
+        <circle cx="105" cy="38" r="4" fill="#15181f"/><circle cx="355" cy="38" r="4" fill="#15181f"/><circle cx="230" cy="28" r="4" fill="#15181f"/>
+        <text x="86" y="28" font-family="Fira Code" font-size="10" fill="#5b6270">S</text>
+        <text x="368" y="28" font-family="Fira Code" font-size="10" fill="#5b6270">D</text>
+        <text x="242" y="24" font-family="Fira Code" font-size="10" fill="#5b6270">G ⚡</text>
+        <!-- electrons -->
+        <g>
+          <circle class="fe" cx="140" cy="127" r="6" fill="#fff" stroke="#2f6fe4" stroke-width="3"/>
+          <circle class="fe d2" cx="140" cy="127" r="6" fill="#fff" stroke="#2f6fe4" stroke-width="3"/>
+          <circle class="fe d3" cx="140" cy="127" r="6" fill="#fff" stroke="#2f6fe4" stroke-width="3"/>
+        </g>
+        <!-- output bulb -->
+        <g transform="translate(414,52)">
+          <circle class="bulbGlow" r="22" fill="#ffd76b" opacity="0"/>
+          <circle r="12" fill="#fff" stroke="#15181f" stroke-width="2"/>
+          <path d="M-5 -3 q5 8 10 0" stroke="#15181f" stroke-width="1.6" fill="none"/>
+          <path d="M355 38 h40" stroke="#15181f" stroke-width="2.5" transform="translate(-414,-52)"/>
+        </g>
+      </svg>
+      <div class="fet-ui">
+        <h3 id="fetH">Gate at 0 V — the switch is OFF</h3>
+        <p id="fetP">With no gate voltage, the P-type body blocks electrons: two back-to-back junctions, no path. The output reads a binary <b style="color:var(--ink)">0</b>.</p>
+        <div class="switch" role="group" aria-label="Gate voltage">
+          <button id="off" class="on" type="button">GATE 0V</button>
+          <button id="on" type="button">GATE +1V ⚡</button>
+        </div>
+        <div class="readout">
+          <div class="ro"><b id="roI">0 µA</b><span>DRAIN CURRENT</span></div>
+          <div class="ro"><b id="roB">0</b><span>LOGIC STATE</span></div>
+          <div class="ro"><b>&lt;1 ns</b><span>SWITCHING TIME</span></div>
+        </div>
+        <div class="fetfacts">The gate never touches the channel — it works by pure electric field through ~1 nm of glass. Pair an N-type MOSFET with its P-type mirror and you get <b>CMOS</b>, which draws power only while switching — the reason a chip with 20 billion of these doesn't melt. Wire switches into AND/OR/NOT gates, gates into adders, adders into processors: <b>every computation ever run is just this switch, repeated.</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= FAB ================= -->
+<section id="fab" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">03 · THE PROCESS</div>
+      <h2>How a chip is actually made</h2>
+      <p class="sub">The most precise manufacturing humans have ever done: ~3 months, 1,000+ steps, in cleanrooms 1,000× cleaner than a hospital OR. Click each station:</p>
+    </div>
+    <div class="card fab icpkg">
+      <div class="fab-track" id="fabTrack" role="tablist" aria-label="Fabrication steps"></div>
+      <div class="fab-detail" id="fabDetail"></div>
+    </div>
+
+    <div class="strip-title">FROM INGOT TO WAFER — PHOTOGRAPHS</div>
+    <div class="strip">
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Monokristalines_Silizium_für_die_Waferherstellung.jpg?width=640" alt="Monocrystalline silicon ingot for wafer production" onerror="this.parentElement.style.display='none'"><span class="cap">A monocrystalline silicon ingot grown by the Czochralski method — one single flawless crystal, 99.9999999% pure (CC BY-SA)</span></div>
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/12-inch_silicon_wafer.jpg?width=640" alt="A 300mm / 12-inch polished silicon wafer" onerror="this.parentElement.style.display='none'"><span class="cap">A polished 300mm wafer — mirror-flat to within nanometers; each one can hold 600+ smartphone chips (CC BY-SA 3.0)</span></div>
+      <div class="ph"><img loading="lazy" src="https://commons.wikimedia.org/wiki/Special:FilePath/Silicon_wafers.jpg?width=640" alt="Patterned silicon wafers" onerror="this.parentElement.style.display='none'"><span class="cap">Patterned wafers after lithography and metallization — the grid squares are individual dies awaiting dicing (CC BY-SA 4.0)</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= MOORE ================= -->
+<section id="moore" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">04 · THE LAW</div>
+      <h2>Moore's Law: 50+ years of doubling</h2>
+      <p class="sub">In April 1965, Gordon Moore noticed transistor counts doubling roughly every year (later revised to every two) — less a law of physics than a self-fulfilling industry promise. Hover the points — the y-axis is logarithmic; the straight line hides a <b style="color:var(--ink)">100-million-fold</b> increase:</p>
+    </div>
+    <div class="card moore icpkg" style="position:relative"><span class="pin1" aria-hidden="true"></span>
+      <svg id="mooreSvg" viewBox="0 0 860 420"></svg>
+      <div class="mtip" id="mtip"></div>
+    </div>
+  </div>
+</section>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= TIMELINE ================= -->
+<section id="history" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">05 · THE EVOLUTION</div>
+      <h2>The timeline: sand becomes intelligence</h2>
+      <p class="sub">Exact dates, the people, and the breakthroughs. Click any entry to expand it — a few include archival photographs (loaded from Wikimedia Commons when online).</p>
+    </div>
+    <div id="tlRoot"></div>
+  </div>
+</section>
+
+<!-- ================= PIONEERS ================= -->
+<section style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">06 · THE PEOPLE</div>
+      <h2>Architects of the silicon age</h2>
+    </div>
+    <div class="pio-grid" id="pioGrid"></div>
+  </div>
+</section>
+
+<div class="trace" aria-hidden="true"></div>
+
+<!-- ================= FUTURE ================= -->
+<section id="future" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head">
+      <div class="tag">07 · WHAT'S NEXT</div>
+      <h2>The future: beyond the nanometer</h2>
+      <p class="sub">Classic Moore's Law scaling is slowing — but the industry's roadmap into the "angstrom era" is more inventive than ever.</p>
+    </div>
+    <div class="fut">
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><g transform="translate(150,65)"><rect x="-60" y="-34" width="120" height="26" rx="8" fill="#d93d7d" opacity=".85"/><rect x="-60" y="8" width="120" height="26" rx="8" fill="#2f6fe4" opacity=".85"/><rect x="-6" y="-44" width="12" height="98" rx="5" fill="#0fa38a"/><text x="-96" y="-14" font-family="Fira Code" font-size="9" fill="#d93d7d">pFET</text><text x="-96" y="26" font-family="Fira Code" font-size="9" fill="#2f6fe4">nFET</text></g><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#0fa38a">CFET · TRANSISTORS GO VERTICAL</text></svg>
+        <div class="yr">2025 → 2032</div><h3>GAA → CFET: the angstrom era</h3>
+        <p>FinFETs are giving way to gate-all-around nanosheets (TSMC N2, Intel 18A, Samsung 3GAE), where the gate wraps the channel completely. Next: CFETs stack the n and p transistor on top of each other, halving footprint again. Roadmaps now speak in angstroms — "A14" means 1.4 nm-class.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><g stroke="#0fa38a" stroke-width="1.2" opacity=".9"><path d="M60 40 l30 -16 30 16 -30 16 Z M90 24 l30 -16 30 16 -30 16 Z M120 40 l30 -16 30 16 -30 16 Z M90 56 l30 -16 30 16 -30 16 Z M150 56 l30 -16 30 16 -30 16 Z" fill="none"/></g><circle cx="90" cy="40" r="3" fill="#d9a13b"/><circle cx="150" cy="40" r="3" fill="#d9a13b"/><circle cx="120" cy="24" r="3" fill="#d9a13b"/><circle cx="120" cy="56" r="3" fill="#d9a13b"/><circle cx="180" cy="56" r="3" fill="#d9a13b"/><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#d9a13b">ONE ATOM THICK</text></svg>
+        <div class="yr">2028 →</div><h3>2D materials & new channels</h3>
+        <p>When silicon channels get too thin, electrons scatter. Materials one atom thick — molybdenum disulfide, tungsten diselenide, carbon nanotubes — could carry current in sheets 10× thinner. Labs at TSMC, Intel, and imec have working 2D transistors; making a trillion of them uniformly is the decade's challenge.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><rect x="70" y="76" width="160" height="18" rx="4" fill="#2c3448"/><rect x="90" y="54" width="52" height="18" rx="4" fill="#2f6fe4" opacity=".9"/><rect x="152" y="54" width="52" height="18" rx="4" fill="#d93d7d" opacity=".9"/><rect x="110" y="32" width="80" height="18" rx="4" fill="#0fa38a" opacity=".9"/><path d="M100 100 v14 M130 100 v14 M160 100 v14 M190 100 v14" stroke="#d9a13b" stroke-width="3"/><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#2f6fe4">CHIPLETS + 3D STACKING</text></svg>
+        <div class="yr">NOW → 2030s</div><h3>Chiplets, 3D stacking & backside power</h3>
+        <p>If you can't shrink further, build upward. Chiplets (AMD's Ryzen, Nvidia Blackwell) bond multiple specialized dies into one package; HBM memory stacks 12+ layers; backside power delivery moves wiring under the transistors. "More than Moore" — scaling the system, not just the transistor.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><rect x="50" y="50" width="70" height="34" rx="6" fill="#2c3448"/><rect x="180" y="50" width="70" height="34" rx="6" fill="#2c3448"/><path d="M120 67 h60" stroke="#d9a13b" stroke-width="3"/><circle cx="135" cy="67" r="4" fill="#fff"><animate attributeName="cx" values="124;176;124" dur="1.2s" repeatCount="indefinite"/></circle><path d="M120 60 q30 -22 60 0" stroke="#0fa38a" stroke-width="1.4" fill="none" stroke-dasharray="4 4"/><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#d9a13b">DATA AT LIGHTSPEED</text></svg>
+        <div class="yr">2026 → 2035</div><h3>Silicon photonics</h3>
+        <p>Moving data now costs more energy than computing it. Photonic chips route information as light — co-packaged optics are already replacing copper between AI accelerators, and on-chip optical interconnects could cut datacenter interconnect power by 10×.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><circle cx="150" cy="60" r="30" fill="none" stroke="#7b4fe0" stroke-width="1.6"/><ellipse cx="150" cy="60" rx="30" ry="11" fill="none" stroke="#7b4fe0" stroke-width="1.4" transform="rotate(55 150 60)"/><ellipse cx="150" cy="60" rx="30" ry="11" fill="none" stroke="#7b4fe0" stroke-width="1.4" transform="rotate(-55 150 60)"/><circle cx="150" cy="60" r="6" fill="#7b4fe0"/><circle cx="150" cy="30" r="4" fill="#fff"/><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#7b4fe0">QUBITS ON SILICON</text></svg>
+        <div class="yr">2030s</div><h3>Quantum & neuromorphic silicon</h3>
+        <p>The same fabs now print qubits: silicon spin qubits and cryo-CMOS controllers ride on standard 300mm wafers. Meanwhile neuromorphic chips (Intel Loihi, IBM NorthPole) compute like neurons — memory and logic fused — promising 100× efficiency for AI at the edge.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#101420"/><path d="M70 92 q20 -50 45 -50 q22 0 22 24 q0 26 24 26 q26 0 40 -44" stroke="#0fa38a" stroke-width="2.4" fill="none"/><circle cx="70" cy="92" r="4" fill="#0fa38a"/><circle cx="201" cy="48" r="4" fill="#d9a13b"/><rect x="222" y="30" width="40" height="56" rx="6" fill="#2c3448"/><path d="M230 44 h24 M230 56 h24 M230 68 h24" stroke="#d9a13b" stroke-width="2"/><text x="16" y="118" font-family="Fira Code" font-size="9" fill="#0fa38a">AI DESIGNS THE NEXT CHIP</text></svg>
+        <div class="yr">NOW → ∞</div><h3>AI designing its own hardware</h3>
+        <p>Google's AlphaChip lays out chip floorplans better than human engineers; Nvidia, Synopsys, and Cadence embed AI across design and verification. The loop has closed: chips train AI, and AI now designs chips — each generation bootstrapping the next. Wide-bandgap materials (SiC, GaN) meanwhile quietly electrify cars and grids.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>SILICON</b> — the second most abundant element in Earth's crust, taught to think.</div>
+    <div>1833 → 1947 → 2nm → ?</div>
+  </div>
+</footer>
+
+<script>
+/* ========== PCB TRACE DIVIDERS ========== */
+(function(){
+  const svg=`<svg viewBox="0 0 1060 72" preserveAspectRatio="xMidYMid meet">
+    <path class="tr-line" d="M0 36 H180 L216 16 H420 L456 52 H700 L736 24 H1060"/>
+    <path class="tr-line" d="M120 36 V64 M540 52 V70 M880 24 V4"/>
+    <path class="tr-pulse" d="M0 36 H180 L216 16 H420 L456 52 H700 L736 24 H1060"/>
+    <path class="tr-pulse p3" d="M1060 24 H736 L700 52 H456 L420 16 H216 L180 36 H0"/>
+    <circle class="tr-via" cx="120" cy="36" r="5"/><circle class="tr-via" cx="540" cy="52" r="5"/><circle class="tr-via" cx="880" cy="24" r="5"/>
+    <rect class="tr-pad" x="211" y="11" width="10" height="10" rx="2"/><rect class="tr-pad" x="451" y="47" width="10" height="10" rx="2"/><rect class="tr-pad" x="731" y="19" width="10" height="10" rx="2"/>
+  </svg>`;
+  document.querySelectorAll('.trace').forEach(t=>t.innerHTML=svg);
+})();
+
+/* ========== LATTICE ========== */
+(function(){
+  const g=document.getElementById('atoms'),svg=document.getElementById('latSvg');
+  const pos=[60,130,200,270];let center;
+  pos.forEach(y=>pos.forEach(x=>{
+    const grp=document.createElementNS('http://www.w3.org/2000/svg','g');
+    grp.innerHTML=`<circle class="atom" cx="${x}" cy="${y}" r="20"/><text class="atom-txt" x="${x}" y="${y+1}">Si</text>`;
+    g.appendChild(grp);
+    if(x===200&&y===130){center=grp;}
+  }));
+  const cCirc=center.querySelector('circle'),cTxt=center.querySelector('text');
+  const H=document.getElementById('latH'),P=document.getElementById('latP'),N=document.getElementById('latN');
+  const modes={
+    i:{h:'Pure silicon: a perfect, boring crystal',cls:'',
+       p:'Each silicon atom shares its 4 outer electrons with 4 neighbors — every electron is locked in a bond. Pure silicon barely conducts at all. The trick that unlocked the modern world: <b style="color:var(--ink)">contaminate it on purpose.</b>',
+       n:'Doping = adding ~1 impurity atom per million silicon atoms',t:'Si',fill:'#eef0f5',stroke:'#b9bfcc'},
+    n:{h:'N-type: phosphorus donates a free electron',cls:'dopN',
+       p:'Phosphorus has <b style="color:var(--ink)">5</b> outer electrons — one more than silicon needs for bonding. That spare electron (blue, orbiting) breaks free at room temperature and wanders the crystal, ready to carry current. Charge carriers: <b style="color:var(--ntype)">negative electrons</b>.',
+       n:'Donor atoms: phosphorus, arsenic, antimony',t:'P',fill:'#e3ecfd',stroke:'#2f6fe4'},
+    p:{h:'P-type: boron leaves a hole',cls:'dopP',
+       p:'Boron has only <b style="color:var(--ink)">3</b> outer electrons — one bond is left empty. That vacancy (the pink dashed "hole") acts like a positive particle: neighboring electrons hop in, and the hole drifts the other way, carrying current. Charge carriers: <b style="color:var(--ptype)">positive holes</b>.',
+       n:'Acceptor atoms: boron, gallium, indium',t:'B',fill:'#fbe4ee',stroke:'#d93d7d'}
+  };
+  document.querySelectorAll('.lat-btns .chipbtn').forEach(b=>{
+    b.addEventListener('click',()=>{
+      document.querySelectorAll('.lat-btns .chipbtn').forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');
+      const m=modes[b.dataset.mode];
+      svg.classList.remove('dopN','dopP');if(m.cls)svg.classList.add(m.cls);
+      cCirc.setAttribute('fill',m.fill);cCirc.setAttribute('stroke',m.stroke);cCirc.setAttribute('stroke-width','2.5');
+      cTxt.textContent=m.t;
+      H.textContent=m.h;P.innerHTML=m.p;N.textContent=m.n;
+    });
+  });
+})();
+
+/* ========== MOSFET ========== */
+(function(){
+  const fet=document.getElementById('fet');
+  const on=document.getElementById('on'),off=document.getElementById('off');
+  const H=document.getElementById('fetH'),P=document.getElementById('fetP');
+  const roI=document.getElementById('roI'),roB=document.getElementById('roB');
+  function set(state){
+    fet.classList.toggle('fet-on',state);
+    on.classList.toggle('on',state);off.classList.toggle('on',!state);
+    if(state){
+      H.textContent='Gate at +1 V — the switch is ON';
+      P.innerHTML='The positive gate attracts electrons to the surface of the P-region, forming a thin <b style="color:var(--gate)">inversion channel</b> — an electron highway from source to drain. Current flows; the output reads <b style="color:var(--ink)">1</b>.';
+      roI.textContent='250 µA';roB.textContent='1';
+    }else{
+      H.textContent='Gate at 0 V — the switch is OFF';
+      P.innerHTML='With no gate voltage, the P-type body blocks electrons: two back-to-back junctions, no path. The output reads a binary <b style="color:var(--ink)">0</b>.';
+      roI.textContent='0 µA';roB.textContent='0';
+    }
+  }
+  on.onclick=()=>set(true);off.onclick=()=>set(false);
+})();
+
+/* ========== FAB STEPS ========== */
+const fabs=[
+ {e:'🏖️',s:'QUARTZ SAND',k:'STEP 1 · RAW MATERIAL',h:'It really does start with sand',p:'High-purity quartz (SiO₂) is smelted with carbon at ~2,000 °C to yield metallurgical silicon, then refined chemically to 99.9999999% purity ("nine nines") — the purest material humans mass-produce. One foreign atom per billion is one too many.'},
+ {e:'🧊',s:'CRYSTAL INGOT',k:'STEP 2 · CZOCHRALSKI GROWTH',h:'Growing a perfect crystal',p:'A seed crystal is dipped into molten silicon at 1,414 °C and pulled upward while rotating (the Czochralski method, invented 1916 by accident when Jan Czochralski dipped his pen in molten tin instead of ink). Out comes a single flawless crystal — a shimmering ingot up to 2 m long.'},
+ {e:'💿',s:'WAFER SLICING',k:'STEP 3 · WAFERING',h:'Slice and polish to atomic flatness',p:'Diamond wire saws slice the ingot into 300 mm wafers less than 1 mm thick, then polish them so flat that, scaled to the size of India, the tallest bump would be a few millimeters. Each wafer will host hundreds of chips.'},
+ {e:'🎞️',s:'DEPOSITION',k:'STEP 4 · THIN FILMS',h:'Painting with atoms',p:'Layers of insulators, silicon, and metals are deposited — some just one atom thick — using chemical vapor deposition and atomic layer deposition. A modern chip is a lasagna of 100+ such layers.'},
+ {e:'☀️',s:'LITHOGRAPHY',k:'STEP 5 · EUV PATTERNING',h:'Printing with extreme ultraviolet light',p:'The crown jewel. A €200M+ ASML machine fires lasers at 50,000 tin droplets per second, each flash creating plasma hotter than the sun\'s surface that emits 13.5 nm EUV light. Reflected off the flattest mirrors ever made, it projects circuit patterns onto light-sensitive resist — features far smaller than the wavelength of visible light. Repeated ~100 times per chip.'},
+ {e:'🧪',s:'ETCH',k:'STEP 6 · ETCHING',h:'Carving the exposed pattern',p:'Plasma etching removes material exactly where lithography exposed it, sculpting fins, trenches, and holes with atomic precision — some with aspect ratios like drilling a 1-meter-wide hole 60 meters deep.'},
+ {e:'💉',s:'ION IMPLANT',k:'STEP 7 · DOPING',h:'Shooting in the dopants',p:'Phosphorus and boron ions are accelerated to high energy and fired into precise regions of the silicon, creating the N and P zones of millions of transistors at once — then annealed at ~1,000 °C to heal the crystal.'},
+ {e:'🕸️',s:'METALLIZATION',k:'STEP 8 · INTERCONNECT',h:'Wiring 100 billion transistors',p:'Up to 15+ layers of copper wiring — 100+ km of it on one chip — connect the transistors into circuits. The finished wafer shimmers with rainbow diffraction from its nanoscale gratings.'},
+ {e:'✂️',s:'TEST & DICE',k:'STEP 9 · SINGULATION',h:'Test, cut, sort',p:'Every die is electrically probed; imperfect ones are binned as lower-tier parts (that\'s often what separates chip models). A diamond saw or laser then dices the wafer into individual dies.'},
+ {e:'📦',s:'PACKAGING',k:'STEP 10 · ADVANCED PACKAGING',h:'From die to device',p:'Dies are bonded to substrates, connected with microbumps or hybrid bonding, stacked with HBM memory (CoWoS, Foveros), capped and tested. ~3 months after being sand, the chip ships — to a phone, a car, or an AI datacenter.'}
+];
+const ft=document.getElementById('fabTrack'),fd=document.getElementById('fabDetail');
+fabs.forEach((f,i)=>{
+  const b=document.createElement('button');b.className='fstep';b.type='button';b.setAttribute('role','tab');
+  b.innerHTML=`<div class="n">${f.e}</div><small>${f.s}</small>`;
+  b.addEventListener('click',()=>setFab(i));ft.appendChild(b);
+});
+function setFab(i){
+  [...ft.children].forEach((el,k)=>el.classList.toggle('on',k===i));
+  const f=fabs[i];
+  fd.innerHTML=`<div class="k">${f.k}</div><h4>${f.h}</h4><p>${f.p}</p>`;
+}
+setFab(0);
+
+/* ========== MOORE CHART ========== */
+(function(){
+  const data=[
+   [1971,2300,'Intel 4004'],[1974,4500,'Intel 8080'],[1978,29000,'Intel 8086'],
+   [1985,275000,'Intel 386'],[1989,1.2e6,'Intel 486'],[1993,3.1e6,'Pentium'],
+   [2000,4.2e7,'Pentium 4'],[2006,2.91e8,'Core 2 Duo'],[2012,1.4e9,'Ivy Bridge (quad)'],
+   [2020,1.6e10,'Apple M1'],[2023,1.34e11,'Apple M2 Ultra'],[2024,2.08e11,'Nvidia Blackwell']
+  ];
+  const svg=document.getElementById('mooreSvg'),tip=document.getElementById('mtip');
+  const W=860,H=420,L=80,R=30,T=30,B=60;
+  const x=y=>L+(y-1969)/(2026-1969)*(W-L-R);
+  const yv=n=>T+(11.6-Math.log10(n))/(11.6-3)*(H-T-B);
+  let s='';
+  // gridlines
+  const sup=n=>String(n).split('').map(c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[+c]).join('');
+  for(let e=3;e<=11;e++){
+    s+=`<line x1="${L}" x2="${W-R}" y1="${yv(10**e)}" y2="${yv(10**e)}" stroke="#e1e4ec"/>`;
+    s+=`<text x="${L-10}" y="${yv(10**e)+4}" text-anchor="end" font-family="Fira Code" font-size="10" fill="#8b92a3">10${sup(e)}</text>`;
+  }
+  [1970,1980,1990,2000,2010,2020].forEach(yr=>{
+    s+=`<text x="${x(yr)}" y="${H-B+24}" text-anchor="middle" font-family="Fira Code" font-size="10" fill="#8b92a3">${yr}</text>`;
+    s+=`<line x1="${x(yr)}" x2="${x(yr)}" y1="${H-B}" y2="${H-B+6}" stroke="#c6ccda"/>`;
+  });
+  s+=`<line x1="${L}" x2="${W-R}" y1="${H-B}" y2="${H-B}" stroke="#8b92a3"/>`;
+  // ideal doubling line from 1971
+  s+=`<line x1="${x(1971)}" y1="${yv(2300)}" x2="${x(2025)}" y2="${yv(2300*2**((2025-1971)/2))}" stroke="#d9a13b" stroke-width="1.6" stroke-dasharray="6 6"/>`;
+  s+=`<text x="${x(2007)}" y="${yv(2300*2**((2007-1971)/2))-12}" font-family="Fira Code" font-size="10" fill="#c2702f" transform="rotate(-24 ${x(2007)} ${yv(2300*2**((2007-1971)/2))-12})">doubling every 2 years</text>`;
+  // path through points
+  s+=`<path d="M${data.map(d=>`${x(d[0])},${yv(d[1])}`).join(' L')}" fill="none" stroke="#2f6fe4" stroke-width="2" opacity=".5"/>`;
+  data.forEach((d,i)=>{
+    s+=`<g class="mpt" data-i="${i}"><circle cx="${x(d[0])}" cy="${yv(d[1])}" r="6" fill="#2f6fe4" stroke="#fff" stroke-width="2"/></g>`;
+  });
+  s+=`<text x="${L}" y="${T-10}" font-family="Fira Code" font-size="10" fill="#8b92a3">TRANSISTORS PER CHIP (log scale)</text>`;
+  svg.innerHTML=s;
+  svg.querySelectorAll('.mpt').forEach(g=>{
+    g.addEventListener('mousemove',e=>{
+      const d=data[+g.dataset.i];
+      tip.style.opacity=1;
+      tip.innerHTML=`<b>${d[2]}</b> · ${d[0]}<br>${d[1].toLocaleString('en-US')} transistors`;
+      const r=svg.closest('.moore').getBoundingClientRect();
+      tip.style.left=(e.clientX-r.left+14)+'px';tip.style.top=(e.clientY-r.top-14)+'px';
+    });
+    g.addEventListener('mouseleave',()=>tip.style.opacity=0);
+  });
+})();
+
+/* ========== TIMELINE ========== */
+const IMG=f=>`https://commons.wikimedia.org/wiki/Special:FilePath/${f}?width=640`;
+const eras=[
+ {label:'ERA I · CURIOSITIES · 1833–1946',c:'var(--ntype)',ev:[
+  {d:'1833',t:'Faraday notices something strange',
+   b:'<b>Michael Faraday</b> observes that silver sulfide conducts electricity <i>better</i> when heated — the opposite of every metal. It\'s the first recorded semiconductor effect, a mystery that would take a century of quantum mechanics to explain.',
+   who:['Michael Faraday']},
+  {d:'1874 → 1901',t:'The crystal detector — radio\'s first semiconductor',
+   b:'<b>Ferdinand Braun</b> discovers that current flows through metal-sulfide crystals in only one direction (rectification, 1874). By 1901 <b>Jagadish Chandra Bose</b> patents a galena crystal detector — the "cat\'s whisker" that let early radios turn waves into sound. Millions of people used semiconductors decades before anyone knew how they worked.',
+   who:['Ferdinand Braun','Jagadish Chandra Bose']},
+  {d:'October 22, 1925',t:'The transistor is patented… 20 years early',
+   b:'Physicist <b>Julius Lilienfeld</b> files a patent describing the field-effect transistor — the exact principle in every modern chip. But materials of the era were far too impure to make it work. His forgotten patents would later block Bell Labs from patenting the concept themselves.',
+   who:['Julius Edgar Lilienfeld']},
+  {d:'February 23, 1940',t:'Ohl discovers the P-N junction',
+   b:'At Bell Labs, <b>Russell Ohl</b> studies a cracked silicon sample and finds the crack forms a barrier: one side dopes N, the other P, and light shining on it generates voltage. He has discovered both the <b>P-N junction</b> and the <b>solar cell</b> in one afternoon. WWII radar research then perfects silicon and germanium purification — setting the stage.',
+   who:['Russell Ohl','Wartime radar programs']}
+ ]},
+ {label:'ERA II · THE TRANSISTOR · 1947–1959',c:'var(--gate)',ev:[
+  {d:'December 16, 1947',t:'The first transistor — Bell Labs, Murray Hill',
+   b:'<b>John Bardeen</b> and <b>Walter Brattain</b>, in <b>William Shockley\'s</b> group, press two gold contacts onto a germanium slab and see amplification: the point-contact transistor. Demonstrated to Bell brass on December 23. Shockley, furious to be sidelined, invents the more practical <b>junction transistor</b> weeks later (built 1951). The three share the 1956 Nobel Prize — though Bardeen and Brattain never work with Shockley again.',
+   who:['John Bardeen','Walter Brattain','William Shockley'],
+   img:'Replica-of-first-transistor.jpg',cap:'Replica of the first point-contact transistor, Dec 1947 (public domain)'},
+  {d:'May 10, 1954 → Oct 1954',t:'Silicon arrives — and the pocket radio',
+   b:'<b>Gordon Teal</b> at Texas Instruments stuns a conference by announcing working <b>silicon</b> transistors (germanium fails when hot; silicon doesn\'t). That October the <b>Regency TR-1</b>, the first transistor radio, hits stores — teenagers get music in their pockets, and the word "transistor" enters everyday language. In Japan, a small firm licensing the transistor renames itself <b>Sony</b>.',
+   who:['Gordon Teal','Texas Instruments','Akio Morita & Masaru Ibuka']},
+  {d:'September 18, 1957',t:'The "Traitorous Eight" found Silicon Valley',
+   b:'Shockley starts his own company in Mountain View, California — near his mother\'s home — but manages it so abusively that his eight best scientists, including <b>Robert Noyce</b> and <b>Gordon Moore</b>, quit together to found <b>Fairchild Semiconductor</b>. Fairchild\'s alumni ("Fairchildren") go on to found Intel, AMD, and dozens more. The orchards of Santa Clara Valley become Silicon Valley because of one bad boss.',
+   who:['Robert Noyce','Gordon Moore','Jean Hoerni','+ 5 others']},
+  {d:'September 12, 1958 → early 1959',t:'The integrated circuit',
+   b:'At TI, new hire <b>Jack Kilby</b> (alone in the lab during mass summer vacation) demonstrates a complete circuit on one germanium sliver. Months later at Fairchild, <b>Robert Noyce</b> invents the superior <b>planar</b> silicon IC — building on <b>Jean Hoerni\'s</b> planar process — with interconnects printed on top. After a decade of patent war, the industry treats them as co-inventors. Kilby gets the Nobel in 2000; Noyce, who died in 1990, could not share it.',
+   who:['Jack Kilby','Robert Noyce','Jean Hoerni']}
+ ]},
+ {label:'ERA III · MOS & THE MICROPROCESSOR · 1960–1971',c:'var(--gold)',ev:[
+  {d:'June 1960',t:'The MOSFET — the most manufactured object ever',
+   b:'<b>Mohamed Atalla</b> and <b>Dawon Kahng</b> at Bell Labs demonstrate the metal-oxide-semiconductor FET — realizing Lilienfeld\'s 1925 dream by using silicon\'s own oxide as the insulator. Slow at first and ignored by Bell, it proves perfect for miniaturization. Over <b>13 sextillion</b> have been made since: more than all grains of… fine, more than anything else humans have ever built. In 1963 <b>Frank Wanlass</b> adds <b>CMOS</b>, cutting standby power ~a million-fold.',
+   who:['Mohamed Atalla','Dawon Kahng','Frank Wanlass']},
+  {d:'April 19, 1965',t:'Moore\'s Law is published',
+   b:'In <i>Electronics</i> magazine, Fairchild\'s R&D chief <b>Gordon Moore</b> predicts components per chip will double every year (revised 1975: every two years) for at least a decade. It holds for fifty — not because physics demands it, but because the entire industry organizes its roadmaps, budgets, and dreams around hitting it.',
+   who:['Gordon Moore']},
+  {d:'July 18, 1968 → Oct 1970',t:'Intel — and memory on silicon',
+   b:'Noyce and Moore leave Fairchild to found <b>Intel</b> ("Integrated Electronics"), hiring <b>Andy Grove</b> first. Their plan: replace magnetic-core memory with silicon. The Intel 1103 DRAM (Oct 1970) — using <b>Robert Dennard\'s</b> elegant one-transistor memory cell (invented 1966, patented 1968) — becomes the world\'s best-selling chip within two years.',
+   who:['Robert Noyce','Gordon Moore','Andy Grove','Robert Dennard (IBM)']},
+  {d:'November 15, 1971',t:'Intel 4004 — the first microprocessor',
+   b:'Commissioned for a Japanese calculator, <b>Federico Faggin</b> (with <b>Ted Hoff\'s</b> architecture, <b>Stan Mazor</b>, and Busicom\'s <b>Masatoshi Shima</b>) squeezes a complete CPU onto one chip: 2,300 transistors, 10 µm features, 740 kHz — roughly the power of the 1946 ENIAC, which filled a room and drank 150 kW. Intel buys back the rights for $60,000. A computer on a chip changes everything.',
+   who:['Federico Faggin','Ted Hoff','Stan Mazor','Masatoshi Shima'],
+   img:'Intel_C4004.jpg',cap:'The Intel 4004 in its white ceramic package (CC BY-SA, Wikimedia Commons)'}
+ ]},
+ {label:'ERA IV · SCALING & GLOBALIZATION · 1972–2010',c:'var(--copper)',ev:[
+  {d:'1974',t:'Dennard scaling: the free-lunch decades',
+   b:'<b>Robert Dennard\'s</b> team shows that as transistors shrink, they get faster <i>and</i> use proportionally less power — smaller is simply better in every way. This "free lunch" powers 30 years of exponential progress: 8080 → x86 (June 1978) → PCs → Pentium. It finally breaks around 2005 when leakage current turns chips into heaters, forcing the industry to multicore.',
+   who:['Robert Dennard','IBM Research']},
+  {d:'February 21, 1987',t:'TSMC and the foundry revolution',
+   b:'At 55, <b>Morris Chang</b> founds Taiwan Semiconductor Manufacturing Company on a then-heretical idea: make chips <i>only for others</i>, compete with no customer. The pure-play foundry unleashes the fabless era — <b>ARM</b> (1990) licenses CPU designs, <b>Nvidia</b> (1993), <b>Qualcomm</b>, and thousands more design chips without owning a single fab. Meanwhile <b>Lynn Conway</b> and <b>Carver Mead\'s</b> VLSI design revolution (1979–80) had already taught a generation to design chips like software.',
+   who:['Morris Chang','Lynn Conway & Carver Mead','ARM · Nvidia · Qualcomm']},
+  {d:'January 2007',t:'High-k metal gate — and the smartphone',
+   b:'At 45 nm, the SiO₂ gate insulator is ~5 atoms thick and leaking badly. Intel replaces it with hafnium-based "high-k" material and metal gates — Moore calls it the biggest transistor change since the 1960s. Six months later the iPhone launches, and mobile SoCs (led by ARM designs made at TSMC and Samsung) become the industry\'s center of gravity.',
+   who:['Intel','Apple & ARM ecosystem']}
+ ]},
+ {label:'ERA V · NANO & THE AI AGE · 2011–TODAY',c:'var(--ptype)',ev:[
+  {d:'May 4, 2011',t:'FinFET: the transistor stands up',
+   b:'Intel announces Tri-Gate (FinFET) transistors at 22 nm — the channel becomes a 3D fin wrapped by the gate on three sides, taming leakage. Based on <b>Chenming Hu\'s</b> UC Berkeley research (1999), FinFETs carry the entire industry from 22 nm down to 3 nm.',
+   who:['Chenming Hu','Intel','TSMC · Samsung']},
+  {d:'2012 → 2019',t:'AI meets silicon; EUV finally ships',
+   b:'In 2012, <b>AlexNet</b> — trained on two consumer Nvidia GPUs — crushes the ImageNet contest and reboots deep learning; Google answers with the TPU (2016). Meanwhile <b>ASML\'s</b> extreme-ultraviolet lithography, 20+ years and $9B in the making, enters volume production at TSMC (N7+, 2019): one machine, 180 tonnes, >100,000 parts, and the only way to print at 5 nm and below. ASML becomes the sole EUV supplier on Earth.',
+   who:['Alex Krizhevsky · Ilya Sutskever · Geoffrey Hinton','Jensen Huang & Nvidia','ASML']},
+  {d:'November 10, 2020',t:'Apple M1 and the 5nm era',
+   b:'Apple ships the M1 — 16 billion transistors on TSMC\'s 5 nm node — and abandons Intel in Macs, proving ARM-based custom silicon can beat x86 at a fraction of the power. Custom chips become strategy: Amazon, Google, Microsoft, Tesla all design their own.',
+   who:['Apple silicon team','TSMC']},
+  {d:'June 30, 2022 → Aug 9, 2022',t:'3nm, gate-all-around & the geopolitics of sand',
+   b:'Samsung ships the first <b>3 nm gate-all-around</b> chips; TSMC\'s N3 follows in December. With ~90% of leading-edge chips made in Taiwan, semiconductors become the world\'s most strategic commodity: the US <b>CHIPS Act</b> (August 9, 2022) commits $52B to domestic fabs, Europe and Japan follow, export controls target AI chips, and <b>India\'s Semiconductor Mission</b> breaks ground on its first fabs.',
+   who:['Samsung','TSMC','Governments everywhere']},
+  {d:'2023 → 2026',t:'The AI silicon supercycle',
+   b:'ChatGPT ignites insatiable demand for AI accelerators. Nvidia\'s H100 and 208-billion-transistor <b>Blackwell</b> chips — stacked with HBM memory via CoWoS advanced packaging — sell out years ahead, briefly making Nvidia the most valuable company on Earth (2024). The 2 nm era arrives: TSMC N2 enters mass production (H2 2025) with nanosheet transistors and Intel\'s 18A adds backside power. Transistors are now measured against the size of the silicon atom itself: ~0.2 nm. We are ~10 atoms from the wall — and building sideways, upward, and smarter.',
+   who:['Nvidia','TSMC · Intel · Samsung','SK Hynix (HBM)']}
+ ]}
+];
+const root=document.getElementById('tlRoot');
+eras.forEach(era=>{
+  const lb=document.createElement('div');lb.className='era';lb.style.setProperty('--eacc',era.c);root.appendChild(lb);lb.textContent=era.label;
+  const tl=document.createElement('div');tl.className='tl';
+  era.ev.forEach(ev=>{
+    const it=document.createElement('div');it.className='tle';it.style.setProperty('--acc',era.c);
+    const imgHtml=ev.img?`<img loading="lazy" src="${IMG(ev.img)}" alt="${ev.cap}" onerror="this.style.display='none';this.nextElementSibling.style.display='none'"><div class="cap">▪ ${ev.cap}</div>`:'';
+    it.innerHTML=`<div class="dot" aria-hidden="true"></div>
+      <button class="tle-btn" type="button" aria-expanded="false">
+        <span class="tle-d">${ev.d}</span>
+        <span class="tle-t">${ev.t}<span class="ch">▼</span></span>
+        <div class="tle-b"><div class="tle-bi"><p>${ev.b}</p>${imgHtml}
+        <div class="who">${ev.who.map(w=>`<span>${w}</span>`).join('')}</div>
+        </div></div>
+      </button>`;
+    const btn=it.querySelector('.tle-btn');
+    btn.addEventListener('click',()=>{const o=it.classList.toggle('open');btn.setAttribute('aria-expanded',o);});
+    tl.appendChild(it);
+  });
+  root.appendChild(tl);
+});
+
+/* ========== PIONEERS ========== */
+const pioneers=[
+ {n:'Bardeen · Brattain · Shockley',r:'The Transistor · 1947',t:'Invented the point-contact and junction transistors at Bell Labs; shared the 1956 Nobel. Bardeen won a second Nobel (superconductivity) — the only person ever to win two in physics.'},
+ {n:'Julius Lilienfeld',r:'FET Concept · 1925',t:'Patented the field-effect transistor decades before materials could realize it — vindicated by every chip made today.'},
+ {n:'Jack Kilby',r:'Integrated Circuit · 1958',t:'Built the first IC at Texas Instruments during summer vacation; Nobel Prize 2000. Also co-invented the handheld calculator.'},
+ {n:'Robert Noyce',r:'Planar IC · Intel',t:'"Mayor of Silicon Valley." Invented the practical planar IC, co-founded Fairchild and Intel, mentored a generation.'},
+ {n:'Atalla & Kahng',r:'MOSFET · 1960',t:'Their metal-oxide transistor became the most manufactured device in history — 13+ sextillion and counting.'},
+ {n:'Gordon Moore',r:'Moore\'s Law · 1965',t:'Chemist, Fairchild R&D chief, Intel co-founder. His casual extrapolation became the industry\'s 50-year heartbeat.'},
+ {n:'Robert Dennard',r:'DRAM & Scaling · 1966',t:'Invented the one-transistor memory cell in every DRAM, and the scaling rules that made shrinking transistors a free lunch.'},
+ {n:'Federico Faggin',r:'Microprocessor · 1971',t:'Led design of the Intel 4004 (his initials F.F. are etched on the die), the 8080, and later co-founded Zilog (Z80).'},
+ {n:'Lynn Conway',r:'VLSI Revolution · 1979',t:'With Carver Mead, created the structured design methods that let anyone design chips — and taught them to the world.'},
+ {n:'Morris Chang',r:'Foundry Model · 1987',t:'Founded TSMC at 55, inventing the pure-play foundry and making the fabless ecosystem — and modern Taiwan — possible.'},
+ {n:'Chenming Hu',r:'FinFET · 1999',t:'His Berkeley team\'s 3D transistor rescued Moore\'s Law at the nanoscale; every leading-edge chip 2011–2024 used it.'},
+ {n:'Jensen Huang',r:'GPU / AI Computing',t:'Co-founded Nvidia (1993); bet the company on CUDA and parallel computing years before deep learning made GPUs the engines of AI.'}
+];
+const pg=document.getElementById('pioGrid');
+pioneers.forEach(p=>{
+  const initials=p.n.split(/[\s·&]+/).filter(Boolean).slice(0,2).map(w=>w[0]).join('');
+  const d=document.createElement('div');
+  d.className='card pio';
+  d.innerHTML=`<div class="av">${initials}</div><h3>${p.n}</h3><div class="r">${p.r}</div><p>${p.t}</p>`;
+  pg.appendChild(d);
+});
+</script>
+</body>
+</html>
