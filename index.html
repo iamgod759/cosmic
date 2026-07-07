@@ -146,6 +146,14 @@ h1 .grad{
   margin-bottom:12px;
   color:var(--star);
 }
+.card-time{
+  font-size:.85rem;
+  color:var(--solar);
+  margin-bottom:16px;
+  font-weight:600;
+  font-family:'IBM Plex Mono',monospace;
+  letter-spacing:.08em;
+}
 .card p{
   color:var(--dim);
   font-size:1rem;
@@ -168,6 +176,43 @@ h1 .grad{
 .card-btn:hover{
   transform:translateY(-2px);
   box-shadow:0 10px 30px rgba(114,245,220,.3);
+}
+
+/* Timeline Section */
+.timeline-section{
+  padding:60px 0;
+  position:relative;
+}
+.timeline-section::before{
+  content:'';
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:linear-gradient(180deg,var(--aurora),var(--nebula),var(--rose),var(--solar));
+  opacity:.3;
+}
+@media(max-width:768px){
+  .timeline-section::before{left:20px}
+}
+
+.timeline-intro{
+  text-align:center;
+  margin-bottom:80px;
+  position:relative;
+  z-index:2;
+}
+.timeline-intro h2{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:clamp(2rem,5vw,3rem);
+  margin-bottom:16px;
+}
+.timeline-intro p{
+  color:var(--dim);
+  max-width:600px;
+  margin:0 auto;
 }
 
 footer{
@@ -196,56 +241,60 @@ footer b{
 <header>
   <div class="hero">
     <div class="eyebrow">◆ Welcome to COSMIC</div>
-    <h1>Signals across <span class="grad">infinity.</span></h1>
-    <p class="lede">Explore five epic stories: the internet connecting humanity, rockets reaching for the stars, how we became human, the semiconductors powering civilization, and real-time weather across the globe.</p>
+    <h1>From stardust to <span class="grad">innovation.</span></h1>
+    <p class="lede">Four epic stories spanning 13.8 billion years — from the Big Bang through human evolution, to the rockets that took us to space, and the silicon chips that power our world.</p>
   </div>
 </header>
 
-<section style="padding:80px 0;">
+<section class="timeline-section">
   <div class="wrap">
+    <div class="timeline-intro">
+      <h2>The Journey of Cosmic Innovation</h2>
+      <p>Arranged by time, from the beginning of the universe to the future of technology</p>
+    </div>
+
     <div class="stories">
-      <a href="internet-history.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-inner">
-          <span class="card-icon">📡</span>
-          <h2>The Internet</h2>
-          <p>From ARPANET's first message to 5.5 billion people online. Trace the cables, protocols, and pioneers that wired humanity together.</p>
-          <span class="card-btn">Launch story →</span>
-        </div>
-      </a>
-
-      <a href="rocket-history.html" class="card" style="text-decoration:none;color:inherit;">
-        <div class="card-inner">
-          <span class="card-icon">🚀</span>
-          <h2>The Rocket</h2>
-          <p>From Chinese fire arrows to Starship. Explore the physics, engines, and launch sequences that lifted humanity into space.</p>
-          <span class="card-btn">Launch story →</span>
-        </div>
-      </a>
-
+      <!-- First: Big Bang & Evolution (13.8 billion years ago - today) -->
       <a href="becoming-cosmic.html" class="card" style="text-decoration:none;color:inherit;">
         <div class="card-inner">
           <span class="card-icon">🧬</span>
+          <div class="card-time">13.8 Billion Years Ago — Today</div>
           <h2>Becoming Human</h2>
-          <p>From the Big Bang to consciousness. Trace 13.8 billion years of cosmic evolution — how stardust became you.</p>
+          <p>From the Big Bang to consciousness. Trace cosmic evolution — how stardust became atoms, atoms became life, and life became you.</p>
           <span class="card-btn">Journey back →</span>
         </div>
       </a>
 
+      <!-- Second: Semiconductors (1947 - today) -->
       <a href="semiconductor-history.html" class="card" style="text-decoration:none;color:inherit;">
         <div class="card-inner">
           <span class="card-icon">💎</span>
+          <div class="card-time">December 16, 1947 — Today</div>
           <h2>Silicon & Semiconductors</h2>
-          <p>How sand became silicon, transistors, and the billions of chips powering every device we touch today.</p>
+          <p>How sand became transistors. From the first transistor to billions of chips, the technology that powers every digital device.</p>
           <span class="card-btn">Explore silicon →</span>
         </div>
       </a>
 
-      <a href="weather-dashboard.html" class="card" style="text-decoration:none;color:inherit;">
+      <!-- Third: Rockets (1926 - today) -->
+      <a href="rocket-history.html" class="card" style="text-decoration:none;color:inherit;">
         <div class="card-inner">
-          <span class="card-icon">🌤️</span>
-          <h2>Weather Dashboard</h2>
-          <p>Real-time weather conditions anywhere on Earth. Current forecasts, hourly updates, and 7-day predictions powered by live data.</p>
-          <span class="card-btn">Check weather →</span>
+          <span class="card-icon">🚀</span>
+          <div class="card-time">March 16, 1926 — Today</div>
+          <h2>The Rocket</h2>
+          <p>From liquid-fuel engines to Starship. The physics, the engines, and the humans who launched civilization into space.</p>
+          <span class="card-btn">Launch story →</span>
+        </div>
+      </a>
+
+      <!-- Fourth: Internet (1969 - today) -->
+      <a href="internet-history.html" class="card" style="text-decoration:none;color:inherit;">
+        <div class="card-inner">
+          <span class="card-icon">📡</span>
+          <div class="card-time">October 29, 1969 — Today</div>
+          <h2>The Internet</h2>
+          <p>From ARPANET's first message to 5.5 billion people online. The cables, protocols, and pioneers that wired humanity together.</p>
+          <span class="card-btn">Connect online →</span>
         </div>
       </a>
     </div>
@@ -254,8 +303,8 @@ footer b{
 
 <footer>
   <div class="wrap">
-    <div><b>COSMIC</b> — Stories of humanity's greatest technologies, our origins, and the world around us.</div>
-    <div>Created with wonder and curiosity. Five interconnected journeys through time, space, and innovation.</div>
+    <div><b>COSMIC</b> — Four stories of innovation, evolution, and achievement.</div>
+    <div>Arranged chronologically from the birth of the universe to the digital age.</div>
   </div>
 </footer>
 
