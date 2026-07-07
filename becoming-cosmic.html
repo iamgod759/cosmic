@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BECOMING — From the Big Bang to the Human Story</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --space:#05040b;        /* deepest space */
+  --deep:#0a0814;
+  --void:#100b1e;
+  --panel:#171126;
+  --panel2:#1f1838;
+  --line:#2e2650;
+  --gold:#f2c85b;         /* starlight gold */
+  --star:#f6ead2;         /* bone-white starlight */
+  --nebula:#c072d0;       /* nebula magenta */
+  --cosmic:#6aa6d8;       /* cosmic blue */
+  --flare:#ec7a54;        /* solar flare */
+  --moss:#8fb26a;         /* life green */
+  --dim:#9d8fb8;
+  --d:'Fraunces',serif;
+  --b:'Outfit',sans-serif;
+  --m:'IBM Plex Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--space);
+  color:var(--star);font-family:var(--b);line-height:1.7;overflow-x:hidden;
+  background-image:
+    radial-gradient(ellipse at 18% 6%,rgba(192,114,208,.10),transparent 46%),
+    radial-gradient(ellipse at 84% 88%,rgba(106,166,216,.09),transparent 46%),
+    radial-gradient(ellipse at 50% 40%,rgba(242,200,91,.03),transparent 60%);
+}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px;position:relative;z-index:2}
+::selection{background:var(--gold);color:var(--space)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+.irid{background:linear-gradient(120deg,var(--gold),var(--flare) 42%,var(--nebula) 82%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.irid2{background:linear-gradient(120deg,var(--cosmic),var(--nebula),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ===== NAV ===== */
+nav{position:fixed;inset:0 0 auto 0;z-index:50;background:rgba(5,4,11,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+.logo{font-family:var(--d);font-weight:700;font-size:1.05rem;letter-spacing:.04em;display:flex;align-items:center;gap:10px}
+.logo .hp{font-size:1.05rem;color:var(--gold)}
+nav ul{display:flex;gap:20px;list-style:none}
+nav a{color:var(--dim);text-decoration:none;font-family:var(--m);font-size:.72rem;transition:color .2s}
+nav a:hover{color:var(--gold)}
+@media(max-width:960px){nav ul{display:none}}
+
+/* ===== HERO ===== */
+header{min-height:100vh;display:flex;align-items:center;padding-top:60px;position:relative;overflow:hidden}
+header .wrap{position:relative;z-index:2}
+.pill{font-family:var(--m);font-size:.72rem;color:var(--dim);border:1px solid var(--line);background:rgba(23,17,38,.7);border-radius:100px;padding:8px 18px;display:inline-flex;gap:10px;align-items:center;margin-bottom:26px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:pulse 1.8s infinite;box-shadow:0 0 10px var(--gold)}
+@keyframes pulse{50%{opacity:.3}}
+h1{font-family:var(--d);font-weight:700;font-size:clamp(2.7rem,7.5vw,5.4rem);line-height:1;letter-spacing:-.02em;margin-bottom:22px}
+.lede{max-width:620px;color:var(--dim);font-size:1.09rem;font-weight:300;margin-bottom:36px}
+.stats{display:flex;gap:30px;flex-wrap:wrap;margin-bottom:40px}
+.st b{display:block;font-family:var(--d);font-size:1.55rem;color:var(--gold)}
+.st span{font-family:var(--m);font-size:.64rem;color:var(--dim);letter-spacing:.06em}
+.btn{display:inline-block;padding:14px 28px;border-radius:100px;font-family:var(--m);font-size:.8rem;text-decoration:none;transition:.2s;margin-right:12px;margin-bottom:10px}
+.btn-dark{background:linear-gradient(120deg,var(--gold),var(--flare));color:var(--space);font-weight:500}
+.btn-lite{border:1px solid var(--line);color:var(--star)}
+.btn:hover{transform:translateY(-3px);box-shadow:0 12px 32px rgba(242,200,91,.2)}
+.hero-media{position:absolute;right:2%;top:50%;transform:translateY(-50%);width:340px;height:340px;border-radius:50%;overflow:hidden;border:1px solid var(--line);box-shadow:0 0 80px rgba(192,114,208,.25),inset 0 0 60px rgba(5,4,11,.6);opacity:.95}
+.hero-media img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-media figcaption{position:absolute;bottom:0;left:0;right:0;font-family:var(--m);font-size:.58rem;color:var(--star);background:linear-gradient(transparent,rgba(5,4,11,.85));padding:24px 14px 10px;text-align:center}
+@media(max-width:1040px){.hero-media{display:none}}
+
+/* ===== SECTIONS ===== */
+section{padding:110px 0;position:relative}
+.tag{font-family:var(--m);font-size:.72rem;color:var(--gold);margin-bottom:12px;letter-spacing:.18em;text-transform:uppercase}
+h2{font-family:var(--d);font-weight:700;font-size:clamp(1.9rem,4.4vw,3rem);letter-spacing:-.02em;line-height:1.08;margin-bottom:14px}
+.sub{max-width:700px;color:var(--dim);font-weight:300}
+.head{margin-bottom:46px}
+.card{background:rgba(23,17,38,.85);border:1px solid var(--line);border-radius:20px;backdrop-filter:blur(4px);box-shadow:0 8px 32px rgba(0,0,0,.45)}
+b.hi{color:var(--star)}
+
+/* reveal on scroll */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.rv.in{opacity:1;transform:none}
+
+/* ===== COSMIC STAGE ===== */
+.cosmic-grid{display:grid;grid-template-columns:1.15fr 1fr;gap:28px;align-items:center;margin-bottom:36px}
+@media(max-width:860px){.cosmic-grid{grid-template-columns:1fr}}
+.cosmic-figs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cfig{position:relative;border-radius:16px;overflow:hidden;border:1px solid var(--line);aspect-ratio:1/1;background:var(--void)}
+.cfig img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.cfig:hover img{transform:scale(1.06)}
+.cfig figcaption{position:absolute;left:0;right:0;bottom:0;font-family:var(--m);font-size:.58rem;color:var(--star);background:linear-gradient(transparent,rgba(5,4,11,.9));padding:22px 10px 8px}
+.trio{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:8px}
+.trio .card{padding:24px}
+.trio .ic{font-size:2rem;margin-bottom:8px}
+.trio h3{font-family:var(--d);font-size:1.1rem;margin-bottom:6px}
+.trio p{color:var(--dim);font-size:.87rem}
+
+/* ===== STAR STUFF ELEMENTS ===== */
+.elem{padding:34px;margin-top:26px}
+.elem-grid{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center}
+@media(max-width:820px){.elem-grid{grid-template-columns:1fr}}
+.ptable{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.el{aspect-ratio:1/1;border:1px solid var(--line);border-radius:12px;background:var(--panel2);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.2s;color:inherit;font-family:inherit;position:relative;overflow:hidden}
+.el:hover,.el.on{border-color:var(--gold);transform:translateY(-3px)}
+.el .sym{font-family:var(--d);font-size:1.5rem;font-weight:700}
+.el .pct{font-family:var(--m);font-size:.56rem;color:var(--dim)}
+.el .glow{position:absolute;inset:0;opacity:0;transition:.25s;background:radial-gradient(circle at 50% 30%,var(--src,var(--gold)),transparent 70%)}
+.el.on .glow{opacity:.18}
+.elem-read h3{font-family:var(--d);font-size:1.5rem;margin-bottom:2px}
+.elem-read .origin{font-family:var(--m);font-size:.72rem;color:var(--gold);margin-bottom:12px;letter-spacing:.05em}
+.elem-read p{color:var(--dim);font-size:.95rem;min-height:96px}
+.forge{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.forge span{font-family:var(--m);font-size:.62rem;padding:4px 11px;border-radius:100px;border:1px solid var(--line);background:var(--void)}
+
+/* ===== COSMIC CALENDAR (signature) ===== */
+.cal{padding:36px}
+.cal-read{display:grid;grid-template-columns:auto 1fr;gap:26px;align-items:center;margin-bottom:8px}
+@media(max-width:680px){.cal-read{grid-template-columns:1fr}}
+.cal-date{text-align:center;min-width:150px}
+.cal-date .mon{font-family:var(--d);font-size:2.6rem;line-height:1;color:var(--gold)}
+.cal-date .day{font-family:var(--d);font-size:3.6rem;line-height:.9;color:var(--star)}
+.cal-date .clock{font-family:var(--m);font-size:.78rem;color:var(--cosmic);margin-top:6px}
+.cal-info h3{font-family:var(--d);font-size:1.5rem;margin-bottom:4px}
+.cal-info .ago{font-family:var(--m);font-size:.72rem;color:var(--flare);margin-bottom:10px}
+.cal-info p{color:var(--dim);font-size:.95rem}
+.cal-track{margin-top:24px}
+.cal-track input[type=range]{width:100%;appearance:none;height:6px;border-radius:6px;outline:none;
+  background:linear-gradient(90deg,var(--nebula) 0%,var(--cosmic) 25%,var(--moss) 50%,var(--gold) 78%,var(--flare) 100%)}
+.cal-track input[type=range]::-webkit-slider-thumb{appearance:none;width:26px;height:26px;border-radius:50%;background:var(--star);border:3px solid var(--gold);cursor:pointer;box-shadow:0 2px 18px rgba(242,200,91,.4)}
+.cal-track input[type=range]::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--star);border:3px solid var(--gold);cursor:pointer}
+.cal-months{display:flex;justify-content:space-between;font-family:var(--m);font-size:.56rem;color:var(--dim);margin-top:8px}
+.cal-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.cal-chips button{font-family:var(--m);font-size:.64rem;padding:6px 13px;border-radius:100px;border:1px solid var(--line);background:var(--void);color:var(--dim);cursor:pointer;transition:.2s}
+.cal-chips button:hover{border-color:var(--cosmic);color:var(--star)}
+.cal-chips button.on{border-color:var(--gold);color:var(--gold);background:rgba(242,200,91,.08)}
+.cal-foot{margin-top:22px;font-family:var(--m);font-size:.72rem;color:var(--cosmic);border-top:1px dashed var(--line);padding-top:16px}
+.cal-foot b{color:var(--star)}
+
+/* ===== SKULL MORPH ===== */
+.morph{padding:38px}
+.morph-grid{display:grid;grid-template-columns:minmax(280px,1fr) 1fr;gap:38px;align-items:center}
+@media(max-width:860px){.morph-grid{grid-template-columns:1fr}}
+.skullbox{background:radial-gradient(circle at 50% 40%,rgba(242,200,91,.08),transparent 70%);border:1px solid var(--line);border-radius:18px;padding:16px;position:relative}
+.skull-svg{width:100%;max-width:340px;margin:0 auto;display:block}
+.sk-part{transition:all .6s cubic-bezier(.6,0,.2,1)}
+.morph-info h3{font-family:var(--d);font-size:1.5rem;margin-bottom:2px}
+.morph-info .sci{font-family:var(--m);font-size:.72rem;color:var(--gold);font-style:italic;margin-bottom:14px}
+.morph-info p{color:var(--dim);font-size:.95rem;margin-bottom:18px}
+.brainbar{margin-bottom:18px}
+.brainbar label{display:flex;justify-content:space-between;font-family:var(--m);font-size:.72rem;color:var(--dim);margin-bottom:8px}
+.brainbar label b{color:var(--gold)}
+.bmeter{height:12px;background:var(--void);border:1px solid var(--line);border-radius:100px;overflow:hidden}
+.bmeter .bf{height:100%;background:linear-gradient(90deg,var(--cosmic),var(--nebula),var(--gold));border-radius:100px;transition:width .6s}
+.slider-wrap{margin-top:24px}
+.slider-wrap input[type=range]{width:100%;appearance:none;height:5px;border-radius:5px;outline:none;background:linear-gradient(90deg,var(--cosmic),var(--nebula),var(--gold),var(--flare))}
+.slider-wrap input[type=range]::-webkit-slider-thumb{appearance:none;width:24px;height:24px;border-radius:50%;background:var(--star);border:3px solid var(--gold);cursor:pointer;box-shadow:0 2px 16px rgba(242,200,91,.3)}
+.slider-wrap input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--star);border:3px solid var(--gold);cursor:pointer}
+.slider-ticks{display:flex;justify-content:space-between;font-family:var(--m);font-size:.6rem;color:var(--dim);margin-top:10px}
+.slider-ticks span{cursor:pointer;transition:color .2s;text-align:center;flex:1}
+.slider-ticks span:hover,.slider-ticks span.on{color:var(--gold)}
+
+/* ===== TRAITS ===== */
+.traits{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.trait{padding:26px;cursor:pointer;transition:.25s;position:relative;overflow:hidden;text-align:left}
+.trait:hover{transform:translateY(-4px);border-color:var(--gold);box-shadow:0 8px 24px rgba(242,200,91,.07)}
+.trait .ic{font-size:1.8rem;margin-bottom:12px;display:block}
+.trait h3{font-family:var(--d);font-size:1.1rem;margin-bottom:6px}
+.trait p{color:var(--dim);font-size:.87rem}
+.trait .more{display:none;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line);font-size:.85rem;color:var(--star)}
+.trait.open .more{display:block}
+.trait .tap{font-family:var(--m);font-size:.62rem;color:var(--gold);letter-spacing:.1em;margin-top:12px;display:block;text-transform:uppercase}
+
+/* ===== BUDGET ===== */
+.budget{padding:38px;margin-top:22px}
+.budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:center}
+@media(max-width:820px){.budget-grid{grid-template-columns:1fr}}
+.choice{display:flex;flex-direction:column;gap:12px}
+.cbtn{text-align:left;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 20px;cursor:pointer;color:inherit;font-family:inherit;transition:.2s}
+.cbtn:hover{border-color:var(--gold)}
+.cbtn.on{border-color:var(--gold);background:rgba(242,200,91,.1)}
+.cbtn b{font-family:var(--d);font-size:1rem}
+.budget-vis{text-align:center}
+.budget-vis .big{font-family:var(--d);font-size:3rem;color:var(--gold);line-height:1}
+.budget-vis .lbl{font-family:var(--m);font-size:.72rem;color:var(--dim);margin-top:6px}
+.budget-vis p{margin-top:18px;color:var(--dim);font-size:.9rem;min-height:84px}
+
+/* ===== MIGRATION ===== */
+.mapwrap{padding:34px}
+.mapwrap svg{width:100%;height:auto;background:#0a0716;border-radius:14px;border:1px solid var(--line)}
+.mroute{fill:none;stroke-width:3;stroke-linecap:round;stroke-dasharray:6 8;opacity:0;transition:opacity .3s}
+.mroute.show{opacity:1;animation:dash 20s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-400}}
+.mnode{cursor:pointer}
+.mnode circle{transition:.2s}
+.mnode:hover circle{r:9}
+.map-cap{font-family:var(--m);font-size:.78rem;color:var(--dim);margin-top:16px;min-height:44px}
+.map-cap b{color:var(--gold)}
+
+/* cousins */
+.cousins{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:26px}
+.cousin{padding:0;overflow:hidden}
+.cousin .ph{aspect-ratio:4/3;background:var(--void);position:relative;overflow:hidden}
+.cousin .ph img{width:100%;height:100%;object-fit:cover;display:block}
+.cousin .ph .ph-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:var(--line)}
+.cousin .body{padding:20px}
+.cousin h3{font-family:var(--d);font-size:1.12rem}
+.cousin .sci{font-family:var(--m);font-size:.66rem;color:var(--gold);margin-bottom:8px;font-style:italic}
+.cousin p{color:var(--dim);font-size:.85rem}
+.cousin .dna{font-family:var(--m);font-size:.62rem;color:var(--cosmic);margin-top:10px;display:block}
+
+/* ===== TIMELINE ===== */
+.era{font-family:var(--m);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;display:inline-block;background:var(--panel);border:1.5px solid var(--eacc,var(--line));color:var(--eacc,var(--star));padding:8px 20px;border-radius:100px;margin:54px 0 26px}
+.tl{position:relative}
+.tl::before{content:'';position:absolute;left:18px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--nebula),var(--cosmic),var(--moss),var(--gold),var(--flare))}
+.tle{position:relative;padding-left:60px;margin-bottom:16px}
+.tle .dot{position:absolute;left:8px;top:16px;width:22px;height:22px;border-radius:50%;background:var(--space);border:2px solid var(--acc,var(--gold));display:flex;align-items:center;justify-content:center}
+.tle .dot::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--acc,var(--gold))}
+.tle-btn{width:100%;text-align:left;background:rgba(23,17,38,.85);border:1px solid var(--line);border-radius:14px;padding:20px 24px;cursor:pointer;color:inherit;font-family:inherit;transition:.22s}
+.tle-btn:hover{border-color:var(--acc,var(--gold));transform:translateX(5px)}
+.tle-d{font-family:var(--m);font-size:.72rem;color:var(--acc,var(--gold));display:block;margin-bottom:4px}
+.tle-t{font-family:var(--d);font-size:1.1rem;font-weight:600;display:flex;justify-content:space-between;gap:12px;align-items:center}
+.tle-t .ch{color:var(--dim);font-size:.75rem;transition:transform .3s;flex-shrink:0}
+.tle.open .tle-t .ch{transform:rotate(180deg)}
+.tle-b{max-height:0;overflow:hidden;transition:max-height .5s ease}
+.tle.open .tle-b{max-height:1400px}
+.tle-bi{padding-top:14px;color:var(--dim);font-size:.93rem}
+.tle-bi b{color:var(--star)}
+.tle-bi img{width:100%;max-width:440px;border-radius:12px;border:1px solid var(--line);margin:14px 0 6px;display:block}
+.cap{font-family:var(--m);font-size:.62rem;color:var(--dim)}
+.who{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px}
+.who span{font-family:var(--m);font-size:.66rem;padding:5px 12px;border-radius:100px;border:1px solid var(--line);background:var(--void)}
+.who span::before{content:'✦ ';color:var(--acc,var(--gold))}
+
+/* ===== FUTURE ===== */
+.fut{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+.fcard{padding:26px;transition:.22s}
+.fcard:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(0,0,0,.4)}
+.fcard .yr{font-family:var(--m);font-size:.66rem;color:var(--gold);letter-spacing:.14em}
+.fcard h3{font-family:var(--d);font-size:1.1rem;margin:8px 0 10px}
+.fcard p{color:var(--dim);font-size:.88rem}
+.fart{width:100%;height:140px;border-radius:12px;border:1px solid var(--line);margin-bottom:16px;display:block;background:#0a0716}
+
+footer{border-top:1px solid var(--line);padding:46px 0;color:var(--dim);font-size:.85rem}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+footer b{font-family:var(--d);color:var(--star)}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<nav>
+  <div class="wrap">
+    <div class="logo"><span class="hp">✦</span>BECOMING</div>
+    <ul>
+      <li><a href="#cosmic">Cosmic Stage</a></li>
+      <li><a href="#calendar">Cosmic Calendar</a></li>
+      <li><a href="#skull">The Skull</a></li>
+      <li><a href="#traits">What Makes Us</a></li>
+      <li><a href="#migration">Migration</a></li>
+      <li><a href="#history">Timeline</a></li>
+      <li><a href="#future">Future</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header>
+  <div class="wrap">
+    <div class="pill"><i></i>13.8 billion years of cosmic evolution — condensed into one becoming</div>
+    <h1>From stardust to <span class="irid">consciousness.</span></h1>
+    <p class="lede">The atoms in your body were forged in the hearts of ancient stars. Over billions of years they assembled into a lineage that learned to walk, to make, to speak, to imagine — and finally, to ask where it all came from. This is the story of how the universe became aware of itself, told through starlight, fossils, DNA, and the art we left behind.</p>
+    <div class="stats">
+      <div class="st"><b>13.8 billion yrs</b><span>AGE OF THE COSMOS</span></div>
+      <div class="st"><b>~7 million yrs</b><span>SINCE THE HUMAN–CHIMP SPLIT</span></div>
+      <div class="st"><b>~300,000 yrs</b><span>AGE OF OUR SPECIES</span></div>
+      <div class="st"><b>8.1 billion</b><span>OF US TODAY</span></div>
+    </div>
+    <a class="btn btn-dark" href="#calendar">Compress the cosmos</a>
+    <a class="btn btn-lite" href="#history">Skip to the timeline</a>
+  </div>
+  <figure class="hero-media">
+    <img loading="eager"
+      src="https://commons.wikimedia.org/wiki/Special:FilePath/Webb%20Takes%20a%20Stunning%2C%20Star-Filled%20Portrait%20of%20the%20Pillars%20of%20Creation%20(Cropped)%20(weic2216a).jpeg?width=700"
+      alt="The Pillars of Creation, a stellar nursery, photographed by the James Webb Space Telescope"
+      onerror="this.closest('.hero-media').style.display='none'">
+    <figcaption>Pillars of Creation · a stellar nursery · NASA / ESA / CSA / JWST</figcaption>
+  </figure>
+</header>
+
+<!-- ================= COSMIC STAGE ================= -->
+<section id="cosmic">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">00 · The cosmic stage</div>
+      <h2>We are made of <span class="irid2">star stuff</span></h2>
+      <p class="sub">Every element heavier than helium was forged in the cores of stars and scattered across the universe when they died. Your calcium, your iron, your carbon — all born in stellar furnaces. The human story begins not in Africa, but in the hearts of ancient suns.</p>
+    </div>
+
+    <div class="cosmic-grid rv">
+      <div class="cosmic-figs">
+        <figure class="cfig">
+          <img loading="lazy"
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/Webb%20Takes%20a%20Stunning%2C%20Star-Filled%20Portrait%20of%20the%20Pillars%20of%20Creation%20(Cropped)%20(weic2216a).jpeg?width=560"
+            alt="Star-forming region in the Eagle Nebula" onerror="this.closest('.cfig').style.display='none'">
+          <figcaption>Stars being born, Eagle Nebula</figcaption>
+        </figure>
+        <figure class="cfig">
+          <img loading="lazy"
+            src="https://commons.wikimedia.org/wiki/Special:FilePath/The%20Earth%20seen%20from%20Apollo%2017.jpg?width=560"
+            alt="Earth photographed from Apollo 17, the Blue Marble" onerror="this.closest('.cfig').style.display='none'">
+          <figcaption>Earth · the Blue Marble · Apollo 17</figcaption>
+        </figure>
+      </div>
+      <div>
+        <p style="color:var(--dim);font-size:.98rem">Roughly <b class="hi">13.8 billion years ago</b> everything — matter, energy, space, and time itself — erupted from a single point. As the cosmos cooled, gravity gathered hydrogen into stars. Those stars cooked light elements into heavier ones, then exploded, seeding space with the raw material of planets and people. Every carbon atom in your DNA was once inside a star.</p>
+      </div>
+    </div>
+
+    <div class="trio rv">
+      <div class="card"><div class="ic">💥</div><h3>The Big Bang</h3><p>All matter, energy, space and time began in a single point 13.8 billion years ago. The universe has been expanding and cooling ever since — from a searing fireball to the star-strewn cosmos we see tonight.</p></div>
+      <div class="card"><div class="ic">⭐</div><h3>Stellar nucleosynthesis</h3><p>Stars fuse hydrogen into helium, then helium into carbon, oxygen and iron — the elements of life. When massive stars die as supernovae, they scatter these elements across space to seed new worlds.</p></div>
+      <div class="card"><div class="ic">🌍</div><h3>A planet of life</h3><p>On Earth, those elements assembled into molecules, then cells, then minds. The same carbon forged in a dying star now forms your DNA. We are, quite literally, the universe made conscious.</p></div>
+    </div>
+
+    <!-- STAR STUFF INTERACTIVE -->
+    <div class="card elem rv">
+      <div class="tag" style="margin-bottom:8px">Interactive · where your atoms were forged</div>
+      <h2 style="font-size:1.5rem;margin-bottom:8px">You are cosmic leftovers</h2>
+      <p class="sub" style="margin-bottom:24px">Almost every atom in your body was made somewhere out in the universe long before Earth existed. Tap an element to see where — and when — it was born.</p>
+      <div class="elem-grid">
+        <div class="ptable" id="ptable"></div>
+        <div class="elem-read">
+          <h3 id="elName">Oxygen</h3>
+          <div class="origin" id="elOrigin">≈ 65% of your body by mass</div>
+          <p id="elDesc">The most abundant element in your body, mostly locked up in water. Forged in the cores of massive stars and blasted out when they explode as supernovae. Every breath and every cell relies on atoms that were once inside a dying giant star.</p>
+          <div class="forge" id="elForge"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COSMIC CALENDAR (signature) ================= -->
+<section id="calendar" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">The great compression</div>
+      <h2>The whole of time, in <span class="irid">one year</span></h2>
+      <p class="sub">Imagine the 13.8-billion-year history of the universe squeezed into a single calendar year — the Big Bang at midnight on January 1st, this very moment at midnight on December 31st. On this scale, one day is ~38 million years and one second is ~438 years. Drag the slider, or jump to a moment, and watch just how astonishingly late in the year we arrive.</p>
+    </div>
+
+    <div class="card cal rv">
+      <div class="cal-read">
+        <div class="cal-date">
+          <div class="mon" id="calMon">JAN</div>
+          <div class="day" id="calDay">1</div>
+          <div class="clock" id="calClock">00:00:00</div>
+        </div>
+        <div class="cal-info">
+          <h3 id="calTitle">The Big Bang</h3>
+          <div class="ago" id="calAgo">13.8 billion years ago</div>
+          <p id="calDesc">Everything begins. Space, time, matter and energy erupt from an unimaginably hot, dense point and start expanding. Within minutes the first simple nuclei — hydrogen and helium — form. Not a single atom of your body's carbon exists yet; it still waits inside stars unborn.</p>
+        </div>
+      </div>
+
+      <div class="cal-track">
+        <input type="range" id="calSlider" min="0" max="365" value="0" step="0.001" aria-label="Cosmic calendar scrubber">
+        <div class="cal-months"><span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span></div>
+      </div>
+
+      <div class="cal-chips" id="calChips"></div>
+
+      <div class="cal-foot" id="calFoot">All of recorded human history — every pharaoh, empire, war and equation — fits into the <b>last ~14 seconds</b> of the cosmic year.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SKULL MORPH ================= -->
+<section id="skull" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">01 · The transformation</div>
+      <h2>Morph a skull across 4 million years</h2>
+      <p class="sub">Drag the slider to travel from an ape-like ancestor to a modern human. Watch three things change together: the <b class="hi">brain balloons</b>, the <b class="hi">face flattens and retreats</b>, and the heavy <b class="hi">brow ridge melts away</b>. These aren't random — each shift tracks a change in how we lived.</p>
+    </div>
+    <div class="card morph rv">
+      <div class="morph-grid">
+        <div class="skullbox">
+          <svg class="skull-svg" viewBox="0 0 300 260" id="skullSvg" aria-label="Morphing hominin skull">
+            <path id="braincase" class="sk-part" fill="#efe6d6" stroke="#c9bca6" stroke-width="2"/>
+            <path id="face" class="sk-part" fill="#e5d9c4" stroke="#c9bca6" stroke-width="2"/>
+            <path id="brow" class="sk-part" fill="#d9c8ab"/>
+            <ellipse id="eye" class="sk-part" cx="0" cy="0" rx="16" ry="18" fill="#100b1e"/>
+            <rect id="teeth" class="sk-part" fill="#f3ecdd" stroke="#c9bca6"/>
+          </svg>
+        </div>
+        <div class="morph-info">
+          <h3 id="skName">Australopithecus</h3>
+          <div class="sci" id="skSci">"Lucy" · ~3.2 million years ago</div>
+          <p id="skDesc">A small-brained upright walker. The brain is barely larger than a chimp's, the face juts forward, and a bony brow shields the eyes. Yet the pelvis and knees are already built for walking on two legs — walking came first, long before the big brain.</p>
+          <div class="brainbar">
+            <label>BRAIN VOLUME <b id="skCC">~400 cm³</b></label>
+            <div class="bmeter"><div class="bf" id="skBar" style="width:22%"></div></div>
+          </div>
+          <div class="slider-wrap">
+            <input type="range" id="skSlider" min="0" max="4" value="0" step="0.01" aria-label="Skull morph slider">
+            <div class="slider-ticks" id="skTicks"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TRAITS ================= -->
+<section id="traits" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">02 · The upgrades</div>
+      <h2>What actually makes us human</h2>
+      <p class="sub">Not one thing but a stack of innovations, each building on the last. Tap any to open it.</p>
+    </div>
+    <div class="traits rv" id="traitGrid"></div>
+
+    <div class="card budget rv">
+      <div class="tag" style="margin-bottom:8px">Interactive · the energy trade-off</div>
+      <h2 style="font-size:1.5rem;margin-bottom:8px">Why can we afford such an expensive brain?</h2>
+      <p class="sub" style="margin-bottom:26px">Your brain is 2% of your body weight but burns <b class="hi">20% of your energy</b> — a chimp's uses about half that share. Evolution had to pay for it somehow. Tap each innovation to see how we funded the most expensive organ in the animal kingdom.</p>
+      <div class="budget-grid">
+        <div class="choice" id="budgetChoice"></div>
+        <div class="budget-vis">
+          <div class="big" id="budgetBig">🧠</div>
+          <div class="lbl" id="budgetLbl">Pick an innovation →</div>
+          <p id="budgetP">Each one freed up calories or time that could be redirected to growing and running a bigger brain.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MIGRATION ================= -->
+<section id="migration" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">03 · Out of Africa</div>
+      <h2>How we populated a planet</h2>
+      <p class="sub">Every person outside Africa descends from a small band that left ~60,000 years ago. Click the waypoints to trace the journey — and meet the cousins we found (and mingled with) along the way.</p>
+    </div>
+    <div class="card mapwrap rv">
+      <svg viewBox="0 0 800 400" id="migMap" aria-label="Human migration map">
+        <g fill="#171126" stroke="#2e2650" stroke-width="1">
+          <path d="M330 120 q40 -40 90 -30 q50 10 60 60 q30 20 10 70 q10 50 -30 80 q-20 50 -60 40 q-40 40 -70 0 q-30 -30 -20 -80 q-30 -40 0 -80 q10 -50 30 -60 Z"/>
+          <path d="M180 80 q60 -30 130 -10 q-10 40 -60 50 q-50 20 -90 5 q-20 -25 20 -45 Z"/>
+          <path d="M470 90 q120 -30 200 10 q40 40 20 90 q-60 40 -140 20 q-70 -20 -90 -70 q-10 -30 10 -50 Z"/>
+          <path d="M640 240 q60 10 80 50 q-10 40 -70 40 q-50 -10 -50 -50 q0 -30 40 -40 Z"/>
+          <path d="M120 240 q40 -10 50 40 q40 60 0 90 q-40 10 -50 -40 q-30 -50 0 -90 Z"/>
+          <path d="M90 170 q50 -20 70 20 q10 40 -30 60 q-50 10 -60 -30 q-10 -30 20 -50 Z"/>
+        </g>
+        <path class="mroute" data-r="0" stroke="var(--gold)" d="M370 200 Q390 170 410 150"/>
+        <path class="mroute" data-r="1" stroke="var(--cosmic)" d="M410 150 Q300 110 230 100"/>
+        <path class="mroute" data-r="2" stroke="var(--nebula)" d="M410 150 Q520 130 600 140"/>
+        <path class="mroute" data-r="3" stroke="var(--moss)" d="M600 140 Q660 200 690 270"/>
+        <path class="mroute" data-r="4" stroke="var(--flare)" d="M600 140 Q560 220 520 250"/>
+        <path class="mroute" data-r="5" stroke="var(--star)" d="M520 130 Q300 90 180 200 Q140 260 150 330"/>
+        <g class="mnode" data-i="0"><circle cx="370" cy="200" r="6" fill="var(--gold)"/><text x="378" y="204" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">E. Africa</text></g>
+        <g class="mnode" data-i="1"><circle cx="230" cy="100" r="6" fill="var(--cosmic)"/><text x="150" y="94" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">Europe</text></g>
+        <g class="mnode" data-i="2"><circle cx="600" cy="140" r="6" fill="var(--nebula)"/><text x="608" y="136" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">C. Asia</text></g>
+        <g class="mnode" data-i="3"><circle cx="690" cy="270" r="6" fill="var(--moss)"/><text x="640" y="292" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">Australia</text></g>
+        <g class="mnode" data-i="4"><circle cx="520" cy="250" r="6" fill="var(--flare)"/><text x="528" y="254" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">SE Asia</text></g>
+        <g class="mnode" data-i="5"><circle cx="150" cy="330" r="6" fill="var(--star)"/><text x="158" y="334" font-family="IBM Plex Mono" font-size="10" fill="#9d8fb8">Americas</text></g>
+      </svg>
+      <div class="map-cap" id="mapCap">Click a waypoint above to trace that leg of the journey.</div>
+    </div>
+
+    <div class="head rv" style="margin-top:54px;margin-bottom:22px">
+      <div class="tag">Our vanished cousins</div>
+      <h2 style="font-size:1.7rem">We were never the only humans</h2>
+      <p class="sub">As sapiens spread, we met other members of our genus — and interbred with them. For a brief window Earth held several human species at once. Then, only we remained. But they live on inside us: most people outside Africa carry <b class="hi">~2% Neanderthal DNA</b>, and some carry Denisovan genes too.</p>
+    </div>
+    <div class="cousins rv" id="cousinGrid"></div>
+  </div>
+</section>
+
+<!-- ================= TIMELINE ================= -->
+<section id="history" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">04 · The long road</div>
+      <h2>The timeline of becoming</h2>
+      <p class="sub">From the Big Bang to CRISPR. Click any entry to expand it — many include real archival images (loaded from Wikimedia Commons when you're online). Remember: human evolution is a branching bush, not a ladder — most of these species overlapped.</p>
+    </div>
+    <div id="tlRoot"></div>
+  </div>
+</section>
+
+<!-- ================= FUTURE ================= -->
+<section id="future" style="padding-top:30px">
+  <div class="wrap">
+    <div class="head rv">
+      <div class="tag">05 · What comes next</div>
+      <h2>The future of the human</h2>
+      <p class="sub">For the first time, a species can direct its own evolution. Natural selection hasn't stopped — but culture, medicine, and technology now steer it. Here's where we might be going.</p>
+    </div>
+    <div class="fut rv">
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><g stroke="#f2c85b" stroke-width="2" fill="none"><path d="M110 30 q20 20 0 40 q-20 20 0 40"/><path d="M150 30 q-20 20 0 40 q20 20 0 40"/><path d="M110 40 h40 M112 60 h36 M110 80 h40 M112 100 h36" stroke-width="1.4"/></g><circle cx="190" cy="55" r="4" fill="#ec7a54"/><path d="M186 55 l-30 10" stroke="#ec7a54" stroke-width="1.4"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#f2c85b">EDITING THE CODE · CRISPR</text></svg>
+        <div class="yr">NOW → 2040s</div><h3>Directed evolution</h3>
+        <p>CRISPR gene editing already cures sickle-cell disease (approved 2023) and lets us correct inherited disorders. As tools sharpen, humanity gains the power — and the ethical burden — to shape its own genome. The line between healing and enhancement is where the next century's hardest debates live.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><ellipse cx="150" cy="60" rx="46" ry="34" fill="none" stroke="#f6ead2" stroke-width="1.6"/><path d="M120 46 q30 -14 60 0 M116 60 h68 M120 74 q30 14 60 0" stroke="#6aa6d8" stroke-width="1.4" fill="none"/><g fill="#f2c85b"><circle cx="132" cy="52" r="2.5"/><circle cx="168" cy="52" r="2.5"/><circle cx="150" cy="66" r="2.5"/><circle cx="140" cy="72" r="2.5"/><circle cx="162" cy="70" r="2.5"/></g><path d="M196 60 h30 M210 46 v28" stroke="#ec7a54" stroke-width="2"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#6aa6d8">MIND MEETS MACHINE</text></svg>
+        <div class="yr">2030s →</div><h3>Merging with our tools</h3>
+        <p>Brain–computer interfaces (Neuralink, Synchron) already let paralysed people type and control devices with thought. Our species has always extended itself through tools — from hand-axes to smartphones. The next step brings the tool <i>inside</i>, blurring where the human ends and the technology begins.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><circle cx="90" cy="70" r="26" fill="#ec7a54" opacity=".85"/><circle cx="86" cy="64" r="6" fill="#f2c85b" opacity=".6"/><path d="M150 50 q40 -6 70 20" stroke="#f6ead2" stroke-width="1.4" fill="none" stroke-dasharray="4 4"/><g fill="#6aa6d8"><circle cx="230" cy="44" r="10"/></g><path d="M240 40 l14 -8" stroke="#6aa6d8"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#ec7a54">A MULTIPLANET SPECIES</text></svg>
+        <div class="yr">2030s → 2100s</div><h3>Life beyond Earth</h3>
+        <p>If we settle the Moon and Mars, isolated populations in low gravity and high radiation could, over many generations, begin to diverge — the first branching of the human lineage since our cousins died out. Space may do to us what oceans once did to island species.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><path d="M60 90 q30 -50 60 -20 q10 -30 40 -20 q30 -20 50 20 q20 30 -10 50 Z" fill="#8fb26a" opacity=".7"/><circle cx="150" cy="40" r="12" fill="#f2c85b"/><path d="M150 52 v40 M130 70 h40" stroke="#05040b" stroke-width="2"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#8fb26a">EVOLUTION HASN'T STOPPED</text></svg>
+        <div class="yr">ONGOING</div><h3>Still evolving, quietly</h3>
+        <p>We're changing right now: lactase persistence spread in the last 10,000 years, high-altitude adaptations in Tibet arose in ~3,000, and genes for malaria resistance shift generation by generation. Culture is the fastest evolutionary force of all — and it now moves in years, not millennia.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><circle cx="110" cy="60" r="30" fill="none" stroke="#f2c85b" stroke-width="2"/><path d="M110 34 v52 M84 60 h52" stroke="#f2c85b" stroke-width="1.4"/><circle cx="110" cy="60" r="8" fill="#ec7a54"/><g stroke="#6aa6d8" stroke-width="1.4" fill="none"><path d="M180 45 h50 M180 60 h50 M180 75 h50"/></g><circle cx="230" cy="45" r="3" fill="#6aa6d8"/><circle cx="230" cy="75" r="3" fill="#6aa6d8"/><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#f2c85b">LONGER, HEALTHIER LIVES</text></svg>
+        <div class="yr">2030s → 2060s</div><h3>Extending the lifespan</h3>
+        <p>Research into cellular senescence, epigenetic reprogramming, and age-reversal (Yamanaka factors) aims not just to add years but to compress illness into life's final moments. A species that doubled its life expectancy in a single century may not be done yet.</p>
+      </div>
+      <div class="card fcard">
+        <svg class="fart" viewBox="0 0 300 130"><rect width="300" height="130" fill="#0a0716"/><g stroke="#f6ead2" stroke-width="1.2" opacity=".5" fill="none"><circle cx="150" cy="65" r="12"/><circle cx="100" cy="45" r="8"/><circle cx="200" cy="45" r="8"/><circle cx="90" cy="90" r="8"/><circle cx="210" cy="90" r="8"/><path d="M150 65 L100 45 M150 65 L200 45 M150 65 L90 90 M150 65 L210 90"/></g><g fill="#f2c85b"><circle cx="150" cy="65" r="4"/><circle cx="100" cy="45" r="3"/><circle cx="200" cy="45" r="3"/><circle cx="90" cy="90" r="3"/><circle cx="210" cy="90" r="3"/></g><text x="16" y="120" font-family="IBM Plex Mono" font-size="9" fill="#f6ead2">ONE CONNECTED SPECIES</text></svg>
+        <div class="yr">THE DEEPER SHIFT</div><h3>A global superorganism?</h3>
+        <p>The biggest change may not be biological. Eight billion minds linked in real time, sharing knowledge and coordinating at planetary scale, behave less like separate individuals and more like a single thinking network — a new kind of evolution, running on culture and silicon rather than genes.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>BECOMING</b> — you are the current draft of a 13.8-billion-year story.</div>
+    <div>Homo sapiens · "wise man" · still being written.</div>
+  </div>
+</footer>
+
+<script>
+/* ========== STARS + SHOOTING STARS ========== */
+(function(){
+  const c=document.getElementById('stars'),x=c.getContext('2d');
+  const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w,h,stars=[];
+  function rs(){w=c.width=innerWidth;h=c.height=innerHeight;
+    stars=Array.from({length:Math.min(190,w/8)},()=>({x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.7+.2,s:Math.random()*.14+.02,o:Math.random()*.5+.12,ph:Math.random()*6.28}));}
+  function draw(){x.clearRect(0,0,w,h);
+    for(const s of stars){const f=.6+.4*Math.sin(s.ph+performance.now()/2000);
+      x.globalAlpha=s.o*f;x.fillStyle='#f6ead2';x.beginPath();x.arc(s.x,s.y,s.r,0,7);x.fill();
+      if(!reduced){s.y-=s.s;s.x+=Math.sin(s.y/50+s.ph)*.07;if(s.y<0){s.y=h;s.x=Math.random()*w;}}}
+    if(!reduced&&Math.random()<.004){const sx=Math.random()*w,sy=Math.random()*h*.5;
+      x.globalAlpha=.7;x.strokeStyle='#f2c85b';x.lineWidth=1.2;x.beginPath();x.moveTo(sx,sy);x.lineTo(sx-70,sy+70);x.stroke();}
+    x.globalAlpha=1;if(!reduced)requestAnimationFrame(draw);}
+  addEventListener('resize',rs);rs();draw();
+})();
+
+/* ========== SCROLL REVEAL ========== */
+(function(){
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},{threshold:.12});
+  document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+})();
+
+/* ========== STAR-STUFF ELEMENTS ========== */
+(function(){
+  const els=[
+    {sym:'O',name:'Oxygen',pct:'≈ 65% of your body by mass',src:'var(--flare)',
+     desc:"The most abundant element in your body, mostly locked up in water. Forged in the cores of massive stars and blasted out when they explode as supernovae. Every breath and every cell relies on atoms once inside a dying giant star.",forge:['Massive stars','Supernovae']},
+    {sym:'C',name:'Carbon',pct:'≈ 18% of your body by mass',src:'var(--gold)',
+     desc:"The backbone of every molecule of life — DNA, proteins, fats, sugars. Made in the bellies of aging low-mass stars (like the Sun will become) and puffed gently into space as they die. Life on Earth is carbon chemistry, cooked in stars.",forge:['Dying low-mass stars','Red giants']},
+    {sym:'H',name:'Hydrogen',pct:'≈ 10% of your body by mass',src:'var(--cosmic)',
+     desc:"The oldest atoms of all. Hydrogen formed in the first few minutes after the Big Bang, 13.8 billion years ago. The hydrogen in the water you drink is a direct relic of the newborn universe — you are drinking the Big Bang.",forge:['The Big Bang']},
+    {sym:'N',name:'Nitrogen',pct:'≈ 3% of your body by mass',src:'var(--gold)',
+     desc:"Essential for DNA and every protein. Built inside stars through the carbon–nitrogen–oxygen fusion cycle and released as they age and die. Without stellar nitrogen there would be no genetic code to copy.",forge:['Dying low-mass stars']},
+    {sym:'Ca',name:'Calcium',pct:'≈ 1.5% of your body by mass',src:'var(--flare)',
+     desc:"Your bones and teeth are stellar ash. Calcium is forged deep in massive stars and scattered by supernovae. Every skeleton is a monument to an exploded star.",forge:['Massive stars','Supernovae']},
+    {sym:'P',name:'Phosphorus',pct:'≈ 1% of your body by mass',src:'var(--flare)',
+     desc:"The 'P' in DNA and in ATP, the molecule that powers every cell. Relatively rare in the cosmos, made in massive stars and supernovae — a stellar bottleneck that may help explain why life is scarce.",forge:['Massive stars','Supernovae']},
+    {sym:'Fe',name:'Iron',pct:'trace — but vital',src:'var(--nebula)',
+     desc:"Carried by the haemoglobin that makes your blood red and ferries oxygen through your veins. Iron is the end of the line for stellar fusion — the last element a dying star can make before it collapses and explodes.",forge:['Supernovae','White-dwarf blasts']},
+    {sym:'Au',name:'Heavier atoms',pct:'trace — iodine, zinc, gold…',src:'var(--nebula)',
+     desc:"The rarest atoms in you — the iodine in your thyroid, the zinc in your enzymes, even flecks of gold — were forged in the most violent events known: colliding neutron stars. You carry jewellery made by dead stars smashing together.",forge:['Neutron-star mergers']}
+  ];
+  const table=document.getElementById('ptable');
+  const nm=document.getElementById('elName'),or=document.getElementById('elOrigin'),de=document.getElementById('elDesc'),fo=document.getElementById('elForge');
+  function show(e){nm.textContent=e.name;or.textContent=e.pct;de.textContent=e.desc;
+    fo.innerHTML=e.forge.map(f=>`<span>${f}</span>`).join('');}
+  els.forEach((e,i)=>{
+    const b=document.createElement('button');b.className='el';b.type='button';b.style.setProperty('--src',e.src);
+    b.innerHTML=`<span class="glow"></span><span class="sym">${e.sym}</span><span class="pct">${e.pct.replace('≈ ','').replace(' of your body by mass','')}</span>`;
+    b.addEventListener('click',()=>{table.querySelectorAll('.el').forEach(x=>x.classList.remove('on'));b.classList.add('on');show(e);});
+    if(i===0)b.classList.add('on');
+    table.appendChild(b);
+  });
+  show(els[0]);
+})();
+
+/* ========== COSMIC CALENDAR ========== */
+(function(){
+  const TOTAL=13.8e9, DAYS=365;
+  // each event carries its TRUE age (years ago); the calendar day is derived so dates stay consistent
+  const raw=[
+    {ago:13.8e9,   t:'The Big Bang',                agoTxt:'13.8 billion years ago',
+      d:"Everything begins. Space, time, matter and energy erupt from an unimaginably hot, dense point and start expanding. Within minutes the first nuclei — hydrogen and helium — form. Not one atom of your carbon exists yet."},
+    {ago:13.5e9,   t:'The first stars ignite',      agoTxt:'~13.5 billion years ago',
+      d:"Gravity pulls primordial hydrogen into the first stars, which blaze to life and begin fusing new elements. The universe lights up for the first time, ending the cosmic 'dark ages'."},
+    {ago:13.0e9,   t:'The Milky Way takes shape',    agoTxt:'~13 billion years ago',
+      d:"Our home galaxy assembles from smaller clumps of stars and gas. Generation after generation of stars live and die, each seeding the galaxy with heavier elements for the next."},
+    {ago:4.6e9,    t:'The Sun & Solar System form',  agoTxt:'~4.6 billion years ago',
+      d:"A collapsing cloud of gas and dust — enriched by earlier supernovae — forms the Sun. The leftover disc clumps into planets. Two-thirds of the cosmic year has already slipped by."},
+    {ago:4.54e9,   t:'Earth forms',                  agoTxt:'~4.54 billion years ago',
+      d:"Our planet coalesces from the solar nebula. The carbon, oxygen and iron that will one day make bodies are all already here — forged in earlier stars and scattered across space."},
+    {ago:3.8e9,    t:'First life on Earth',          agoTxt:'~3.8 billion years ago',
+      d:"Simple single-celled life appears in the oceans. For most of the cosmic year that follows, life stays microscopic — bacteria and, later, more complex cells."},
+    {ago:5.4e8,    t:'The Cambrian explosion',       agoTxt:'~540 million years ago',
+      d:"In a geological blink, complex animals with eyes, shells and skeletons burst onto the scene. The ancestors of nearly every animal group alive today appear in the fossil record."},
+    {ago:2.3e8,    t:'Age of the dinosaurs',         agoTxt:'~230 million years ago',
+      d:"Dinosaurs rise to dominate the land for over 150 million years. Small, shrew-like mammals — our distant ancestors — scurry in the undergrowth, waiting."},
+    {ago:6.6e7,    t:'Dinosaurs fall, mammals rise', agoTxt:'~66 million years ago',
+      d:"An asteroid strike ends the reign of the dinosaurs. In the aftermath, mammals diversify and grow — including the primates from which we descend."},
+    {ago:7.0e6,    t:'The human lineage splits off', agoTxt:'~7 million years ago',
+      d:"Late on the very last day of the cosmic year, our lineage diverges from the ancestors of chimpanzees. Early hominins like Sahelanthropus begin to experiment with walking upright."},
+    {ago:3.0e5,    t:'Homo sapiens appears',         agoTxt:'~300,000 years ago',
+      d:"In the last ~11 minutes of December 31st, anatomically modern humans emerge in Africa. Everything you think of as 'human history' still hasn't happened."},
+    {ago:1.2e4,    t:'Farming & the first cities',   agoTxt:'~12,000 years ago',
+      d:"In the final ~27 seconds of the cosmic year, humans invent agriculture, build cities and start writing. Empires rise and fall in the last handful of seconds."},
+    {ago:0.001,    t:'You, reading this',            agoTxt:'right now',
+      d:"The clock strikes midnight. Every person you've ever heard of lived in the last few seconds of the cosmic year. We are astonishingly, humblingly new — and, so far, the only part of the cosmos that has learned to tell this story."}
+  ];
+  const events=raw.map(e=>({...e,day:DAYS*(1-e.ago/TOTAL)}));
+  const MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const CUM=[0,31,59,90,120,151,181,212,243,273,304,334,365];
+  const slider=document.getElementById('calSlider');
+  const monEl=document.getElementById('calMon'),dayEl=document.getElementById('calDay'),clkEl=document.getElementById('calClock');
+  const tEl=document.getElementById('calTitle'),aEl=document.getElementById('calAgo'),dEl=document.getElementById('calDesc');
+  const chips=document.getElementById('calChips');
+
+  function dayToDate(d){
+    d=Math.max(0,Math.min(364.99999,d));
+    let m=0;while(m<11&&d>=CUM[m+1])m++;
+    const dom=Math.floor(d-CUM[m])+1;
+    const frac=d-Math.floor(d);
+    const secs=Math.floor(frac*86400);
+    const hh=String(Math.floor(secs/3600)).padStart(2,'0');
+    const mm=String(Math.floor((secs%3600)/60)).padStart(2,'0');
+    const ss=String(secs%60).padStart(2,'0');
+    return {mon:MONTHS[m],dom,clock:`${hh}:${mm}:${ss}`};
+  }
+  function nearest(d){let best=events[0];for(const e of events){if(d>=e.day-0.0001)best=e;}return best;}
+  function render(d){
+    const dt=dayToDate(d);
+    monEl.textContent=dt.mon;dayEl.textContent=dt.dom;clkEl.textContent=dt.clock;
+    const e=nearest(d);tEl.textContent=e.t;aEl.textContent=e.agoTxt;dEl.textContent=e.d;
+    [...chips.children].forEach(c=>c.classList.toggle('on',+c.dataset.day===e.day));
+  }
+  slider.addEventListener('input',()=>render(parseFloat(slider.value)));
+  events.forEach(e=>{
+    const b=document.createElement('button');b.type='button';b.dataset.day=e.day;b.textContent=e.t;
+    b.addEventListener('click',()=>{slider.value=e.day;render(e.day);});
+    chips.appendChild(b);
+  });
+  render(0);
+})();
+
+/* ========== SKULL MORPH ========== */
+(function(){
+  const stages=[
+    {name:'Australopithecus',sci:'"Lucy" · ~3.2 million years ago',cc:'~400 cm³',bar:22,
+     desc:"A small-brained upright walker. The brain is barely larger than a chimp's, the face juts forward, and a bony brow shields the eyes. Yet the pelvis and knees are already built for walking on two legs — walking came first, long before the big brain.",
+     brain:'M120 90 Q110 55 150 52 Q195 54 200 92 Q205 115 185 128 L120 126 Q108 110 120 90Z',
+     face:'M120 126 L185 128 Q196 150 190 175 Q185 205 150 210 Q120 208 116 178 Q112 150 120 126Z',
+     brow:'M116 118 Q150 106 196 116 Q198 128 190 130 Q150 120 120 130 Q114 126 116 118Z',
+     eye:[150,150,15,17],teeth:[132,192,44,12]},
+    {name:'Homo habilis',sci:'"Handy Man" · ~2.1 million years ago',cc:'~600 cm³',bar:35,
+     desc:'The first toolmaker in our genus. The braincase swells noticeably to house a mind that could plan and shape stone. The face is still large and projecting, but the jaw is beginning to shrink as cut meat and simple tools ease the chewing load.',
+     brain:'M112 84 Q104 46 152 44 Q205 46 210 88 Q214 114 190 128 L112 126 Q100 108 112 84Z',
+     face:'M116 126 L190 128 Q200 150 194 172 Q188 200 152 205 Q120 203 116 175 Q112 150 116 126Z',
+     brow:'M112 116 Q152 104 200 114 Q202 126 194 128 Q152 118 118 128 Q110 124 112 116Z',
+     eye:[152,148,15,16],teeth:[134,188,42,11]},
+    {name:'Homo erectus',sci:'"Upright Man" · ~1.5 million years ago',cc:'~950 cm³',bar:55,
+     desc:"A tall, long-legged strider who mastered fire and left Africa. The brain is now over twice Lucy's. A thick, shelf-like brow ridge remains, but the face is flatter and the body proportions are essentially modern. This is the great pioneer of our lineage.",
+     brain:'M104 78 Q96 38 152 36 Q214 38 220 84 Q224 112 196 128 L104 126 Q92 104 104 78Z',
+     face:'M112 126 L196 128 Q204 148 198 168 Q192 194 152 198 Q118 196 114 170 Q108 148 112 126Z',
+     brow:'M106 114 Q152 100 204 112 Q206 126 196 128 Q152 116 116 128 Q104 122 106 114Z',
+     eye:[152,146,15,16],teeth:[136,182,40,10]},
+    {name:'Homo neanderthalensis',sci:'Neanderthal · ~120,000 years ago',cc:'~1,450 cm³',bar:88,
+     desc:'Our cold-adapted cousin — actually bigger-brained than us on average. A large braincase stretched long and low, a prominent brow, a wide nose and a robust body built for Ice Age Europe. They buried their dead, made art, and interbred with our ancestors.',
+     brain:'M98 74 Q88 30 152 30 Q222 32 228 82 Q232 112 200 128 L98 126 Q86 100 98 74Z',
+     face:'M110 126 L200 128 Q208 146 202 166 Q196 190 152 194 Q116 192 112 168 Q106 146 110 126Z',
+     brow:'M102 112 Q152 96 206 110 Q208 126 200 128 Q152 114 114 128 Q100 120 102 112Z',
+     eye:[152,144,16,17],teeth:[136,178,40,10]},
+    {name:'Homo sapiens',sci:'Us · today',cc:'~1,350 cm³',bar:82,
+     desc:'A high, domed forehead over a flat, tucked-in face; a delicate jaw, small teeth, and — uniquely — a chin. The brow ridge is gone. The frontal lobes behind that vertical forehead handle planning, language, and imagination. Slightly smaller-brained than Neanderthals, but wired differently: shape, not just size, is what counts.',
+     brain:'M96 68 Q84 22 152 22 Q224 24 230 74 Q236 116 202 132 L96 130 Q84 100 96 68Z',
+     face:'M114 130 L200 132 Q206 148 200 164 Q194 184 152 188 Q116 186 114 166 Q110 148 114 130Z',
+     brow:'M120 122 Q152 116 196 122 Q198 128 194 130 Q152 124 120 130 Q117 126 120 122Z',
+     eye:[152,142,14,15],teeth:[138,174,36,9]}
+  ];
+  const S=document.getElementById('skullSvg');
+  const bc=S.querySelector('#braincase'),fc=S.querySelector('#face'),bw=S.querySelector('#brow'),ey=S.querySelector('#eye'),th=S.querySelector('#teeth');
+  const nm=document.getElementById('skName'),sci=document.getElementById('skSci'),desc=document.getElementById('skDesc'),cc=document.getElementById('skCC'),bar=document.getElementById('skBar');
+  const slider=document.getElementById('skSlider'),ticks=document.getElementById('skTicks');
+  stages.forEach((s,i)=>{const sp=document.createElement('span');sp.textContent=s.name.replace('Homo ','H. ').replace('Australopithecus','A.');sp.onclick=()=>{slider.value=i;render();};ticks.appendChild(sp);});
+  function apply(s){
+    bc.setAttribute('d',s.brain);fc.setAttribute('d',s.face);bw.setAttribute('d',s.brow);
+    ey.setAttribute('cx',s.eye[0]);ey.setAttribute('cy',s.eye[1]);ey.setAttribute('rx',s.eye[2]);ey.setAttribute('ry',s.eye[3]);
+    th.setAttribute('x',s.teeth[0]);th.setAttribute('y',s.teeth[1]);th.setAttribute('width',s.teeth[2]);th.setAttribute('height',s.teeth[3]);th.setAttribute('rx','3');
+    nm.textContent=s.name;sci.textContent=s.sci;desc.textContent=s.desc;cc.textContent=s.cc;bar.style.width=s.bar+'%';
+  }
+  function render(){const v=parseFloat(slider.value),i=Math.round(v);apply(stages[i]);[...ticks.children].forEach((t,k)=>t.classList.toggle('on',k===i));}
+  slider.addEventListener('input',render);apply(stages[0]);render();
+})();
+
+/* ========== TRAITS ========== */
+const traits=[
+ {ic:'🚶',n:'Bipedalism',s:'Standing up — the very first step.',more:'~7–4 million years ago, our ancestors began walking upright. It freed the hands to carry food, tools, and infants, and let us travel efficiently across the drying African savanna. Every later human trait was built on this foundation — walking came before the big brain.'},
+ {ic:'🪨',n:'Toolmaking',s:'Extending the body with stone.',more:"The Oldowan stone tools (~2.6 million years ago) let us cut meat, crack bones for marrow, and access calorie-rich food our teeth couldn't. Tools are the first technology — and they started a feedback loop: better tools fed bigger brains, which made better tools."},
+ {ic:'🔥',n:'Fire & cooking',s:'Pre-digesting food with heat.',more:'Controlled fire (~1 million+ years ago, possibly earlier) cooked food, unlocking far more energy from every bite and killing parasites. Cooking is like having a second stomach outside the body — it may be the single innovation that most directly paid for our expensive brains.'},
+ {ic:'🧠',n:'The big brain',s:'Tripled in size in 3 million years.',more:"From ~400 cm³ in Lucy to ~1,350 cm³ today. But size isn't everything: it's the expanded prefrontal cortex — planning, self-control, imagination — that sets us apart. This brain costs 20% of our energy, which is why every other trait here exists to feed it."},
+ {ic:'🗣️',n:'Language',s:'Sharing minds across time.',more:'Complex language (likely by 100,000+ years ago) let knowledge accumulate across generations instead of dying with each individual. A single human knows almost nothing alone; together, connected by language, we built everything. This is our true superpower.'},
+ {ic:'🎨',n:'Symbolic thought',s:"Imagining what isn't there.",more:'Cave paintings, carved figurines, ochre body-paint, and burial rituals (from ~100,000 years ago) reveal minds that could think in symbols — art, religion, myth, money, nations. The ability to believe in shared fictions let strangers cooperate in the millions.'},
+ {ic:'👶',n:'Childhood',s:'Born helpless, learning for years.',more:"Because our big-brained heads must pass through a bipedal pelvis, human babies are born early and helpless, needing years of care. That long childhood is a feature, not a bug: it's a huge window for learning culture, language, and skills from those around us."},
+ {ic:'🤝',n:'Cooperation',s:'Surviving together, not alone.',more:'Sharing food, teaching the young, caring for the sick and elderly — hyper-cooperation let a physically unremarkable ape dominate the planet. We instinctively read intentions, feel empathy, and enforce fairness in ways no other species does at our scale.'}
+];
+(function(){
+  const tg=document.getElementById('traitGrid');
+  traits.forEach(t=>{
+    const d=document.createElement('button');d.className='card trait';d.type='button';d.setAttribute('aria-expanded','false');
+    d.innerHTML=`<span class="ic">${t.ic}</span><h3>${t.n}</h3><p>${t.s}</p><div class="more">${t.more}</div><span class="tap">✦ Tap to expand</span>`;
+    d.addEventListener('click',()=>{const o=d.classList.toggle('open');d.setAttribute('aria-expanded',o);d.querySelector('.tap').textContent=o?'✦ Tap to collapse':'✦ Tap to expand';});
+    tg.appendChild(d);
+  });
+})();
+
+/* ========== ENERGY BUDGET ========== */
+(function(){
+  const budget=[
+   {k:'🔥 Cooking food',big:'+50%',lbl:'MORE ENERGY PER BITE',p:'Cooking gelatinises starch and denatures protein, so we extract far more calories with far less digestive effort. Our guts shrank as our brains grew — we outsourced digestion to the campfire.'},
+   {k:'🍖 Eating meat & marrow',big:'🧈',lbl:'DENSE, PORTABLE CALORIES',p:"Stone tools gave access to meat and fatty bone marrow — compact, energy-rich fuel. A brain runs on glucose and fat; a purely leafy diet simply couldn't power one this big."},
+   {k:'🦷 Smaller guts & teeth',big:'−',lbl:'THE EXPENSIVE-TISSUE TRADE',p:'Guts are almost as costly to run as brains. As cooking and tools did the digestive work, our intestines and jaw muscles shrank — and evolution spent the saved energy on grey matter instead. A direct trade, tissue for tissue.'},
+   {k:'🤝 Sharing & teaching',big:'∞',lbl:'POOLED KNOWLEDGE & FOOD',p:'Group food-sharing smooths out the risk of a bad hunt, and teaching means no one re-invents fire. Cooperation let individuals afford to be specialists — and to carry the metabolic cost of a slow-growing, big-brained child.'}
+  ];
+  const bc2=document.getElementById('budgetChoice'),bBig=document.getElementById('budgetBig'),bLbl=document.getElementById('budgetLbl'),bP=document.getElementById('budgetP');
+  budget.forEach(b=>{
+    const btn=document.createElement('button');btn.className='cbtn';btn.type='button';btn.innerHTML=`<b>${b.k}</b>`;
+    btn.addEventListener('click',()=>{[...bc2.children].forEach(x=>x.classList.remove('on'));btn.classList.add('on');bBig.textContent=b.big;bLbl.textContent=b.lbl;bP.textContent=b.p;});
+    bc2.appendChild(btn);
+  });
+})();
+
+/* ========== MIGRATION ========== */
+(function(){
+  const legs=[
+   {t:'The homeland — East Africa, ~300,000 yrs ago',c:'<b>Homo sapiens</b> emerges in Africa. Early sapiens fossils at Jebel Irhoud (Morocco, ~300kya) and Omo Kibish (Ethiopia, ~230kya) show our species living, making tools, and using pigment across the continent long before anyone left.'},
+   {t:'Into Europe, ~45,000 yrs ago',c:"Sapiens reach Europe and meet the <b>Neanderthals</b> who had lived there for 300,000 years. Within ~5,000 years the Neanderthals are gone — but not before interbreeding: ~2% of most non-Africans' DNA is Neanderthal to this day."},
+   {t:'Across Asia, ~50,000+ yrs ago',c:'Bands spread east across the vast Asian interior. In Siberia they meet the <b>Denisovans</b>, a cousin species known mostly from DNA and a fingertip bone — whose genes survive today in Melanesians and Tibetans (including a high-altitude gene).'},
+   {t:'Australia, ~50,000–65,000 yrs ago',c:"In one of prehistory's greatest feats, humans cross open ocean to reach <b>Sahul</b> (Australia–New Guinea) — the first evidence anywhere of planned sea voyaging. Aboriginal Australians descend from these first mariners in an unbroken line."},
+   {t:'Southeast Asia & the islands',c:'Coastal "beachcomber" routes carry people rapidly through South and Southeast Asia. Here our ancestors overlapped with tiny relatives like <b>Homo floresiensis</b> (the 1-metre "Hobbit" of Flores, surviving until ~50kya).'},
+   {t:'The Americas, ~20,000–16,000 yrs ago',c:'The last great frontier. Humans cross the <b>Beringia</b> land bridge from Siberia into Alaska during the Ice Age, then sweep south to the tip of Patagonia within a few thousand years — populating two continents astonishingly fast.'}
+  ];
+  const routes=document.querySelectorAll('.mroute'),cap=document.getElementById('mapCap');
+  document.querySelectorAll('.mnode').forEach(n=>{
+    n.addEventListener('click',()=>{const i=+n.dataset.i;routes.forEach((r,k)=>r.classList.toggle('show',k<=i));cap.innerHTML='<b>'+legs[i].t+'</b> — '+legs[i].c;});
+  });
+})();
+
+/* ========== COUSINS ========== */
+(function(){
+  const IMG=f=>`https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(f)}?width=520`;
+  const cousins=[
+   {n:'Neanderthals',sci:'Homo neanderthalensis',emoji:'🧔',img:'Homo sapiens neanderthalensis - head model - Smithsonian Museum of Natural History - 2012-05-17.jpg',
+    p:'Stocky, cold-adapted and bigger-brained than us on average. They made tools and jewellery, used fire and medicine, cared for their injured and buried their dead across Ice Age Europe and West Asia.',dna:'~2% of non-African DNA today'},
+   {n:'Denisovans',sci:'Homo denisova',emoji:'🦴',img:'Denisova.jpg',
+    p:'A ghost species known mostly from DNA and a fingertip bone found in a Siberian cave in 2010. They ranged across Asia and passed on genes — including a high-altitude adaptation still carried by Tibetans.',dna:'up to ~5% in Melanesians'},
+   {n:'The Hobbit',sci:'Homo floresiensis',emoji:'👣',img:'Homo floresiensis cave.jpg',
+    p:'A metre-tall human that survived on the Indonesian island of Flores until ~50,000 years ago — an island-dwarfed cousin our ancestors may have overlapped with as they island-hopped toward Australia.',dna:'no surviving genes known'},
+   {n:'Homo sapiens',sci:'Us · the last ones standing',emoji:'🧑',img:'Homo sapiens - head model - Smithsonian Museum of Natural History - 2012-05-17.jpg',
+    p:'Of at least four human species alive 60,000 years ago, only we remain. Whether through competition, climate, disease or absorption, our cousins vanished — leaving fragments of themselves stitched into our genomes.',dna:'8.1 billion of us today'}
+  ];
+  const g=document.getElementById('cousinGrid');
+  cousins.forEach(c=>{
+    const d=document.createElement('div');d.className='card cousin';
+    d.innerHTML=`<div class="ph"><span class="ph-fallback">${c.emoji}</span>
+      <img loading="lazy" src="${IMG(c.img)}" alt="${c.n}" onerror="this.style.display='none'"></div>
+      <div class="body"><h3>${c.n}</h3><div class="sci">${c.sci}</div><p>${c.p}</p><span class="dna">✦ ${c.dna}</span></div>`;
+    g.appendChild(d);
+  });
+})();
+
+/* ========== TIMELINE ========== */
+(function(){
+  const IMG=f=>`https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(f)}?width=620`;
+  const eras=[
+   {label:'THE COSMIC PRELUDE · 13.8 BILLION – 7 MILLION YEARS AGO',c:'var(--cosmic)',ev:[
+    {d:'~13.8 billion years ago',t:'The Big Bang',
+     b:'All matter, energy, space and time begin in a single point. The universe expands and cools, and the first atoms — <b>hydrogen and helium</b> — form. The elements that would one day make your body are not yet born; they await the stars.',
+     who:['The universe','All of existence'],
+     img:'Webb Takes a Stunning, Star-Filled Portrait of the Pillars of Creation (Cropped) (weic2216a).jpeg',
+     cap:'A stellar nursery in the Eagle Nebula — where stars, and elements, are born (JWST)'},
+    {d:'~4.54 billion years ago',t:'Earth forms',
+     b:'Our planet coalesces from the solar nebula, a disc of gas and dust left over from the birth of the Sun. The <b>carbon, oxygen and iron</b> that will become the human story are already here, forged in earlier stars and scattered by supernovae.',
+     who:['The Solar System','Earth'],
+     img:'The Earth seen from Apollo 17.jpg',
+     cap:'Earth from Apollo 17 — the Blue Marble, 1972'},
+    {d:'~7 million years ago',t:'The split from chimpanzees',
+     b:'Genetic clocks and fossils like <b>Sahelanthropus tchadensis</b> (Chad, ~7 mya) mark the divergence of our lineage from the ancestors of chimpanzees — our closest living relatives, with whom we still share ~98.8% of our DNA. We did not descend <i>from</i> chimps; we share a common ancestor and both evolved since.',
+     who:['Sahelanthropus tchadensis','Common ancestor with Pan'],
+     img:'Sahelanthropus tchadensis - TM 266-01-060-1.jpg',
+     cap:'Cast of the Sahelanthropus ("Toumaï") skull, ~7 million years old'}
+   ]},
+   {label:'DEEP ROOTS · 7 – 2 MILLION YEARS AGO',c:'var(--nebula)',ev:[
+    {d:'~4.4 million years ago',t:'"Ardi" — an early upright walker',
+     b:'<b>Ardipithecus ramidus</b>, described in 2009 from a remarkably complete skeleton in Ethiopia, could walk upright on the ground yet still climb well, with a grasping big toe. It shows our ancestors were becoming bipedal while still living partly in the trees — bipedalism came in stages.',
+     who:['Ardipithecus ramidus','Tim White & team'],
+     img:'Ardipithecis_Ramidus_skeleton_1994-1996.jpeg',
+     cap:'Reconstruction of the "Ardi" skeleton, Ardipithecus ramidus'},
+    {d:'~3.2 million years ago',t:'"Lucy" and the age of Australopithecus',
+     b:'Discovered in 1974 at Hadar, Ethiopia, by <b>Donald Johanson</b> and Tom Gray, <b>Lucy</b> (Australopithecus afarensis) is ~40% of one skeleton — proof that a small-brained (~400 cm³) creature already walked fully upright. The <b>Laetoli footprints</b> (Tanzania, ~3.6 mya), preserved in volcanic ash, capture the same species strolling on two legs. Bipedalism, decisively, preceded the big brain.',
+     who:['Australopithecus afarensis','Donald Johanson','Mary Leakey (Laetoli)'],
+     img:'Reconstruction of the fossil skeleton of "Lucy" the Australopithecus afarensis.jpg',
+     cap:"Reconstruction of Lucy's skeleton, Australopithecus afarensis"}
+   ]},
+   {label:'GENUS HOMO EMERGES · 2.6M – 300K YEARS AGO',c:'var(--gold)',ev:[
+    {d:'~2.6 million years ago',t:'The first stone tools',
+     b:'The <b>Oldowan</b> toolkit — sharp flakes struck from cobbles — appears in East Africa (recent finds at Lomekwi may push simple tools to 3.3 mya). Cutting meat and cracking marrow bones unlocked dense calories, feeding brain growth and starting the tool-brain feedback loop that never stopped.',
+     who:['Oldowan toolmakers','Homo habilis (likely)'],
+     img:'Olduvai stone chopping tool.jpg',
+     cap:'An Oldowan chopping tool, among the oldest known human technology (British Museum)'},
+    {d:'~1.9 million years ago',t:'Homo erectus — the great pioneer',
+     b:'<b>Homo erectus</b> ("upright man") had a nearly modern body, mastered <b>fire</b>, made the elegant teardrop <b>Acheulean hand-axe</b>, and was the first hominin to leave Africa — reaching Georgia, China (Peking Man), and Java. It survived ~1.5 million years, far longer than we have. Fire and cooking may have been the key that funded our expanding brains.',
+     who:['Homo erectus','Eugène Dubois (discovered "Java Man", 1891)'],
+     img:'Homo erectus adult female - head model - Smithsonian Museum of Natural History - 2012-05-17.jpg',
+     cap:'Reconstruction of a Homo erectus face (Smithsonian)'},
+    {d:'~800,000–300,000 years ago',t:'Fire, hearths, and bigger brains',
+     b:'Evidence of controlled fire at hearths becomes widespread. Brain size climbs steadily. <b>Homo heidelbergensis</b> — a likely common ancestor of both us and Neanderthals — hunts large game with wooden spears (the Schöningen spears, Germany, ~300kya, are the oldest known hunting weapons).',
+     who:['Homo heidelbergensis','Shared ancestor of sapiens & Neanderthals']}
+   ]},
+   {label:'THE HUMAN FAMILY · 300K – 40K YEARS AGO',c:'var(--flare)',ev:[
+    {d:'~430,000 → 40,000 years ago',t:'The Neanderthals',
+     b:"<b>Homo neanderthalensis</b> thrived across Ice Age Europe and western Asia — stocky, cold-adapted, and <i>bigger-brained than us on average</i>. Far from brutish, they made tools and jewellery, used fire and medicinal plants, cared for their injured, and buried their dead. First identified in 1856 in Germany's Neander Valley, they vanished ~40,000 years ago — but live on in our DNA.",
+     who:['Homo neanderthalensis','Discovered Neander Valley, 1856'],
+     img:'Homo sapiens neanderthalensis - head model - Smithsonian Museum of Natural History - 2012-05-17.jpg',
+     cap:'Reconstruction of a Neanderthal face (Smithsonian)'},
+    {d:'~300,000 years ago',t:'Homo sapiens appears',
+     b:'Our own species emerges in Africa — not in one spot but across the continent. The <b>Jebel Irhoud</b> fossils (Morocco), redated in 2017 to ~300,000 years, pushed our origin back over 100,000 years and showed sapiens evolved pan-African, mosaic-style, rather than from a single "Garden of Eden."',
+     who:['Homo sapiens','Jean-Jacques Hublin & team (Jebel Irhoud)']},
+    {d:'~100,000–40,000 years ago',t:'The dawn of the symbolic mind',
+     b:'The archaeological record lights up with the <b>modern mind</b>: engraved ochre at Blombos Cave (South Africa, ~75kya), shell beads, burials with grave goods, and — by ~45,000 years ago — spectacular <b>cave art</b> in Indonesia and Europe. Humans were now thinking in symbols, telling stories, and believing in things unseen.',
+     who:['Symbolic revolution','Blombos & Sulawesi cave artists'],
+     img:'Lascaux painting.jpg',
+     cap:'Cave painting at Lascaux, France — the symbolic mind at work'},
+    {d:'~70,000–50,000 years ago',t:'The great expansion & our lost cousins',
+     b:'A wave of sapiens spreads out of Africa across the whole planet, meeting and interbreeding with <b>Neanderthals</b> and the newly-discovered <b>Denisovans</b> (identified from DNA in 2010). For a brief window, Earth held at least four human species at once — us, Neanderthals, Denisovans, and the tiny <b>Homo floresiensis</b>. Then, only we remained.',
+     who:['Homo sapiens','Homo denisova','Homo floresiensis','Svante Pääbo (ancient DNA, Nobel 2022)']}
+   ]},
+   {label:'THE MODERN HUMAN · 40,000 YEARS AGO → NOW',c:'var(--star)',ev:[
+    {d:'~12,000 years ago',t:'The Agricultural Revolution',
+     b:'As the Ice Age ended, humans in the Fertile Crescent, China, Mesoamerica and elsewhere independently began <b>farming</b>. Settling down enabled cities, writing, kings, and disease — and rewrote our biology: genes for digesting milk (lactase persistence) and starch spread rapidly. In evolutionary terms, this was yesterday.',
+     who:['Neolithic farmers','Multiple independent origins']},
+    {d:'~5,000 years ago',t:'Writing — memory outside the brain',
+     b:'Cuneiform in Sumer and hieroglyphs in Egypt let humans store knowledge outside their own heads for the first time. Culture could now accumulate without limit, across centuries. The pace of change decoupled from biology entirely — evolution by ideas overtook evolution by genes.',
+     who:['Sumerian scribes','Ancient Egypt']},
+    {d:'1859',t:'Darwin explains the mechanism',
+     b:'<b>Charles Darwin</b> publishes <i>On the Origin of Species</i>, laying out evolution by natural selection — alongside <b>Alfred Russel Wallace</b>, who reached the same idea independently. In 1871\'s <i>The Descent of Man</i>, Darwin dares to place humans within the tree of life. It remains one of the most powerful ideas ever conceived.',
+     who:['Charles Darwin','Alfred Russel Wallace'],
+     img:'Charles Darwin portrait.jpg',
+     cap:'Charles Darwin, who placed humanity within the tree of life'},
+    {d:'1953 → 2003 → today',t:'Reading (and now writing) our own code',
+     b:"<b>Watson, Crick, Franklin & Wilkins</b> reveal DNA's structure (1953). The <b>Human Genome Project</b> reads all 3 billion letters of our genome (completed 2003). Ancient-DNA pioneer <b>Svante Pääbo</b> sequences the Neanderthal genome (2010, Nobel 2022), proving they live on inside us. Now, with <b>CRISPR</b>, we can edit the code — the first species able to consciously rewrite itself.",
+     who:['Watson · Crick · Franklin · Wilkins','Human Genome Project','Svante Pääbo','Doudna & Charpentier (CRISPR)'],
+     img:'DNA orbit animated static thumb.png',
+     cap:'The DNA double helix — the code of life, now readable and editable'}
+   ]}
+  ];
+  const root=document.getElementById('tlRoot');
+  eras.forEach(era=>{
+    const lb=document.createElement('div');lb.className='era';lb.style.setProperty('--eacc',era.c);root.appendChild(lb);lb.textContent=era.label;
+    const tl=document.createElement('div');tl.className='tl';
+    era.ev.forEach(ev=>{
+      const it=document.createElement('div');it.className='tle';it.style.setProperty('--acc',era.c);
+      const imgHtml=ev.img?`<img loading="lazy" src="${IMG(ev.img)}" alt="${ev.cap||''}" onerror="this.style.display='none';this.nextElementSibling.style.display='none'"><div class="cap">✦ ${ev.cap||''}</div>`:'';
+      it.innerHTML=`<div class="dot" aria-hidden="true"></div>
+        <button class="tle-btn" type="button" aria-expanded="false">
+          <span class="tle-d">${ev.d}</span>
+          <span class="tle-t">${ev.t}<span class="ch">▼</span></span>
+          <div class="tle-b"><div class="tle-bi"><p>${ev.b}</p>${imgHtml}
+          <div class="who">${ev.who.map(w=>`<span>${w}</span>`).join('')}</div>
+          </div></div>
+        </button>`;
+      const btn=it.querySelector('.tle-btn');
+      btn.addEventListener('click',()=>{const o=it.classList.toggle('open');btn.setAttribute('aria-expanded',o);});
+      tl.appendChild(it);
+    });
+    root.appendChild(tl);
+  });
+})();
+</script>
+</body>
+</html>
